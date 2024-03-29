@@ -4,7 +4,6 @@ import androidx.datastore.core.Serializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tomasan7.jecnamobile.settings.Settings
@@ -24,14 +23,20 @@ object SettingsSerializer : Serializer<Settings>
             e.printStackTrace()
             defaultValue
         }
+        finally
+        {
+            withContext(Dispatchers.IO) {
+                input.close()
+            }
+        }
     }
 
     override suspend fun writeTo(t: Settings, output: OutputStream)
     {
         withContext(Dispatchers.IO) {
-            output.write(
-                Json.encodeToString(t).encodeToByteArray()
-            )
+            output.use {
+                it.write(Json.encodeToString(t).encodeToByteArray())
+            }
         }
     }
 }
