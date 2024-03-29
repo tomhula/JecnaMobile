@@ -27,14 +27,20 @@ class CacheNewsRepository @Inject constructor(
         if (!isCacheAvailable())
             return null
 
+        val inputStream = cacheFile.inputStream()
+
         return try
         {
-            Json.decodeFromStream(cacheFile.inputStream())
+            Json.decodeFromStream(inputStream)
         }
         catch (e: Exception)
         {
             e.printStackTrace()
             null
+        }
+        finally
+        {
+            inputStream.close()
         }
     }
 
