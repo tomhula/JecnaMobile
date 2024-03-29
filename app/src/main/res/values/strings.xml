@@ -144,7 +144,7 @@
     <string name="notification_grade_value_change_text">%1$s -> %2$s - %3$s</string>
     <string name="notification_grade_size_change_title">Změna velikosti známky z %1$s</string>
     <string name="notification_grade_size_change_text">%1$s -> %2$s - %3$s</string>
-    <string name="notification_grade_remove_title">Smazána známkla z %1$s</string>
+    <string name="notification_grade_remove_title">Smazána známka z %1$s</string>
     <string name="notification_grade_remove_text">Smazáno - %1$s</string>
 
     <string name="notification_grade_size_small">malá</string>
