@@ -5,6 +5,8 @@ import dagger.Module
 import dagger.hilt.migration.DisableInstallInCheck
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepositoryImpl
+import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
+import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeCheckerImpl
 import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.grades.GradesRepositoryImpl
 import me.tomasan7.jecnamobile.login.AuthRepository
@@ -44,4 +46,8 @@ interface AppModuleBindings
     @Binds
     @Singleton
     fun bindTeachersRepository(repository: TeachersRepositoryImpl): TeachersRepository
+
+    @Binds
+    @Singleton
+    fun bindGradesChangeChecker(gradesChecker: GradesChangeCheckerImpl): GradesChangeChecker
 }

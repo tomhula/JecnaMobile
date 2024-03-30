@@ -132,6 +132,24 @@
     <string name="timetable_dialog_classroom">Učebna</string>
     <string name="timetable_dialog_group">Skupina</string>
 
+
+    <!-- #### Notifications ####  -->
+
+    <string name="notification_channel_grade_name">Známky</string>
+    <string name="notification_channel_grade_description">Oznámení o známkách</string>
+
+    <string name="notification_grade_new_title">Nová známka z %1$s</string>
+    <string name="notification_grade_new_text">%1$s - %2$s</string>
+    <string name="notification_grade_value_change_title">Změna známky z %1$s</string>
+    <string name="notification_grade_value_change_text">%1$s -> %2$s - %3$s</string>
+    <string name="notification_grade_size_change_title">Změna velikosti známky z %1$s</string>
+    <string name="notification_grade_size_change_text">%1$s -> %2$s - %3$s</string>
+    <string name="notification_grade_remove_title">Smazána známka z %1$s</string>
+    <string name="notification_grade_remove_text">Smazáno - %1$s</string>
+
+    <string name="notification_grade_size_small">malá</string>
+    <string name="notification_grade_size_big">velká</string>
+
     <!-- ##### General ##### -->
 
     <string name="monday">Pondělí</string>

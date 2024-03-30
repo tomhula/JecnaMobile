@@ -90,9 +90,12 @@ dependencies {
 
     implementation(libs.activity.ktx)
 
+    kapt(libs.hilt.compiler)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.work)
+    implementation(libs.work.runtime.ktx)
     implementation(libs.datastore)
     implementation(libs.serialization.json)
 }
