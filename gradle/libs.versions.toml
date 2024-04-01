@@ -12,6 +12,7 @@ composeDestinations = "1.9.53"
 composeStateEvents = "2.2.0"
 composeHtml = "1.0.2"
 composeCoil = "2.6.0"
+accompanist = "0.32.0"
 
 activity = "1.8.2"
 
@@ -37,6 +38,7 @@ composeDestinations-ksp = { module = "io.github.raamcosta.compose-destinations:k
 composeStateEvents = { module = "com.github.leonard-palm:compose-state-events", version.ref = "composeStateEvents" }
 composeHtml = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 composeCoil = { module = "io.coil-kt:coil-compose", version.ref = "composeCoil" }
+accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 

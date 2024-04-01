@@ -51,6 +51,12 @@ class GradeCheckerWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result
     {
+        if (!notificationsAllowed(appContext))
+        {
+            Log.i(LOG_TAG, "Notifications are not allowed. Exiting...")
+            return Result.success()
+        }
+
         Log.i(LOG_TAG, "Checking for grade changes...")
 
         if (jecnaClient.autoLoginAuth == null)
@@ -155,23 +161,26 @@ class GradeCheckerWorker @AssistedInject constructor(
             .setContentTitle(title)
             .setContentText(text)
 
-        if (checkForNotificationPermission())
+        if (notificationsAllowed(appContext))
             notificationManagerCompat.notify(id, builder.build())
-    }
-
-    private fun checkForNotificationPermission(): Boolean
-    {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU)
-            return true
-        return ActivityCompat.checkSelfPermission(appContext, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object
     {
         private const val LOG_TAG = "GradeCheckerWorker"
 
-        fun scheduleWorker(context: Context)
+        /**
+         * If notifications are enabled, schedules the grade checker worker, if not, cancels it.
+         */
+        fun scheduleWorkerIfNotificationsEnabled(context: Context)
         {
+            if (!notificationsAllowed(context))
+            {
+                Log.i(LOG_TAG, "Notifications are not allowed. Cancelling grade checker worker...")
+                WorkManager.getInstance(context).cancelUniqueWork(JecnaMobileApplication.GRADE_CHECKER_WORKER_ID)
+                return
+            }
+
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .build()
@@ -186,20 +195,10 @@ class GradeCheckerWorker @AssistedInject constructor(
                 .enqueueUniquePeriodicWork(JecnaMobileApplication.GRADE_CHECKER_WORKER_ID, ExistingPeriodicWorkPolicy.UPDATE, workRequest)
         }
 
-        /* TODO: REMOVE: DEBUG ONLY */
-        fun scheduleImmediate(context: Context)
-        {
-            val constraints = Constraints.Builder()
-                .setRequiredNetworkType(NetworkType.CONNECTED)
-                .build()
-            val workRequest = OneTimeWorkRequestBuilder<GradeCheckerWorker>()
-                .setConstraints(constraints)
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
-                .build()
-
-            Log.i(LOG_TAG, "Scheduling testing one time grade checker worker...")
-            WorkManager.getInstance(context)
-                .enqueue(workRequest)
-        }
+        private fun notificationsAllowed(context: Context) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        else
+            /* All notifications are allowed on lower android versions */
+            true
     }
 }

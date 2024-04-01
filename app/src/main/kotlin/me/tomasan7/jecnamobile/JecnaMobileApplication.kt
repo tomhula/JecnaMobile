@@ -24,7 +24,7 @@ class JecnaMobileApplication : Application(), Configuration.Provider
     {
         super.onCreate()
         createNotificationChannels()
-        GradeCheckerWorker.scheduleWorker(this)
+        GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(this)
     }
 
     private fun createNotificationChannels()

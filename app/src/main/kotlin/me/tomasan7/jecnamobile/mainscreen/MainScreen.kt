@@ -2,6 +2,7 @@ package me.tomasan7.jecnamobile.mainscreen
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -37,6 +37,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.rememberNavController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.RootNavGraph
@@ -63,6 +66,8 @@ fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
+    RequestNotificationsPermission()
+
     val settings by settingsAsStateAwaitFirst()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -169,6 +174,20 @@ fun MainScreen(
             )
         }
     )
+}
+
+@OptIn(ExperimentalPermissionsApi::class)
+@Composable
+private fun RequestNotificationsPermission()
+{
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    {
+        val permissionState = rememberPermissionState(android.Manifest.permission.POST_NOTIFICATIONS)
+        LaunchedEffect(permissionState.status.isGranted) {
+            if (!permissionState.status.isGranted)
+                permissionState.launchPermissionRequest()
+        }
+    }
 }
 
 @Composable

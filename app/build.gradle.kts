@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.composeDestinations.core)
     ksp(libs.composeDestinations.ksp)
     implementation(libs.composeStateEvents)
+    implementation(libs.accompanist.permissions)
 
     implementation(libs.activity.ktx)
 
