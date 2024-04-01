@@ -50,7 +50,7 @@ class TeachersViewModel @Inject constructor(
 
     init
     {
-        if (jecnaClient.autoLoginAuth != null)
+        if (jecnaClient.lastSuccessfulLoginTime != null)
             loadReal()
     }
 

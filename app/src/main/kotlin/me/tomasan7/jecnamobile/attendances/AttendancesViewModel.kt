@@ -57,7 +57,7 @@ class AttendancesViewModel @Inject constructor(
     init
     {
         loadCache()
-        if (jecnaClient.autoLoginAuth != null)
+        if (jecnaClient.lastSuccessfulLoginTime != null)
             loadReal()
     }
 
