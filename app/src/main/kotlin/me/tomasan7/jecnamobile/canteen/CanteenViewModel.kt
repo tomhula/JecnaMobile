@@ -47,6 +47,7 @@ class CanteenViewModel @Inject constructor(
     var uiState by mutableStateOf(CanteenState())
         private set
     private var loadMenuJob: Job? = null
+    private var loginjob: Job? = null
     private var loginInProcess = false
     private val awaitedDays = mutableSetOf<LocalDate>()
 
@@ -68,7 +69,7 @@ class CanteenViewModel @Inject constructor(
     private fun loginCanteenClient()
     {
         loginInProcess = true
-        viewModelScope.launch {
+        loginjob = viewModelScope.launch {
             changeUiState(loading = true)
 
             val auth = authRepository.get()
@@ -199,34 +200,39 @@ class CanteenViewModel @Inject constructor(
 
         loadMenuJob?.cancel()
 
-        val days = getDays()
-        awaitedDays.addAll(days)
-        loadMenuJob = canteenClient.getMenuAsync(days)
-            .onEach { addDayMenu(it) }
-            .catch { e -> showMenuLoadErrorMessage(e, R.string.error_load) }
-            .onCompletion {
-                changeUiState(loading = false)
-                awaitedDays.removeAll(days.toSet())
-            }
-            .launchIn(viewModelScope)
-
         viewModelScope.launch {
-            try
-            {
-                val credit = canteenClient.getCredit()
-                changeUiState(credit = credit)
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                showMessage(R.string.no_internet_connection)
-            }
-            catch (e: ParseException)
-            {
-                showMessage(R.string.error_unsupported_credit)
-            }
-            catch (e: Exception)
-            {
-                showMessage(R.string.error_load_credit)
+            loginjob?.join()
+            val days = getDays()
+            awaitedDays.addAll(days)
+            loadMenuJob = canteenClient.getMenuAsync(days)
+                .onEach { addDayMenu(it) }
+                .catch { e -> showMenuLoadErrorMessage(e, R.string.error_load); e.printStackTrace() }
+                .onCompletion {
+                    changeUiState(loading = false)
+                    awaitedDays.removeAll(days.toSet())
+                }
+                .launchIn(viewModelScope)
+
+            viewModelScope.launch {
+                try
+                {
+                    val credit = canteenClient.getCredit()
+                    changeUiState(credit = credit)
+                }
+                catch (e: UnresolvedAddressException)
+                {
+                    showMessage(R.string.no_internet_connection)
+                }
+                catch (e: ParseException)
+                {
+                    e.printStackTrace()
+                    showMessage(R.string.error_unsupported_credit)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                    showMessage(R.string.error_load_credit)
+                }
             }
         }
     }
