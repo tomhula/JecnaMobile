@@ -1,5 +1,8 @@
 package me.tomasan7.jecnamobile.login
 
+import androidx.compose.runtime.Immutable
+
+@Immutable
 data class LoginState(
     val isLoading: Boolean = false,
     val username: String = "",

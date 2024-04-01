@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.attendances
 
+import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import me.tomasan7.jecnaapi.data.attendance.AttendancesPage
@@ -8,6 +9,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.Month
 
+@Immutable
 data class AttendancesState(
     val loading: Boolean = false,
     val attendancesPage: AttendancesPage? = null,

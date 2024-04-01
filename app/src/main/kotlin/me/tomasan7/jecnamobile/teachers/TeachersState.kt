@@ -1,12 +1,14 @@
 package me.tomasan7.jecnamobile.teachers
 
 import android.icu.text.Collator
+import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import me.tomasan7.jecnaapi.data.schoolStaff.TeachersPage
 import me.tomasan7.jecnamobile.util.removeAccent
 import java.util.Locale
 
+@Immutable
 data class TeachersState(
     val loading: Boolean = false,
     val teachersPage: TeachersPage? = null,

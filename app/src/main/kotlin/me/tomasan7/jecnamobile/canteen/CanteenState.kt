@@ -1,10 +1,12 @@
 package me.tomasan7.jecnamobile.canteen
 
+import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import me.tomasan7.jecnaapi.data.canteen.DayMenu
 import java.time.LocalTime
 
+@Immutable
 data class CanteenState(
     val loading: Boolean = false,
     val orderInProcess: Boolean = false,
