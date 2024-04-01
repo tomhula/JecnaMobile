@@ -167,7 +167,7 @@ class AttendancesViewModel @Inject constructor(
         }
     }
 
-    fun reload() = loadReal()
+    fun reload() = if (!uiState.loading) loadReal() else Unit
 
     private fun isSelectedPeriodCurrent() =
         uiState.selectedSchoolYear == SchoolYear.current() && uiState.selectedMonth == LocalDate.now().month

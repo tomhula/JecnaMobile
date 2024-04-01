@@ -177,7 +177,7 @@ class TimetableViewModel @Inject constructor(
         }
     }
 
-    fun reload() = loadReal(false)
+    fun reload() = if (!uiState.loading) loadReal(false) else Unit
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 

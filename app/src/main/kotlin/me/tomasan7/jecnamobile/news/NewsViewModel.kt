@@ -248,7 +248,7 @@ class NewsViewModel @Inject constructor(
         }
     }
 
-    fun reload() = loadReal()
+    fun reload() = if (!uiState.loading) loadReal() else Unit
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 

@@ -127,7 +127,7 @@ class TeacherViewModel @Inject constructor(
 
     private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)
 
-    fun reload() = loadReal()
+    fun reload() = if (!uiState.loading) loadReal() else Unit
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 

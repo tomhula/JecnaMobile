@@ -179,7 +179,7 @@ class GradesViewModel @Inject constructor(
         }
     }
 
-    fun reload() = loadReal()
+    fun reload() = if (!uiState.loading) loadReal() else Unit
 
     private fun isSelectedPeriodCurrent() =
         uiState.selectedSchoolYear == SchoolYear.current() && uiState.selectedSchoolYearHalf == SchoolYearHalf.current()
