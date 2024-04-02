@@ -3,7 +3,7 @@ plugin-android = "8.3.1"
 plugin-kotlin = "1.9.23"
 plugin-ksp = "1.9.23-1.0.19"
 
-jecnaAPI = "5.0.0"
+jecnaAPI = "5.0.1"
 
 compose-compiler = "1.5.11"
 compose-android-bom = "2024.03.00"
