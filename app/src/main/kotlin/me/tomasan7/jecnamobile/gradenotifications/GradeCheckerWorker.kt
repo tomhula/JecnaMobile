@@ -13,8 +13,6 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -127,7 +125,7 @@ class GradeCheckerWorker @AssistedInject constructor(
         {
             is GradesChange.NewGrade -> with(change) {
                 title = appContext.getString(R.string.notification_grade_new_title, subject.name.full)
-                text = appContext.getString(R.string.notification_grade_new_text, newGrade.valueChar.toString(), newGrade.description)
+                text = appContext.getString(R.string.notification_grade_new_text, newGrade.small.sizeString().replaceFirstChar { it.uppercase() } + " " + newGrade.valueChar.toString(), newGrade.description)
             }
             is GradesChange.GradeChange -> with(change) {
                 if (oldGrade.value != newGrade.value)
