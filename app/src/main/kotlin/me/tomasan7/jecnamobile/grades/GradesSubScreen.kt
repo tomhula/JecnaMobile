@@ -319,7 +319,7 @@ private fun Container(
                             enabled = onRightColumnClick != null,
                             onClick = { onRightColumnClick?.invoke() },
                             indication = null,
-                            interactionSource = MutableInteractionSource()
+                            interactionSource = remember { MutableInteractionSource() }
                         ),
                     verticalArrangement = Arrangement.SpaceEvenly,
                     content = rightColumnContent
