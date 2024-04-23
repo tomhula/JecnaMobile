@@ -163,7 +163,7 @@ class GradeCheckerWorker @AssistedInject constructor(
         val pendingIntent: PendingIntent = PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(appContext, JecnaMobileApplication.Companion.NotificationChannelIds.GRADE)
-            .setSmallIcon(R.drawable.ic_launcher_jecna_foreground)
+            .setSmallIcon(R.drawable.ic_grade)
             .setContentTitle(title)
             .setContentText(text)
             .setContentIntent(pendingIntent)
