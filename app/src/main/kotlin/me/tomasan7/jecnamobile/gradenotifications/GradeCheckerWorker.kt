@@ -1,7 +1,9 @@
 package me.tomasan7.jecnamobile.gradenotifications
 
 import android.Manifest
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
@@ -24,6 +26,7 @@ import me.tomasan7.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
+import me.tomasan7.jecnamobile.MainActivity
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChange
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
@@ -154,10 +157,17 @@ class GradeCheckerWorker @AssistedInject constructor(
 
     private fun sendGradeNotification(title: String, text: String, id: Int)
     {
+        val intent = Intent(appContext, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent = PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+
         val builder = NotificationCompat.Builder(appContext, JecnaMobileApplication.Companion.NotificationChannelIds.GRADE)
             .setSmallIcon(R.drawable.ic_launcher_jecna_foreground)
             .setContentTitle(title)
             .setContentText(text)
+            .setContentIntent(pendingIntent)
+            .setAutoCancel(true)
 
         if (notificationsAllowed(appContext))
             notificationManagerCompat.notify(id, builder.build())
