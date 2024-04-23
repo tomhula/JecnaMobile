@@ -46,6 +46,12 @@ Minimální podporovaný android je `Android 8.0 (Oreo)`.
   </a>
 </p>
 
+## Známé chyby
+
+- Nefunguje dávání jídel do/z burzy
+- Když se změní stav sítě zatímco je aplikace minimalizována, tak se uživateli zobrazí toast "Při přihlašování došlo k chybě"
+- Několik částí aplikace nefunguje, když uživatel nezaškrtne "Zapamatovat uživatele"
+
 ## Kontribuce
 
 Za váš příspěvek bude rád každý Ječňák s Androidem, takže neváhej přispět.
