@@ -8,16 +8,16 @@ plugins {
 }
 
 android {
-    compileSdk = 34
+    compileSdk = 35
 
     namespace = "me.tomasan7.jecnamobile"
 
     defaultConfig {
         applicationId = "me.tomasan7.jecnamobile"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 26
-        versionName = "2.4.0"
+        targetSdk = 35
+        versionCode = 27
+        versionName = "2.4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
