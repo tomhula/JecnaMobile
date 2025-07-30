@@ -23,7 +23,7 @@ datastore = "1.0.0"
 serialization = "1.6.3"
 
 [libraries]
-jecnaAPI = { module = "com.github.Tomasan7.JecnaAPI:jecnaapi", version.ref = "jecnaAPI" }
+jecnaAPI = { module = "com.github.tomhula.JecnaAPI:jecnaapi", version.ref = "jecnaAPI" }
 
 compose-android-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-android-bom" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
