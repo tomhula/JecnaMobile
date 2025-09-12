@@ -17,7 +17,7 @@ enum class SidebarLink(
 )
 {
     SubstitutionTimetable(
-        "https://spsejecnacz.sharepoint.com/:x:/s/nastenka/EbA_RcWKRdRNlB8YU1iuWM4BnMetCQlVm8toHuuyW-TPyA?e=uu3iPR&CID=2686cea0-2d06-3304-4519-087fb9e06fd0",
+        "https://spsejecnacz.sharepoint.com/:x:/s/nastenka/ESy19K245Y9BouR5ksciMvgBu3Pn_9EaT0fpP8R6MrkEmg?e=9Vgl8M",
         R.string.sidebar_link_substitution_timetable,
         Icons.Outlined.TableChart
     ),
