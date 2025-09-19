@@ -74,8 +74,7 @@ import me.tomasan7.jecnamobile.util.settingsDataStore
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph
-@Destination
+@Destination<SubScreensNavGraph>
 @Composable
 fun CanteenSubScreen(
     navDrawerController: NavDrawerController,

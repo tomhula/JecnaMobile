@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.kotlin)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.kapt)
@@ -34,24 +35,16 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     kotlin {
-        jvmToolchain(17)
+        jvmToolchain(21)
     }
 
     buildFeatures {
         compose = true
-    }
-
-    composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
 
     packaging {
@@ -67,6 +60,10 @@ android {
     }
 }
 
+ksp {
+    arg("compose-destinations.codeGenPackageName", "me.tomasan7.jecnamobile")
+}
+
 /* Allow references to generated code */
 kapt {
     correctErrorTypes = true
@@ -74,6 +71,9 @@ kapt {
 
 dependencies {
     implementation(libs.jecnaAPI)
+
+    // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
+    kapt("androidx.room:room-compiler-processing:2.7.0")
 
     implementation(platform(libs.compose.android.bom))
     debugImplementation(libs.compose.ui.tooling)

@@ -44,16 +44,14 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.popUpTo
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
 import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.ui.component.OutlinedPasswordField
 
-@RootNavGraph(start = true)
-@Destination
+@Destination<RootGraph>(start = true)
 @Composable
 fun LoginScreen(
     navigator: DestinationsNavigator,

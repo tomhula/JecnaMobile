@@ -44,7 +44,7 @@ class MainActivity : ComponentActivity()
 
                 DestinationsNavHost(
                     navGraph = NavGraphs.root,
-                    startRoute = startDestination,
+                    start = startDestination,
                     modifier = Modifier.fillMaxSize().background(backgroundColor)
                 )
             }

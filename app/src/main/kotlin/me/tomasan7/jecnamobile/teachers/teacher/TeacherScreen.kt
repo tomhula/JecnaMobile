@@ -55,8 +55,7 @@ import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph
-@Destination
+@Destination<SubScreensNavGraph>
 @Composable
 fun TeacherScreen(
     teacherReference: TeacherReference,

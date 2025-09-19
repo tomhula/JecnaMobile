@@ -37,8 +37,7 @@ import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph
-@Destination
+@Destination<SubScreensNavGraph>
 @Composable
 fun AttendancesSubScreen(
     navDrawerController: NavDrawerController,

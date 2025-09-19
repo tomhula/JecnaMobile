@@ -36,18 +36,20 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavArgs
+import androidx.navigation.NavArgument
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.RootGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.ramcosta.composedestinations.navigation.dependency
-import com.ramcosta.composedestinations.navigation.navigate
-import com.ramcosta.composedestinations.navigation.popUpTo
+import com.ramcosta.composedestinations.navigation.navGraph
 import com.ramcosta.composedestinations.utils.findDestination
+import com.ramcosta.composedestinations.utils.toDestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.NavGraphs
@@ -55,11 +57,11 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
 import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
+import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
-@RootNavGraph
-@Destination
+@Destination<RootGraph>
 @Composable
 fun MainScreen(
     navigator: DestinationsNavigator,
@@ -75,7 +77,14 @@ fun MainScreen(
     val linkItems = SidebarLink.entries
     var selectedItem by rememberMutableStateOf(SubScreenDestination.Timetable)
     val subScreensNavController = rememberNavController()
+    val subScreensNavigator = remember(subScreensNavController) { subScreensNavController.toDestinationsNavigator() }
     val startRoute = remember { NavGraphs.subScreens.findDestination(settings.openSubScreenRoute)!! }
+    // Workaround, because DestinationsNavHost does not accept a DestinationSpec as start
+    val startDirection = remember(startRoute) {
+        object : com.ramcosta.composedestinations.spec.Direction {
+            override val route: String = startRoute.route
+        }
+    }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)
 
     LaunchedEffect(subScreensNavController) {
@@ -118,7 +127,7 @@ fun MainScreen(
                                 return@onClick
 
                             /* https://developer.android.com/jetpack/compose/navigation#bottom-nav */
-                            subScreensNavController.navigate(item.destination.route) {
+                            subScreensNavigator.navigate(item.destination) {
                                 popUpTo(startRoute) {
                                     saveState = true
                                 }
@@ -148,7 +157,7 @@ fun MainScreen(
                     SidebarButtonsRow(
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
-                            subScreensNavController.navigate(SettingsScreenDestination)
+                            subScreensNavigator.navigate(SettingsScreenDestination)
                         },
                         onLogoutClick = {
                             viewModel.logout()
@@ -164,12 +173,14 @@ fun MainScreen(
         },
         content = {
             DestinationsNavHost(
-                navGraph = NavGraphs.subScreens,
-                startRoute = startRoute,
+                navGraph = SubScreensGraph,
+                start = startDirection,
                 navController = subScreensNavController,
                 modifier = Modifier.fillMaxSize(),
                 dependenciesContainerBuilder = {
-                    dependency(NavGraphs.subScreens) { navDrawerController }
+                    navGraph(SubScreensGraph) {
+                        dependency(navDrawerController)
+                    }
                 }
             )
         }

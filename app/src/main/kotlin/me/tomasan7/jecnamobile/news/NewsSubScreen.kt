@@ -74,8 +74,7 @@ import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph
-@Destination
+@Destination<SubScreensNavGraph>
 @Composable
 fun NewsSubScreen(
     navDrawerController: NavDrawerController,

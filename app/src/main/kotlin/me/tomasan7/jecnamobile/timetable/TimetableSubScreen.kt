@@ -43,8 +43,7 @@ import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph(start = true)
-@Destination
+@Destination<SubScreensNavGraph>(start = true)
 @Composable
 fun TimetableSubScreen(
     navDrawerController: NavDrawerController,

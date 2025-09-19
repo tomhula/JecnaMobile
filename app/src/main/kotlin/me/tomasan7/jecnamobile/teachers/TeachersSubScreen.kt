@@ -49,8 +49,7 @@ import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import me.tomasan7.jecnamobile.util.removeAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
-@SubScreensNavGraph
-@Destination
+@Destination<SubScreensNavGraph>
 @Composable
 fun TeachersSubScreen(
     navDrawerController: NavDrawerController,

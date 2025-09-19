@@ -1,10 +1,8 @@
 package me.tomasan7.jecnamobile.mainscreen
 
-import com.ramcosta.composedestinations.annotation.NavGraph
-import com.ramcosta.composedestinations.annotation.RootNavGraph
+import com.ramcosta.composedestinations.annotation.NavHostGraph
 
-@RootNavGraph
-@NavGraph
+@NavHostGraph
 annotation class SubScreensNavGraph(
     val start: Boolean = false
 )
