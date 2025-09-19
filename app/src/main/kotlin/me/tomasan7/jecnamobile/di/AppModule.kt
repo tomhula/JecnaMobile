@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import me.tomasan7.jecnaapi.CanteenClient
 import me.tomasan7.jecnaapi.JecnaClient
+import okhttp3.internal.userAgent
 import javax.inject.Singleton
 
 @Module(includes = [AppModuleBindings::class])
@@ -14,9 +15,9 @@ internal object AppModule
 {
     @Provides
     @Singleton
-    fun provideJecnaClient() = JecnaClient(autoLogin = true)
+    fun provideJecnaClient() = JecnaClient(autoLogin = true, userAgent = "JM")
 
     @Provides
     @Singleton
-    fun provideCanteenClient() = CanteenClient(autoLogin = true)
+    fun provideCanteenClient() = CanteenClient(autoLogin = true, userAgent = "JM")
 }
