@@ -32,6 +32,7 @@ import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
 
@@ -42,8 +43,7 @@ import java.time.format.DateTimeFormatter
 fun AttendancesSubScreen(
     navDrawerController: NavDrawerController,
     viewModel: AttendancesViewModel = hiltViewModel()
-)
-{
+) {
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
         onDispose {
@@ -101,8 +101,7 @@ fun AttendancesSubScreen(
                     onChangeMonth = { viewModel.selectMonth(it) }
                 )
 
-                if (uiState.attendancesPage != null)
-                {
+                if (uiState.attendancesPage != null) {
                     if (uiState.daysSorted!!.isEmpty())
                         NoAttendancesMessage(
                             modifier = Modifier
@@ -137,8 +136,7 @@ private fun PeriodSelectors(
     onChangeSchoolYear: (SchoolYear) -> Unit,
     onChangeMonth: (Month) -> Unit,
     modifier: Modifier = Modifier
-)
-{
+) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.SpaceEvenly
@@ -161,8 +159,7 @@ private fun PeriodSelectors(
 private fun AttendancesDay(
     attendanceRow: Pair<LocalDate, List<Attendance>>,
     modifier: Modifier = Modifier
-)
-{
+) {
     val dayName = getWeekDayName(attendanceRow.first.dayOfWeek)
     val dayDate = attendanceRow.first.format(DATE_FORMATTER)
 
@@ -181,23 +178,39 @@ private fun AttendancesDay(
             horizontalArrangement = Arrangement.spacedBy(7.dp),
             verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
+            //Attendance marked as late only if you come late to the first hour.
+            val upperCutoff = LocalTime.of(7, 25)
+            val lowerCutoff = LocalTime.of(7, 46)
             attendanceRow.second.forEach { attendance ->
-                AttendanceChip(attendance)
+
+                val entryTime: LocalTime? = attendance.time
+                val isLate =
+                    entryTime != null && (entryTime.isAfter(upperCutoff) && entryTime.isBefore(
+                        lowerCutoff
+                    ))
+                if (AttendanceType.ENTER == attendance.type) {
+                    AttendanceChip(attendance, late = isLate)
+                } else {
+                    AttendanceChip(attendance)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun AttendanceChip(attendance: Attendance, late: Boolean = false)
-{
+private fun AttendanceChip(attendance: Attendance, late: Boolean = false) {
     Surface(
         tonalElevation = 10.dp,
         border = if (late) BorderStroke(1.dp, jm_late_attendance) else null,
         shape = RoundedCornerShape(10.dp)
     ) {
         Text(
-            text = "${getAttendanceTypeName(attendance.type)} ${attendance.time.format(TIME_FORMATTER)}",
+            text = "${getAttendanceTypeName(attendance.type)} ${
+                attendance.time.format(
+                    TIME_FORMATTER
+                )
+            }",
             modifier = Modifier.padding(10.dp)
         )
     }
@@ -206,8 +219,7 @@ private fun AttendanceChip(attendance: Attendance, late: Boolean = false)
 @Composable
 private fun NoAttendancesMessage(
     modifier: Modifier = Modifier
-)
-{
+) {
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center
@@ -220,10 +232,9 @@ private fun NoAttendancesMessage(
 }
 
 @Composable
-private fun getAttendanceTypeName(type: AttendanceType) = when (type)
-{
+private fun getAttendanceTypeName(type: AttendanceType) = when (type) {
     AttendanceType.ENTER -> stringResource(R.string.attendances_attendance_type_enter)
-    AttendanceType.EXIT  -> stringResource(R.string.attendances_attendance_type_exit)
+    AttendanceType.EXIT -> stringResource(R.string.attendances_attendance_type_exit)
 }
 
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.")
