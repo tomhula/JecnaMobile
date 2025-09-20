@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnaapi.CanteenClient
 import me.tomasan7.jecnaapi.JecnaClient
+import me.tomasan7.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
@@ -111,18 +112,26 @@ class MainScreenViewModel @Inject constructor(
         appContext.sendBroadcast(intent)
     }
 
+    /**
+     * Logs you out of the device. Handles all exceptions during it.
+     */
     fun logout()
     {
-        runBlocking {
-            launch {
-                jecnaClient.logout()
+        try {
+            runBlocking {
+                launch {
+                    jecnaClient.logout()
+                }
+                launch {
+                    canteenClient.logout()
+                }
             }
-            launch {
-                canteenClient.logout()
-            }
+        } catch (e: AuthenticationException){
+            Toast.makeText(appContext, e.message, Toast.LENGTH_SHORT).show()
+            println(e.message)
+        } finally {
+            authRepository.clear()
         }
-
-        authRepository.clear()
     }
 
     fun onLoginEventConsumed()

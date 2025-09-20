@@ -32,6 +32,7 @@ import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import java.time.LocalDate
+import java.time.LocalTime
 import java.time.Month
 import java.time.format.DateTimeFormatter
 
@@ -181,8 +182,18 @@ private fun AttendancesDay(
             horizontalArrangement = Arrangement.spacedBy(7.dp),
             verticalArrangement = Arrangement.spacedBy(7.dp)
         ) {
+            //if the entry time is after 7:25 as recommended by the Headmaster, it's marked as late.
+            val cutoff = LocalTime.of(7,25)
             attendanceRow.second.forEach { attendance ->
-                AttendanceChip(attendance)
+
+                val entryTime: LocalTime? = attendance.time
+                val isLate = entryTime?.isAfter(cutoff) == true
+
+                if (attendance.type == AttendanceType.ENTER){
+                    AttendanceChip(attendance, late = isLate)
+                } else {
+                    AttendanceChip(attendance)
+                }
             }
         }
     }
