@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnaapi.CanteenClient
 import me.tomasan7.jecnaapi.JecnaClient
+import me.tomasan7.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
@@ -115,10 +116,20 @@ class MainScreenViewModel @Inject constructor(
     {
         runBlocking {
             launch {
-                jecnaClient.logout()
+                try
+                {
+                    jecnaClient.logout()
+                }
+                // Already logged out
+                catch (_: AuthenticationException) {}
             }
             launch {
-                canteenClient.logout()
+                try
+                {
+                    canteenClient.logout()
+                }
+                // Already logged out
+                catch (_: AuthenticationException) {}
             }
         }
 
