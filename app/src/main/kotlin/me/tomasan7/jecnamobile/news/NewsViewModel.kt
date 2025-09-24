@@ -169,7 +169,8 @@ class NewsViewModel @Inject constructor(
         data(JecnaWebClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
-        headers(Headers.headersOf("Cookie", sessionCookie.toHeaderString()))
+        setHeader("Cookie", sessionCookie.toHeaderString())
+        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
     }.build()
 
     private fun loadCache()
