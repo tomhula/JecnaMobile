@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresPermission
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -49,6 +50,7 @@ class GradeCheckerWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params)
 {
     private val notificationManagerCompat = NotificationManagerCompat.from(appContext)
+
 
     override suspend fun doWork(): Result
     {
@@ -119,6 +121,7 @@ class GradeCheckerWorker @AssistedInject constructor(
         return result
     }
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun sendGradeChangeNotification(subject: Subject, change: GradesChange)
     {
         val title: String
@@ -128,23 +131,23 @@ class GradeCheckerWorker @AssistedInject constructor(
         {
             is GradesChange.NewGrade -> with(change) {
                 title = appContext.getString(R.string.notification_grade_new_title, subject.name.full)
-                text = appContext.getString(R.string.notification_grade_new_text, newGrade.small.sizeString().replaceFirstChar { it.uppercase() } + " " + newGrade.valueChar.toString(), newGrade.description)
+                text = appContext.getString(R.string.notification_grade_new_text, newGrade.small.sizeString().replaceFirstChar { it.uppercase() } + " " + newGrade.valueChar.toString(), newGrade.description ?: "Bez popisu")
             }
             is GradesChange.GradeChange -> with(change) {
                 if (oldGrade.value != newGrade.value)
                 {
                     title = appContext.getString(R.string.notification_grade_value_change_title, subject.name.full)
-                    text = appContext.getString(R.string.notification_grade_value_change_text, oldGrade.valueChar.toString(), newGrade.valueChar.toString(), newGrade.description)
+                    text = appContext.getString(R.string.notification_grade_value_change_text, oldGrade.valueChar.toString(), newGrade.valueChar.toString(), newGrade.description ?: "Bez popisu")
                 }
                 else
                 {
                     title = appContext.getString(R.string.notification_grade_size_change_title, subject.name.full)
-                    text = appContext.getString(R.string.notification_grade_size_change_text, oldGrade.small.sizeString(), newGrade.small.sizeString(), newGrade.description)
+                    text = appContext.getString(R.string.notification_grade_size_change_text, oldGrade.small.sizeString(), newGrade.small.sizeString(), newGrade.description ?: "Bez popisu")
                 }
             }
             is GradesChange.GradeRemoved -> with(change) {
                 title = appContext.getString(R.string.notification_grade_remove_title, subject.name.full)
-                text = appContext.getString(R.string.notification_grade_remove_text, removedGrade.description)
+                text = appContext.getString(R.string.notification_grade_remove_text, removedGrade.description ?: "Bez popisu")
             }
         }
 
@@ -155,6 +158,7 @@ class GradeCheckerWorker @AssistedInject constructor(
 
     private fun Boolean.sizeString() = if (this) appContext.getString(R.string.notification_grade_size_small) else appContext.getString(R.string.notification_grade_size_big)
 
+    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun sendGradeNotification(title: String, text: String, id: Int)
     {
         val intent = Intent(appContext, MainActivity::class.java).apply {
