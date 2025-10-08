@@ -51,7 +51,7 @@ class GradeCheckerWorker @AssistedInject constructor(
 {
     private val notificationManagerCompat = NotificationManagerCompat.from(appContext)
 
-    @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
+
     override suspend fun doWork(): Result
     {
         if (!notificationsAllowed(appContext))
