@@ -7,7 +7,7 @@ import androidx.compose.runtime.Immutable
  * These are separate from real [me.tomasan7.jecnaapi.data.grade.Grade] objects from the API.
  */
 @Immutable
-data class VirtualGrade(
+data class PredictedGrade(
     val subjectName: String,
     val subjectPart: String?,
     val value: Int,
