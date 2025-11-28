@@ -18,7 +18,8 @@ data class GradesState(
     val isCache: Boolean = false,
     val selectedSchoolYear: SchoolYear = gradesPage?.selectedSchoolYear ?: SchoolYear.current(),
     val selectedSchoolYearHalf: SchoolYearHalf = gradesPage?.selectedSchoolYearHalf ?: SchoolYearHalf.current(),
-    val snackBarMessageEvent: StateEventWithContent<String> = consumed()
+    val snackBarMessageEvent: StateEventWithContent<String> = consumed(),
+    val predictedGrades: Map<String, List<PredictedGrade>> = emptyMap()
 )
 {
     /**

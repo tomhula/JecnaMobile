@@ -186,6 +186,22 @@ class GradesViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
+    fun addPredictedGrade(predictedGrade: PredictedGrade)
+    {
+        val currentPredictions = uiState.predictedGrades.toMutableMap()
+        val subjectPredictions = currentPredictions[predictedGrade.subjectName]?.toMutableList() ?: mutableListOf()
+        subjectPredictions.add(predictedGrade)
+        currentPredictions[predictedGrade.subjectName] = subjectPredictions
+        changeUiState(predictedGrades = currentPredictions)
+    }
+
+    fun removePredictionsForSubject(subjectName: String)
+    {
+        val currentPredictions = uiState.predictedGrades.toMutableMap()
+        currentPredictions.remove(subjectName)
+        changeUiState(predictedGrades = currentPredictions)
+    }
+
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         gradesPage: GradesPage? = uiState.gradesPage,
@@ -194,6 +210,7 @@ class GradesViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYearHalf: SchoolYearHalf = uiState.selectedSchoolYearHalf,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
+        predictedGrades: Map<String, List<PredictedGrade>> = uiState.predictedGrades
     )
     {
         uiState = uiState.copy(
@@ -203,7 +220,8 @@ class GradesViewModel @Inject constructor(
             isCache = isCache,
             selectedSchoolYear = selectedSchoolYear,
             selectedSchoolYearHalf = selectedSchoolYearHalf,
-            snackBarMessageEvent = snackBarMessageEvent
+            snackBarMessageEvent = snackBarMessageEvent,
+            predictedGrades = predictedGrades
         )
     }
 
