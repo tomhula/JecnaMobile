@@ -2,6 +2,7 @@ package me.tomasan7.jecnamobile.grades
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +29,6 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -94,6 +94,7 @@ import me.tomasan7.jecnamobile.ui.component.SchoolYearHalfSelector
 import me.tomasan7.jecnamobile.ui.component.SchoolYearSelector
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
+import me.tomasan7.jecnamobile.ui.component.dashedBorder
 import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
 import me.tomasan7.jecnamobile.ui.theme.grade_absence_warning
 import me.tomasan7.jecnamobile.ui.theme.grade_grades_warning
@@ -126,7 +127,7 @@ fun GradesSubScreen(
 
     val uiState = viewModel.uiState
     val objectDialogState = rememberObjectDialogState<Grade>()
-    val predictionDialogState = rememberObjectDialogState<Pair<String, String?>>()
+    val predictionDialogState = rememberObjectDialogState<Subject>()
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
     val settings by settingsAsState()
@@ -185,27 +186,23 @@ fun GradesSubScreen(
                 {
                     uiState.subjectsSorted!!.forEach { subject ->
                         key(subject) {
-                            val predictedGrades = uiState.predictedGrades[subject.name.full] ?: emptyList()
+                            val predictedGrades = uiState.predictedGrades[subject] ?: emptyList()
                             when (settings.gradesViewMode)
                             {
                                 Settings.GradesViewMode.LIST -> ListSubject(
                                     subject = subject,
                                     predictedGrades = predictedGrades,
                                     onGradeClick = { objectDialogState.show(it) },
-                                    onAddPrediction = { subjectName, subjectPart ->
-                                        predictionDialogState.show(subjectName to subjectPart)
-                                    },
-                                    onRemovePredictions = { viewModel.removePredictionsForSubject(it) }
+                                    onAddPredictionClick = { predictionDialogState.show(subject) },
+                                    onPredictedGradeClick = { viewModel.removePredictedGrade(subject, it) }
                                 )
 
                                 Settings.GradesViewMode.GRID -> Subject(
                                     subject = subject,
                                     predictedGrades = predictedGrades,
                                     onGradeClick = { objectDialogState.show(it) },
-                                    onAddPrediction = { subjectName, subjectPart ->
-                                        predictionDialogState.show(subjectName to subjectPart)
-                                    },
-                                    onRemovePredictions = { viewModel.removePredictionsForSubject(it) }
+                                    onAddPredictionClick = { predictionDialogState.show(subject) },
+                                    onPredictedGradeClick = { viewModel.removePredictedGrade(subject, it) }
                                 )
                             }
                         }
@@ -235,12 +232,11 @@ fun GradesSubScreen(
             ObjectDialog(
                 state = predictionDialogState,
                 onDismissRequest = { predictionDialogState.hide() },
-                content = { (subjectName, subjectPart) ->
+                content = { subject ->
                     AddPredictionDialog(
-                        subjectName = subjectName,
-                        subjectPart = subjectPart,
+                        subject = subject,
                         onConfirm = { grade ->
-                            viewModel.addPredictedGrade(grade)
+                            viewModel.addPredictedGrade(subject, grade)
                             predictionDialogState.hide()
                         },
                         onCancel = { predictionDialogState.hide() }
@@ -391,8 +387,8 @@ private fun Subject(
     subject: Subject,
     predictedGrades: List<PredictedGrade> = emptyList(),
     onGradeClick: (Grade) -> Unit = {},
-    onAddPrediction: (String, String?) -> Unit = { _, _ -> },
-    onRemovePredictions: (String) -> Unit = {}
+    onAddPredictionClick: () -> Unit = {},
+    onPredictedGradeClick: (PredictedGrade) -> Unit = {}
 )
 {
     val average = remember(subject, predictedGrades) {
@@ -420,24 +416,27 @@ private fun Subject(
                             style = MaterialTheme.typography.labelSmall
                         )
                 }
-                if (predictedGrades.isNotEmpty()) {
-                    IconButton(onClick = { onRemovePredictions(subject.name.full) }) {
-                        Icon(
-                            imageVector = Icons.Filled.Refresh,
-                            contentDescription = stringResource(R.string.grade_predictor_remove_predictions),
-                            tint = MaterialTheme.colorScheme.primary
-                        )
-                    }
+                IconButton(
+                    onClick = onAddPredictionClick,
+                    modifier = Modifier
+                        .size(Constants.gradeWidth)
+                        .align(Alignment.CenterVertically)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Add,
+                        contentDescription = stringResource(R.string.grade_predictor_add_prediction),
+                        tint = MaterialTheme.colorScheme.secondary
+                    )
                 }
             }
         },
         rightColumnVisible = subject.finalGrade != null || average != null,
         rightColumnContent = {
             if (subject.finalGrade == null)
-                GradeAverage(average!!)
+                GradeAverage(average!!, isPrediction = predictedGrades.isNotEmpty())
             else
                 if (showAverage)
-                    GradeAverage(average!!)
+                    GradeAverage(average!!, isPrediction = predictedGrades.isNotEmpty())
                 else
                     FinalGrade(finalGrade = subject.finalGrade!!)
 
@@ -452,15 +451,21 @@ private fun Subject(
         else
             Column {
                 subject.grades.subjectParts.forEach { subjectPart ->
-                    val predictedForPart = predictedGrades.filter { it.subjectPart == subjectPart }
                     SubjectPart(
                         subjectPart = subjectPart,
                         grades = subject.grades[subjectPart]!!,
-                        predictedGrades = predictedForPart,
+                        predictedGrades = if (subjectPart == null) predictedGrades else emptyList(),
+                        onPredictedGradeClick = onPredictedGradeClick,
                         onGradeClick = onGradeClick,
-                        onAddPrediction = { onAddPrediction(subject.name.full, subjectPart) }
                     )
                 }
+                if (null !in subject.grades.subjectParts && predictedGrades.isNotEmpty())
+                    SubjectPart(
+                        subjectPart = stringResource(R.string.grade_predictor_predicted_label),
+                        grades = emptyList(),
+                        onPredictedGradeClick = onPredictedGradeClick,
+                        predictedGrades = predictedGrades
+                    )
             }
     }
 }
@@ -470,8 +475,8 @@ private fun ListSubject(
     subject: Subject,
     predictedGrades: List<PredictedGrade> = emptyList(),
     onGradeClick: (Grade) -> Unit = {},
-    onAddPrediction: (String, String?) -> Unit = { _, _ -> },
-    onRemovePredictions: (String) -> Unit = {}
+    onAddPredictionClick: () -> Unit = {},
+    onPredictedGradeClick: (PredictedGrade) -> Unit = {}
 )
 {
     val average = remember(subject, predictedGrades) {
@@ -508,23 +513,35 @@ private fun ListSubject(
                                 style = MaterialTheme.typography.labelSmall
                             )
                     }
-                    if (predictedGrades.isNotEmpty()) {
-                        IconButton(onClick = { onRemovePredictions(subject.name.full) }) {
-                            Icon(
-                                imageVector = Icons.Filled.Refresh,
-                                contentDescription = stringResource(R.string.grade_predictor_remove_predictions),
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                        }
+
+                    IconButton(
+                        onClick = onAddPredictionClick,
+                        modifier = Modifier
+                            .size(Constants.gradeWidth)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(R.string.grade_predictor_add_prediction),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
                     }
                 }
 
                 if (subject.finalGrade != null || average != null)
                     if (subject.finalGrade == null)
-                        GradeAverage(average!!, onClick = { showAverage = !showAverage })
+                        GradeAverage(
+                            value = average!!,
+                            onClick = { showAverage = !showAverage },
+                            isPrediction = predictedGrades.isNotEmpty()
+                        )
                     else
                         if (showAverage)
-                            GradeAverage(average!!, onClick = { showAverage = !showAverage })
+                            GradeAverage(
+                                value = average!!,
+                                onClick = { showAverage = !showAverage },
+                                isPrediction = predictedGrades.isNotEmpty()
+                            )
                         else
                             FinalGrade(finalGrade = subject.finalGrade!!, onClick = { showAverage = !showAverage })
             }
@@ -542,15 +559,21 @@ private fun ListSubject(
             if (showGrades)
                 Column {
                     subject.grades.subjectParts.forEach { subjectPart ->
-                        val predictedForPart = predictedGrades.filter { it.subjectPart == subjectPart }
                         ListSubjectPart(
                             subjectPart = subjectPart,
                             grades = subject.grades[subjectPart]!!,
-                            predictedGrades = predictedForPart,
+                            predictedGrades = if (subjectPart == null) predictedGrades else emptyList(),
+                            onPredictedGradeClick = onPredictedGradeClick,
                             onGradeClick = onGradeClick,
-                            onAddPrediction = { onAddPrediction(subject.name.full, subjectPart) }
                         )
                     }
+                    if (null !in subject.grades.subjectParts && predictedGrades.isNotEmpty())
+                        ListSubjectPart(
+                            subjectPart = stringResource(R.string.grade_predictor_predicted_label),
+                            grades = emptyList(),
+                            onPredictedGradeClick = onPredictedGradeClick,
+                            predictedGrades = predictedGrades
+                        )
                 }
         }
     }
@@ -562,8 +585,8 @@ private fun SubjectPart(
     subjectPart: String? = null,
     grades: List<Grade>,
     predictedGrades: List<PredictedGrade> = emptyList(),
+    onPredictedGradeClick: (PredictedGrade) -> Unit = {},
     onGradeClick: (Grade) -> Unit = {},
-    onAddPrediction: () -> Unit = {}
 )
 {
     if (subjectPart != null)
@@ -586,22 +609,9 @@ private fun SubjectPart(
         }
 
         predictedGrades.forEach { predictedGrade ->
-            PredictedGradeBox(
+            PredictedGrade(
                 predictedGrade = predictedGrade,
-                modifier = Modifier.align(Alignment.CenterVertically)
-            )
-        }
-
-        IconButton(
-            onClick = onAddPrediction,
-            modifier = Modifier
-                .size(Constants.gradeWidth)
-                .align(Alignment.CenterVertically)
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(R.string.grade_predictor_add_prediction),
-                tint = MaterialTheme.colorScheme.primary
+                modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = {onPredictedGradeClick(predictedGrade)})
             )
         }
     }
@@ -612,8 +622,8 @@ private fun ListSubjectPart(
     subjectPart: String? = null,
     grades: List<Grade>,
     predictedGrades: List<PredictedGrade> = emptyList(),
+    onPredictedGradeClick: (PredictedGrade) -> Unit = {},
     onGradeClick: (Grade) -> Unit = {},
-    onAddPrediction: () -> Unit = {}
 )
 {
     if (subjectPart != null)
@@ -645,7 +655,7 @@ private fun ListSubjectPart(
         predictedGrades.forEachIndexed { i, predictedGrade ->
             ListPredictedGrade(
                 predictedGrade = predictedGrade,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth().clickable(onClick = { onPredictedGradeClick(predictedGrade) })
             )
             if (i != predictedGrades.lastIndex)
                 HorizontalDivider(
@@ -653,34 +663,6 @@ private fun ListSubjectPart(
                     modifier = Modifier.fillMaxWidth(),
                     color = MaterialTheme.colorScheme.surfaceColorAtElevation(100.dp)
                 )
-        }
-
-        if (predictedGrades.isNotEmpty())
-            HorizontalDivider(
-                thickness = 1.dp,
-                modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colorScheme.surfaceColorAtElevation(100.dp)
-            )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(onClick = onAddPrediction)
-                .padding(vertical = 8.dp),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = stringResource(R.string.grade_predictor_add_prediction),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            HorizontalSpacer(8.dp)
-            Text(
-                text = stringResource(R.string.grade_predictor_add_prediction),
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.bodyMedium
-            )
         }
     }
 }
@@ -787,6 +769,7 @@ private fun Grade(
 @Composable
 private fun GradeAverage(
     value: Float,
+    isPrediction: Boolean = false,
     onClick: (() -> Unit)? = null
 )
 {
@@ -801,28 +784,25 @@ private fun GradeAverage(
         }
     }
 
-    val modifier = Modifier.size(Constants.gradeWidth)
-    val border = BorderStroke(1.dp, getGradeColor(value.roundToInt()))
-    val tonalElevation = 10.dp
     val shape = Constants.gradeShape
 
-    if (onClick != null)
-        Surface(
-            modifier = modifier,
-            shape = shape,
-            border = border,
-            tonalElevation = tonalElevation,
-            onClick = onClick,
-            content = content
-        )
+    val border = BorderStroke(1.dp, getGradeColor(value.roundToInt()))
+    val tonalElevation = 10.dp
+    var modifier = Modifier.size(Constants.gradeWidth)
+    modifier = if (isPrediction)
+        modifier.dashedBorder(border, shape, 4.dp, 2.dp)
     else
-        Surface(
-            modifier = modifier,
-            shape = shape,
-            border = border,
-            tonalElevation = tonalElevation,
-            content = content
-        )
+        modifier.border(border, shape)
+
+    if (onClick != null)
+        modifier = modifier.clickable(onClick = onClick)
+
+    Surface(
+        modifier = modifier,
+        shape = shape,
+        tonalElevation = tonalElevation,
+        content = content
+    )
 }
 
 @Composable
@@ -994,31 +974,18 @@ private fun BehaviourNotification(behaviourNotification: Behaviour.Notification)
 }
 
 @Composable
-private fun PredictedGradeBox(
+private fun PredictedGrade(
     predictedGrade: PredictedGrade,
     modifier: Modifier = Modifier
 )
 {
     val gradeHeight = if (predictedGrade.isSmall) Constants.gradeSmallHeight else Constants.gradeWidth
-    val gradeColor = remember { getGradeColor(predictedGrade.value) }
+    val gradeColor = remember(predictedGrade) { getGradeColor(predictedGrade.value) }
 
     Box(
         modifier = modifier
             .size(Constants.gradeWidth, gradeHeight)
-            .drawBehind {
-                val strokeWidth = 2.dp.toPx()
-                val dashWidth = 8.dp.toPx()
-                val dashGap = 4.dp.toPx()
-
-                drawRoundRect(
-                    color = gradeColor,
-                    style = Stroke(
-                        width = strokeWidth,
-                        pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
-                    ),
-                    cornerRadius = CornerRadius(7.dp.toPx())
-                )
-            }
+            .dashedBorder(1.dp, gradeColor, RoundedCornerShape(7.dp), 4.dp, 2.dp)
             .padding(2.dp),
         contentAlignment = Alignment.Center
     ) {
@@ -1059,20 +1026,7 @@ private fun ListPredictedGrade(
                 Box(
                     modifier = Modifier
                         .size(size)
-                        .drawBehind {
-                            val strokeWidth = 2.dp.toPx()
-                            val dashWidth = 8.dp.toPx()
-                            val dashGap = 4.dp.toPx()
-
-                            drawRoundRect(
-                                color = gradeColor,
-                                style = Stroke(
-                                    width = strokeWidth,
-                                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(dashWidth, dashGap), 0f)
-                                ),
-                                cornerRadius = CornerRadius(7.dp.toPx())
-                            )
-                        }
+                        .dashedBorder(1.dp, gradeColor, RoundedCornerShape(7.dp), 4.dp, 2.dp)
                         .padding(2.dp),
                     contentAlignment = Alignment.Center
                 ) {
@@ -1096,8 +1050,7 @@ private fun ListPredictedGrade(
 
 @Composable
 private fun AddPredictionDialog(
-    subjectName: String,
-    subjectPart: String?,
+    subject: Subject,
     onConfirm: (PredictedGrade) -> Unit,
     onCancel: () -> Unit
 )
@@ -1119,28 +1072,14 @@ private fun AddPredictionDialog(
                 style = MaterialTheme.typography.titleLarge
             )
 
-            if (subjectPart != null) {
-                Text(
-                    text = "$subjectName - $subjectPart",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            } else {
-                Text(
-                    text = subjectName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
                     text = stringResource(R.string.grade_predictor_type_label),
                     style = MaterialTheme.typography.labelLarge
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { isSmall = false }
+                    modifier = Modifier.fillMaxWidth().clickable { isSmall = false }
                 ) {
                     RadioButton(
                         selected = !isSmall,
@@ -1151,7 +1090,7 @@ private fun AddPredictionDialog(
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.clickable { isSmall = true }
+                    modifier = Modifier.fillMaxWidth().clickable { isSmall = true }
                 ) {
                     RadioButton(
                         selected = isSmall,
@@ -1174,7 +1113,7 @@ private fun AddPredictionDialog(
                         val gradeColor = remember { getGradeColor(value) }
                         Box(
                             modifier = Modifier
-                                .size(45.dp)
+                                .size(width = Constants.gradeWidth, height = if (isSmall) Constants.gradeSmallHeight else Constants.gradeWidth)
                                 .clip(Constants.gradeShape)
                                 .background(
                                     if (selectedValue == value) gradeColor
@@ -1202,7 +1141,7 @@ private fun AddPredictionDialog(
                     Text(stringResource(R.string.grade_predictor_cancel_button))
                 }
                 TextButton(onClick = {
-                    onConfirm(PredictedGrade(subjectName, subjectPart, selectedValue, isSmall))
+                    onConfirm(PredictedGrade(selectedValue, isSmall))
                 }) {
                     Text(stringResource(R.string.grade_predictor_add_button))
                 }

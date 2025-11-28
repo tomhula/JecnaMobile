@@ -8,8 +8,6 @@ import androidx.compose.runtime.Immutable
  */
 @Immutable
 data class PredictedGrade(
-    val subjectName: String,
-    val subjectPart: String?,
     val value: Int,
     val isSmall: Boolean
 )

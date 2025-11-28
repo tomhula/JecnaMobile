@@ -82,17 +82,17 @@
     <string name="grade_load_error">Při načítání známek došlo k chybě.</string>
 
     <!-- Grade Predictor -->
-    <string name="grade_predictor_dialog_title">Přidat predikovanou známku</string>
-    <string name="grade_predictor_type_label">Typ známky:</string>
-    <string name="grade_predictor_type_large">Velká (váha 2×)</string>
-    <string name="grade_predictor_type_small">Malá (váha 1×)</string>
-    <string name="grade_predictor_value_label">Hodnota známky:</string>
+    <string name="grade_predictor_dialog_title">Přidat předvídanou známku</string>
+    <string name="grade_predictor_type_label">Velikost známky</string>
+    <string name="grade_predictor_type_large">Velká</string>
+    <string name="grade_predictor_type_small">Malá</string>
+    <string name="grade_predictor_value_label">Hodnota známky</string>
     <string name="grade_predictor_add_button">Přidat</string>
     <string name="grade_predictor_cancel_button">Zrušit</string>
-    <string name="grade_predictor_add_prediction">Přidat predikci</string>
-    <string name="grade_predictor_predicted_label">Predikováno</string>
-    <string name="grade_predictor_remove_predictions">Odstranit predikce</string>
-    <string name="grade_predictor_add_prediction_description">Přidat predikci</string>
+    <string name="grade_predictor_add_prediction">Přidat předpověď</string>
+    <string name="grade_predictor_predicted_label">Předvídáno</string>
+    <string name="grade_predictor_remove_predictions">Odstranit předpověď</string>
+    <string name="grade_predictor_add_prediction_description">Přidat předpověď</string>
 
     <!-- ##### Timetable SubScreen ##### -->
 

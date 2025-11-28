@@ -18,6 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnaapi.JecnaClient
 import me.tomasan7.jecnaapi.data.grade.GradesPage
+import me.tomasan7.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -186,19 +187,21 @@ class GradesViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    fun addPredictedGrade(predictedGrade: PredictedGrade)
+    fun addPredictedGrade(subject: Subject, predictedGrade: PredictedGrade)
     {
         val currentPredictions = uiState.predictedGrades.toMutableMap()
-        val subjectPredictions = currentPredictions[predictedGrade.subjectName]?.toMutableList() ?: mutableListOf()
+        val subjectPredictions = currentPredictions[subject]?.toMutableList() ?: mutableListOf()
         subjectPredictions.add(predictedGrade)
-        currentPredictions[predictedGrade.subjectName] = subjectPredictions
+        currentPredictions[subject] = subjectPredictions
         changeUiState(predictedGrades = currentPredictions)
     }
 
-    fun removePredictionsForSubject(subjectName: String)
+    fun removePredictedGrade(subject: Subject, predictedGrade: PredictedGrade)
     {
         val currentPredictions = uiState.predictedGrades.toMutableMap()
-        currentPredictions.remove(subjectName)
+        val predictedGrades = currentPredictions[subject]?.toMutableList() ?: return
+        predictedGrades.remove(predictedGrade)
+        currentPredictions[subject] = predictedGrades
         changeUiState(predictedGrades = currentPredictions)
     }
 
@@ -210,7 +213,7 @@ class GradesViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYearHalf: SchoolYearHalf = uiState.selectedSchoolYearHalf,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
-        predictedGrades: Map<String, List<PredictedGrade>> = uiState.predictedGrades
+        predictedGrades: Map<Subject, List<PredictedGrade>> = uiState.predictedGrades
     )
     {
         uiState = uiState.copy(
