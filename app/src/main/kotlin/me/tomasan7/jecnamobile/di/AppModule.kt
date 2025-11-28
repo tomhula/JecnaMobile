@@ -16,7 +16,7 @@ internal object AppModule
     @Provides
     @Singleton
     /* Long timeout because attendances page takes the server around 11s to respond */
-    fun provideJecnaClient() = JecnaClient(autoLogin = true, userAgent = "JM", requestTimout = 12.seconds)
+    fun provideJecnaClient() = JecnaClient(autoLogin = true, userAgent = "JM", requestTimout = 15.seconds)
 
     @Provides
     @Singleton

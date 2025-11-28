@@ -18,6 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnaapi.JecnaClient
 import me.tomasan7.jecnaapi.data.grade.GradesPage
+import me.tomasan7.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -186,6 +187,24 @@ class GradesViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
+    fun addPredictedGrade(subject: Subject, predictedGrade: PredictedGrade)
+    {
+        val currentPredictions = uiState.predictedGrades.toMutableMap()
+        val subjectPredictions = currentPredictions[subject]?.toMutableList() ?: mutableListOf()
+        subjectPredictions.add(predictedGrade)
+        currentPredictions[subject] = subjectPredictions
+        changeUiState(predictedGrades = currentPredictions)
+    }
+
+    fun removePredictedGrade(subject: Subject, predictedGrade: PredictedGrade)
+    {
+        val currentPredictions = uiState.predictedGrades.toMutableMap()
+        val predictedGrades = currentPredictions[subject]?.toMutableList() ?: return
+        predictedGrades.remove(predictedGrade)
+        currentPredictions[subject] = predictedGrades
+        changeUiState(predictedGrades = currentPredictions)
+    }
+
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         gradesPage: GradesPage? = uiState.gradesPage,
@@ -194,6 +213,7 @@ class GradesViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYearHalf: SchoolYearHalf = uiState.selectedSchoolYearHalf,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
+        predictedGrades: Map<Subject, List<PredictedGrade>> = uiState.predictedGrades
     )
     {
         uiState = uiState.copy(
@@ -203,7 +223,8 @@ class GradesViewModel @Inject constructor(
             isCache = isCache,
             selectedSchoolYear = selectedSchoolYear,
             selectedSchoolYearHalf = selectedSchoolYearHalf,
-            snackBarMessageEvent = snackBarMessageEvent
+            snackBarMessageEvent = snackBarMessageEvent,
+            predictedGrades = predictedGrades
         )
     }
 
