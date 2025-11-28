@@ -879,7 +879,7 @@ private fun GradeDialogContent(
 {
     Surface(
         tonalElevation = 2.dp,
-        modifier = Modifier.width(300.dp),
+        modifier = Modifier.width(340.dp),
         shape = RoundedCornerShape(28.dp),
         border = BorderStroke(2.dp, getGradeColor(grade))
     ) {
@@ -1174,7 +1174,7 @@ private fun AddPredictionDialog(
                         val gradeColor = remember { getGradeColor(value) }
                         Box(
                             modifier = Modifier
-                                .size(50.dp)
+                                .size(45.dp)
                                 .clip(Constants.gradeShape)
                                 .background(
                                     if (selectedValue == value) gradeColor
