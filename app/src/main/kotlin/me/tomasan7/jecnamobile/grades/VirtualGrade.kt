@@ -3,11 +3,11 @@ package me.tomasan7.jecnamobile.grades
 import androidx.compose.runtime.Immutable
 
 /**
- * Represents a hypothetical grade that a user predicts for grade calculation purposes.
+ * Represents a hypothetical grade used for grade average predictions.
  * These are separate from real [me.tomasan7.jecnaapi.data.grade.Grade] objects from the API.
  */
 @Immutable
-data class PredictedGrade(
+data class VirtualGrade(
     val subjectName: String,
     val subjectPart: String?,
     val value: Int,

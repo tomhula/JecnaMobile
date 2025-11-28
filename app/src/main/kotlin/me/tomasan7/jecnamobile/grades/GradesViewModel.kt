@@ -186,20 +186,20 @@ class GradesViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    fun addPredictedGrade(predictedGrade: PredictedGrade)
+    fun addPredictedGrade(virtualGrade: VirtualGrade)
     {
-        val currentPredictions = uiState.predictedGrades.toMutableMap()
-        val subjectPredictions = currentPredictions[predictedGrade.subjectName]?.toMutableList() ?: mutableListOf()
-        subjectPredictions.add(predictedGrade)
-        currentPredictions[predictedGrade.subjectName] = subjectPredictions
-        changeUiState(predictedGrades = currentPredictions)
+        val currentPredictions = uiState.virtualGrades.toMutableMap()
+        val subjectPredictions = currentPredictions[virtualGrade.subjectName]?.toMutableList() ?: mutableListOf()
+        subjectPredictions.add(virtualGrade)
+        currentPredictions[virtualGrade.subjectName] = subjectPredictions
+        changeUiState(virtualGrades = currentPredictions)
     }
 
     fun removePredictionsForSubject(subjectName: String)
     {
-        val currentPredictions = uiState.predictedGrades.toMutableMap()
+        val currentPredictions = uiState.virtualGrades.toMutableMap()
         currentPredictions.remove(subjectName)
-        changeUiState(predictedGrades = currentPredictions)
+        changeUiState(virtualGrades = currentPredictions)
     }
 
     private fun changeUiState(
@@ -210,7 +210,7 @@ class GradesViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYearHalf: SchoolYearHalf = uiState.selectedSchoolYearHalf,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
-        predictedGrades: Map<String, List<PredictedGrade>> = uiState.predictedGrades
+        virtualGrades: Map<String, List<VirtualGrade>> = uiState.virtualGrades
     )
     {
         uiState = uiState.copy(
@@ -221,7 +221,7 @@ class GradesViewModel @Inject constructor(
             selectedSchoolYear = selectedSchoolYear,
             selectedSchoolYearHalf = selectedSchoolYearHalf,
             snackBarMessageEvent = snackBarMessageEvent,
-            predictedGrades = predictedGrades
+            virtualGrades = virtualGrades
         )
     }
 
