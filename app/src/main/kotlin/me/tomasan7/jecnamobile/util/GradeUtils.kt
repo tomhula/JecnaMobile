@@ -1,6 +1,7 @@
 package me.tomasan7.jecnamobile.util
 
 import me.tomasan7.jecnaapi.data.grade.Grade
+import me.tomasan7.jecnaapi.data.grade.Grades
 import me.tomasan7.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnamobile.grades.PredictedGrade
 import me.tomasan7.jecnamobile.ui.theme.grade_0
@@ -27,14 +28,16 @@ fun getGradeColor(grade: Grade) = getGradeColor(grade.value)
  * Calculates weighted average including predicted grades.
  * Large grades have weight 2, small grades have weight 1.
  */
-fun Subject.calculateAverageWithPredictions(predictedGrades: List<PredictedGrade>): Float?
+fun Grades.calculateAverageWithPredictions(predictedGrades: List<PredictedGrade>): Float?
 {
     var totalWeightedSum = 0.0
     var totalWeight = 0.0
 
     // Add real grades
-    grades.subjectParts.forEach { subjectPart ->
-        grades[subjectPart]?.forEach { grade ->
+    subjectParts.forEach { subjectPart ->
+        this[subjectPart]?.forEach { grade ->
+            if (grade.value == 0)
+                return@forEach
             val weight = if (grade.small) 1.0 else 2.0
             totalWeightedSum += grade.value * weight
             totalWeight += weight
