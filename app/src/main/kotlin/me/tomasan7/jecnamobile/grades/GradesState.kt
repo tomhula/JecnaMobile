@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import me.tomasan7.jecnaapi.data.grade.GradesPage
+import me.tomasan7.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnaapi.util.SchoolYearHalf
 import java.time.Instant
@@ -18,7 +19,8 @@ data class GradesState(
     val isCache: Boolean = false,
     val selectedSchoolYear: SchoolYear = gradesPage?.selectedSchoolYear ?: SchoolYear.current(),
     val selectedSchoolYearHalf: SchoolYearHalf = gradesPage?.selectedSchoolYearHalf ?: SchoolYearHalf.current(),
-    val snackBarMessageEvent: StateEventWithContent<String> = consumed()
+    val snackBarMessageEvent: StateEventWithContent<String> = consumed(),
+    val predictedGrades: Map<Subject, List<PredictedGrade>> = emptyMap()
 )
 {
     /**
