@@ -149,8 +149,12 @@ fun CanteenSubScreen(
                     // TODO: Add animated appearance using AnimatedVisibility
                     DayMenu(
                         dayMenu = dayMenu,
-                        onMenuItemClick = { viewModel.orderMenuItem(it, dayMenu.day) },
-                        onMenuItemLongClick = { viewModel.putMenuItemOnExchange(it, dayMenu.day) },
+                        onMenuItemClick = {
+                            if (it.isOrdered && !it.isEnabled)
+                                viewModel.putMenuItemOnExchange(it, dayMenu.day)
+                            else
+                                viewModel.orderMenuItem(it, dayMenu.day)
+                        },
                         onInfoClick = { allergensDialogState.show(dayMenu) }
                     )
                 }

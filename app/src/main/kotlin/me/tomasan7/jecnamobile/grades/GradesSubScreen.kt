@@ -393,7 +393,7 @@ private fun Subject(
 {
     val average = remember(subject, predictedGrades) {
         if (predictedGrades.isNotEmpty())
-            subject.calculateAverageWithPredictions(predictedGrades)
+            subject.grades.calculateAverageWithPredictions(predictedGrades)
         else
             subject.grades.average()
     }
@@ -481,7 +481,7 @@ private fun ListSubject(
 {
     val average = remember(subject, predictedGrades) {
         if (predictedGrades.isNotEmpty())
-            subject.calculateAverageWithPredictions(predictedGrades)
+            subject.grades.calculateAverageWithPredictions(predictedGrades)
         else
             subject.grades.average()
     }
