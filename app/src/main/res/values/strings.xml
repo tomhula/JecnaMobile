@@ -69,6 +69,7 @@
 
     <string name="grade_grades_warning_content">5?</string>
     <string name="grade_absence_warning_content">N?</string>
+    <string name="grade_excused">U</string>
 
     <string name="grade_weight">Váha</string>
     <string name="grade_weight_small">Malá</string>

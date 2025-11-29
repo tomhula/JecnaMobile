@@ -97,6 +97,7 @@ import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.component.dashedBorder
 import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
 import me.tomasan7.jecnamobile.ui.theme.grade_absence_warning
+import me.tomasan7.jecnamobile.ui.theme.grade_excused
 import me.tomasan7.jecnamobile.ui.theme.grade_grades_warning
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import me.tomasan7.jecnamobile.util.PullToRefreshHandler
@@ -441,7 +442,12 @@ private fun Subject(
                     FinalGrade(finalGrade = subject.finalGrade!!)
 
         },
-        onRightColumnClick = { showAverage = !showAverage }
+        onRightColumnClick = {
+            // Excused subject won't have any grades. This will throw NullPointerException if switched to showAwerage
+            if (subject.finalGrade !== FinalGrade.Excused) {
+                showAverage = !showAverage
+            }
+        }
     ) {
         if (subject.grades.isEmpty())
             Text(
@@ -815,6 +821,17 @@ private fun FinalGrade(
     is FinalGrade.GradesWarning           -> GradesWarning(onClick = onClick)
     is FinalGrade.AbsenceWarning          -> AbsenceWarning(onClick = onClick)
     is FinalGrade.GradesAndAbsenceWarning -> GradesAndAbsenceWarning(onClick = onClick)
+    is FinalGrade.Excused                 -> Excused(onClick = onClick)
+}
+
+@Composable
+private fun Excused(onClick: (() -> Unit)? = {})
+{
+    GradeBox(
+        text = stringResource(R.string.grade_excused),
+        color = grade_excused,
+        onClick = onClick
+    )
 }
 
 
