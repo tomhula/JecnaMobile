@@ -26,6 +26,7 @@ import me.tomasan7.jecnaapi.CanteenClient
 import me.tomasan7.jecnaapi.JecnaClient
 import me.tomasan7.jecnaapi.data.canteen.DayMenu
 import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
+import me.tomasan7.jecnaapi.data.canteen.ItemDescription
 import me.tomasan7.jecnaapi.data.canteen.MenuItem
 import me.tomasan7.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -274,6 +275,9 @@ class CanteenViewModel @Inject constructor(
 
     private suspend fun loadExchangeData() {
         val exchange = canteenClient.getExchange()
+            .groupBy { it.day }
+            .map { (day, items) -> ExchangeDay(day, items) }
+            .sortedBy { it.day }
         changeUiState(exchange = exchange, loading = false)
     }
 
@@ -394,7 +398,7 @@ class CanteenViewModel @Inject constructor(
         loading: Boolean = uiState.loading,
         orderInProcess: Boolean = uiState.orderInProcess,
         menu: Set<DayMenu> = uiState.menu,
-        exchange: List<ExchangeItem> = uiState.exchange,
+        exchange: List<ExchangeDay> = uiState.exchange,
         credit: Float? = uiState.credit,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )

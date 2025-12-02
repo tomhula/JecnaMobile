@@ -61,6 +61,7 @@ import me.tomasan7.jecnaapi.data.canteen.DayMenu
 import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
 import me.tomasan7.jecnaapi.data.canteen.MenuItem
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.canteen.ExchangeDay
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -241,10 +242,10 @@ fun CanteenSubScreen(
                                     .padding(16.dp)
                                     .fillMaxSize()
                             ) {
-                                items(uiState.exchange, key = { it.orderPath }) { exchangeItem ->
-                                    ExchangeItem(
-                                        exchangeItem = exchangeItem,
-                                        onClick = { viewModel.orderExchangeItem(it) }
+                                items(uiState.exchange, key = { it.day }) { exchangeDay ->
+                                    ExchangeDay(
+                                        exchangeDay = exchangeDay,
+                                        onItemClick = { viewModel.orderExchangeItem(it) }
                                     )
                                 }
                             }
@@ -276,15 +277,14 @@ fun CanteenSubScreen(
 }
 
 @Composable
-private fun ExchangeItem(
-    exchangeItem: ExchangeItem,
+private fun ExchangeDay(
+    exchangeDay: ExchangeDay,
     modifier: Modifier = Modifier,
-    onClick: (ExchangeItem) -> Unit,
+    onItemClick: (ExchangeItem) -> Unit,
 )
 {
-    val dayName = getWeekDayName(exchangeItem.day.dayOfWeek)
-    val dayDate = remember { exchangeItem.day.format(DATE_FORMATTER) }
-    val lunchString = stringResource(R.string.canteen_lunch, exchangeItem.number)
+    val dayName = getWeekDayName(exchangeDay.day.dayOfWeek)
+    val dayDate = remember { exchangeDay.day.format(DATE_FORMATTER) }
 
     Card(
         title = {
@@ -294,43 +294,62 @@ private fun ExchangeItem(
                 modifier = Modifier
             )
         },
-        modifier = modifier.combinedClickable(
-            onClick = { onClick(exchangeItem) },
-            onLongClick = { onClick(exchangeItem) },
-        )
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            exchangeItem.description?.soup?.let { Soup(it) }
-            ElevatedTextRectangle(
-                modifier = modifier.clip(RoundedCornerShape(8.dp)),
-                text = {
-                    val text = remember(exchangeItem.description?.rest) {
-                        exchangeItem.description?.rest?.replaceFirstChar { it.uppercase() }
-                            ?.replace(" , ", ", ") ?: lunchString
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = text,
-                            modifier = Modifier.weight(1f)
-                        )
-                        Text(
-                            text = "${exchangeItem.amount}x",
-                            modifier = Modifier.padding(start = 8.dp),
-                            maxLines = 1,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
-            )
+            exchangeDay.items.getOrNull(0)?.description?.soup?.let { Soup(it) }
+            exchangeDay.items.forEach { exchangeItem ->
+                ExchangeItem(
+                    exchangeItem = exchangeItem,
+                    onClick = { onItemClick(exchangeItem) }
+                )
+            }
         }
     }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun ExchangeItem(
+    exchangeItem: ExchangeItem,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit
+)
+{
+    val lunchString = stringResource(R.string.canteen_lunch, exchangeItem.number)
+    ElevatedTextRectangle(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .combinedClickable(
+                onClick = { onClick() },
+                onLongClick = { onClick() },
+            ),
+        text = {
+            val text = remember(exchangeItem.description?.rest) {
+                exchangeItem.description?.rest?.replaceFirstChar { it.uppercase() }
+                    ?.replace(" , ", ", ") ?: lunchString
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = text,
+                    modifier = Modifier.weight(1f)
+                )
+                Text(
+                    text = "${exchangeItem.amount}x",
+                    modifier = Modifier.padding(start = 8.dp),
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    )
 }
 
 /* https://dev.to/luismierez/infinite-lazycolumn-in-jetpack-compose-44a4 */
