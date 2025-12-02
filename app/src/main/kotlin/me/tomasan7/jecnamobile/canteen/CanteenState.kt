@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import me.tomasan7.jecnaapi.data.canteen.DayMenu
+import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
 import java.time.LocalTime
 
 @Immutable
@@ -12,6 +13,7 @@ data class CanteenState(
     val orderInProcess: Boolean = false,
     val credit: Float? = null,
     val menu: Set<DayMenu> = emptySet(),
+    val exchange: List<ExchangeItem> = emptyList(),
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
 {

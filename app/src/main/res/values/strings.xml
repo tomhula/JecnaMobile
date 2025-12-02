@@ -102,6 +102,9 @@
 
     <!-- ##### Canteen SubScreen ##### -->
 
+    <string name="canteen_menu">Jídelníček</string>
+    <string name="canteen_exchange">Burza</string>
+    <string name="canteen_exchange_empty">Burza je prázdná</string>
     <string name="canteen_login_error">Při přihlašování došlo k chybě.</string>
     <string name="canteen_allergens">Alergeny</string>
     <string name="canteen_credit">%1s Kč</string>

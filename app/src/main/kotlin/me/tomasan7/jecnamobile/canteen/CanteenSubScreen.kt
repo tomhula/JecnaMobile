@@ -25,10 +25,13 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -44,15 +47,18 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnaapi.data.canteen.DayMenu
+import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
 import me.tomasan7.jecnaapi.data.canteen.MenuItem
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
@@ -86,11 +92,30 @@ fun CanteenSubScreen(
     val helpDialogState = rememberObjectDialogState<Unit>()
     val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    var previousTabIndex by remember { mutableIntStateOf(selectedTabIndex) }
+
+    LaunchedEffect(selectedTabIndex) {
+        if (previousTabIndex == 1 && selectedTabIndex == 0)
+        {
+            viewModel.loadMenu()
+        }
+        else if (previousTabIndex == 0 && selectedTabIndex == 1)
+        {
+            viewModel.fetchExchange()
+        }
+        previousTabIndex = selectedTabIndex
+    }
 
     PullToRefreshHandler(
         state = pullToRefreshState,
         shown = uiState.loading,
-        onRefresh = { viewModel.reload() }
+        onRefresh = {
+            when (selectedTabIndex) {
+                0 -> viewModel.reloadMenu()
+                1 -> viewModel.reloadExchange()
+            }
+        }
     )
 
     val context = LocalContext.current
@@ -132,57 +157,185 @@ fun CanteenSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        Column(
             modifier = Modifier
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            val columnState = remember { LazyListState() }
-
-            LazyColumn(
-                state = columnState,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(16.dp)
-            ) {
-                items(uiState.menuSorted, key = { it.day.hashCode() }) { dayMenu ->
-                    // TODO: Add animated appearance using AnimatedVisibility
-                    DayMenu(
-                        dayMenu = dayMenu,
-                        onMenuItemClick = {
-                            if (it.isOrdered && !it.isEnabled)
-                                viewModel.putMenuItemOnExchange(it, dayMenu.day)
-                            else
-                                viewModel.orderMenuItem(it, dayMenu.day)
-                        },
-                        onInfoClick = { allergensDialogState.show(dayMenu) }
+            PrimaryTabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = Modifier.zIndex(1f),
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                indicator = {
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
+            ) {
+                Tab(
+                    selected = selectedTabIndex == 0,
+                    onClick = { selectedTabIndex = 0 },
+                    text = { Text(stringResource(R.string.canteen_menu)) },
+                )
+                Tab(
+                    selected = selectedTabIndex == 1,
+                    onClick = { selectedTabIndex = 1 },
+                    text = { Text(stringResource(R.string.canteen_exchange)) },
+                )
             }
 
-            InfiniteListHandler(listState = columnState, buffer = 1) {
-                viewModel.loadMoreDayMenus(1)
+            Box(
+                modifier = Modifier
+                    .nestedScroll(pullToRefreshState.nestedScrollConnection)
+                    .fillMaxSize()
+            ) {
+                when (selectedTabIndex)
+                {
+                    0 ->
+                    {
+                        val columnState = remember { LazyListState() }
+
+                        LazyColumn(
+                            state = columnState,
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            items(uiState.menuSorted, key = { it.day.hashCode() }) { dayMenu ->
+                                // TODO: Add animated appearance using AnimatedVisibility
+                                DayMenu(
+                                    dayMenu = dayMenu,
+                                    onMenuItemClick = {
+                                        if (it.isOrdered && !it.isEnabled)
+                                            viewModel.putMenuItemOnExchange(it, dayMenu.day)
+                                        else
+                                            viewModel.orderMenuItem(it, dayMenu.day)
+                                    },
+                                    onInfoClick = { allergensDialogState.show(dayMenu) }
+                                )
+                            }
+                        }
+
+                        InfiniteListHandler(listState = columnState, buffer = 1) {
+                            viewModel.loadMoreDayMenus(1)
+                        }
+                    }
+                    1 ->
+                    {
+                        if (uiState.exchange.isEmpty() && !uiState.loading)
+                            Box(
+                                modifier = Modifier.fillMaxSize(),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.canteen_exchange_empty),
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        else
+                            LazyColumn(
+                                verticalArrangement = Arrangement.spacedBy(16.dp),
+                                modifier = Modifier
+                                    .padding(16.dp)
+                                    .fillMaxSize()
+                            ) {
+                                items(uiState.exchange, key = { it.orderPath }) { exchangeItem ->
+                                    ExchangeItem(
+                                        exchangeItem = exchangeItem,
+                                        onClick = { viewModel.orderExchangeItem(it) }
+                                    )
+                                }
+                            }
+                    }
+                }
+
+                PullToRefreshContainer(
+                    state = pullToRefreshState,
+                    modifier = Modifier.align(Alignment.TopCenter).zIndex(0f)
+                )
             }
+        }
 
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
+        ObjectDialog(
+            state = allergensDialogState,
+            onDismissRequest = { allergensDialogState.hide() },
+            content = { dayMenu ->
+                AllergensDialogContent(
+                    dayMenu = dayMenu,
+                    onCloseCLick = { allergensDialogState.hide() })
+            }
+        )
+
+        if (uiState.orderInProcess)
+            Dialog(onDismissRequest = { }) {
+                CircularProgressIndicator()
+            }
+    }
+}
+
+@Composable
+private fun ExchangeItem(
+    exchangeItem: ExchangeItem,
+    modifier: Modifier = Modifier,
+    onClick: (ExchangeItem) -> Unit,
+)
+{
+    val dayName = getWeekDayName(exchangeItem.day.dayOfWeek)
+    val dayDate = remember { exchangeItem.day.format(DATE_FORMATTER) }
+    val lunchString = stringResource(R.string.canteen_lunch, exchangeItem.number)
+
+    Card(
+        title = {
+            Text(
+                text = "$dayName $dayDate",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
             )
+        },
+        modifier = modifier.combinedClickable(
+            onClick = { onClick(exchangeItem) },
+            onLongClick = { onClick(exchangeItem) },
+        )
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            exchangeItem.description?.soup?.let { Soup(it) }
+            ElevatedTextRectangle(
+                modifier = modifier.clip(RoundedCornerShape(8.dp)),
+                label = {
+                    Text(
+                        text = lunchString,
+                        modifier = Modifier
+                    )
+                },
 
-            ObjectDialog(
-                state = allergensDialogState,
-                onDismissRequest = { allergensDialogState.hide() },
-                content = { dayMenu ->
-                    AllergensDialogContent(
-                        dayMenu = dayMenu,
-                        onCloseCLick = { allergensDialogState.hide() })
+                text = {
+                    val text = remember(exchangeItem.description?.rest) {
+                        exchangeItem.description?.rest?.replaceFirstChar { it.uppercase() }
+                            ?.replace(" , ", ", ") ?: lunchString
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = text,
+                            modifier = Modifier.weight(1f)
+                        )
+                        Text(
+                            text = "${exchangeItem.amount}x",
+                            modifier = Modifier.padding(start = 8.dp),
+                            maxLines = 1,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 }
             )
-
-            if (uiState.orderInProcess)
-                Dialog(onDismissRequest = { }) {
-                    CircularProgressIndicator()
-                }
         }
     }
 }
