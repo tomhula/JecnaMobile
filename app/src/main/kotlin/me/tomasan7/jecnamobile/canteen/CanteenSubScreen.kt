@@ -307,13 +307,6 @@ private fun ExchangeItem(
             exchangeItem.description?.soup?.let { Soup(it) }
             ElevatedTextRectangle(
                 modifier = modifier.clip(RoundedCornerShape(8.dp)),
-                label = {
-                    Text(
-                        text = lunchString,
-                        modifier = Modifier
-                    )
-                },
-
                 text = {
                     val text = remember(exchangeItem.description?.rest) {
                         exchangeItem.description?.rest?.replaceFirstChar { it.uppercase() }
