@@ -34,15 +34,13 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -75,7 +73,6 @@ import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered_disabled
-import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import java.time.format.DateTimeFormatter
@@ -91,7 +88,6 @@ fun CanteenSubScreen(
     val uiState = viewModel.uiState
     val allergensDialogState = rememberObjectDialogState<DayMenu>()
     val helpDialogState = rememberObjectDialogState<Unit>()
-    val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(selectedTabIndex) }
@@ -108,16 +104,7 @@ fun CanteenSubScreen(
         previousTabIndex = selectedTabIndex
     }
 
-    PullToRefreshHandler(
-        state = pullToRefreshState,
-        shown = uiState.loading,
-        onRefresh = {
-            when (selectedTabIndex) {
-                0 -> viewModel.reloadMenu()
-                1 -> viewModel.reloadExchange()
-            }
-        }
-    )
+    // Pull-to-refresh handled by PullToRefreshBox in the content
 
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -158,11 +145,22 @@ fun CanteenSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Column(
+        PullToRefreshBox(
+            isRefreshing = uiState.loading,
+            onRefresh = {
+                when (selectedTabIndex) {
+                    0 -> viewModel.reloadMenu()
+                    1 -> viewModel.reloadExchange()
+                }
+            },
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
             PrimaryTabRow(
                 selectedTabIndex = selectedTabIndex,
                 modifier = Modifier.zIndex(1f),
@@ -188,7 +186,6 @@ fun CanteenSubScreen(
 
             Box(
                 modifier = Modifier
-                    .nestedScroll(pullToRefreshState.nestedScrollConnection)
                     .fillMaxSize()
             ) {
                 when (selectedTabIndex)
@@ -252,10 +249,8 @@ fun CanteenSubScreen(
                     }
                 }
 
-                PullToRefreshContainer(
-                    state = pullToRefreshState,
-                    modifier = Modifier.align(Alignment.TopCenter).zIndex(0f)
-                )
+                // Indicator handled by PullToRefreshBox
+            }
             }
         }
 

@@ -1,9 +1,6 @@
 package me.tomasan7.jecnamobile.util
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
@@ -20,17 +17,4 @@ fun Color.manipulate(factor: Float): Color
     return Color(r, g, b, alpha)
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PullToRefreshHandler(state: PullToRefreshState, shown: Boolean, onRefresh: () -> Unit)
-{
-    if (state.isRefreshing)
-        LaunchedEffect(true) { onRefresh() }
-
-    LaunchedEffect(state, shown) {
-        if (shown)
-            state.startRefresh()
-        else
-            state.endRefresh()
-    }
-}
+// PullToRefreshHandler removed due to migration to Material3 PullToRefreshBox API.

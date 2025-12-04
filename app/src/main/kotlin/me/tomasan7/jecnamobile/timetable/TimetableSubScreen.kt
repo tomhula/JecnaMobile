@@ -14,14 +14,12 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -40,7 +38,6 @@ import me.tomasan7.jecnamobile.ui.component.OutlinedDropDownSelector
 import me.tomasan7.jecnamobile.ui.component.SchoolYearSelector
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.Timetable
-import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>(start = true)
@@ -59,14 +56,7 @@ fun TimetableSubScreen(
     }
 
     val uiState = viewModel.uiState
-    val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
-
-    PullToRefreshHandler(
-        state = pullToRefreshState,
-        shown = uiState.loading,
-        onRefresh = { viewModel.reload() }
-    )
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -88,11 +78,12 @@ fun TimetableSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.loading,
+            onRefresh = { viewModel.reload() },
             modifier = Modifier
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 .padding(paddingValues)
+                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -118,11 +109,6 @@ fun TimetableSubScreen(
                         onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) }
                     )
             }
-
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
         }
     }
 }

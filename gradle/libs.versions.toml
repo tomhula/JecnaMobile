@@ -5,8 +5,8 @@ plugin-ksp = "2.2.20-2.0.3"
 
 jecnaAPI = "v6.1.0"
 
-compose-compiler = "1.5.11"
-compose-android-bom = "2024.03.00"
+compose-compiler = "1.5.15"
+compose-android-bom = "2025.12.00"
 
 composeDestinations = "2.2.0"
 composeStateEvents = "2.2.0"
