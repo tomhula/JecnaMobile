@@ -506,6 +506,7 @@ private fun ListSubject(
             ) {
                 Row(
                     modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
@@ -524,6 +525,7 @@ private fun ListSubject(
                         onClick = onAddPredictionClick,
                         modifier = Modifier
                             .size(Constants.gradeWidth)
+                            .padding(end = 20.dp)
                             .align(Alignment.CenterVertically)
                     ) {
                         Icon(
