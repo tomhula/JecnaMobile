@@ -132,9 +132,18 @@ class CanteenViewModel @Inject constructor(
             try
             {
                 val newCredit = canteenClient.order(menuItem)
-                val newDayMenu = canteenClient.getDayMenu(dayMenuDate)
-                updateMenu(newDayMenu)
-                changeUiState(loading = false, credit = newCredit)
+
+                when (newCredit)
+                {
+                    null -> showMessage(R.string.error_order)
+                    -1f -> changeUiState(loading = false, credit = null)
+                    else ->
+                    {
+                        val newDayMenu = canteenClient.getDayMenu(dayMenuDate)
+                        updateMenu(newDayMenu)
+                        changeUiState(loading = false, credit = newCredit)
+                    }
+                }
             }
             catch (e: UnresolvedAddressException)
             {
@@ -167,8 +176,11 @@ class CanteenViewModel @Inject constructor(
         viewModelScope.launch {
             try
             {
-                canteenClient.order(item);
-                loadExchangeData()
+                val newCredit = canteenClient.order(item)
+                if (newCredit == null)
+                    showMessage(R.string.error_order)
+                else
+                    loadExchangeData()
             }
             catch (e: UnresolvedAddressException)
             {
