@@ -137,7 +137,6 @@ fun GradesSubScreen(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_grades, navDrawerController) {
                 OfflineDataIndicator(
-                    modifier = Modifier.padding(end = 16.dp),
                     underlyingIcon = SubScreenDestination.Grades.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
