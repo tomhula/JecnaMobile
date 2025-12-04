@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -936,20 +937,56 @@ private fun GradeDialogContent(
 @Composable
 private fun Behaviour(behaviour: Behaviour)
 {
-    Container(
+    Surface(
         modifier = Modifier.fillMaxWidth(),
-        title = Behaviour.SUBJECT_NAME,
-        rightColumnContent = {
-            if (behaviour.finalGrade is FinalGrade.Grade)
-                Grade(Grade((behaviour.finalGrade as FinalGrade.Grade).value, false, gradeId = -1))
-        }
+        tonalElevation = ElevationLevel.level1,
+        shadowElevation = ElevationLevel.level1,
+        shape = RoundedCornerShape(12.dp)
     ) {
-        FlowRow(
-            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)
+        Row(
+            modifier = Modifier.padding(20.dp)
         ) {
-            behaviour.notifications.forEach {
-                BehaviourNotification(it)
+            Column(Modifier.weight(1f, true)) {
+                Text(
+                    text = Behaviour.SUBJECT_NAME,
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Spacer(Modifier.height(15.dp))
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = 800.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    FlowRow(
+                        verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
+                        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)
+                    ) {
+                        behaviour.notifications.forEach {
+                            BehaviourNotification(it)
+                        }
+                    }
+                }
+            }
+
+            if (behaviour.finalGrade is FinalGrade.Grade)
+            {
+                VerticalDivider(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(horizontal = 10.dp),
+                    thickness = 2.dp,
+                    color = MaterialTheme.colorScheme.surfaceColorAtElevation(100.dp)
+                )
+
+                Column(
+                    modifier = Modifier.fillMaxHeight(),
+                    verticalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Grade(Grade((behaviour.finalGrade as FinalGrade.Grade).value, false, gradeId = -1))
+                }
             }
         }
     }
