@@ -449,7 +449,7 @@ private fun Subject(
             }
         }
     ) {
-        if (subject.grades.isEmpty())
+        if (subject.grades.isEmpty() && predictedGrades.isEmpty())
             Text(
                 text = stringResource(R.string.no_grades),
                 style = MaterialTheme.typography.bodyMedium
@@ -557,7 +557,7 @@ private fun ListSubject(
         rightColumnVisible = false,
         rightColumnContent = {},
     ) {
-        if (subject.grades.isEmpty())
+        if (subject.grades.isEmpty() && predictedGrades.isEmpty())
             Text(
                 text = stringResource(R.string.no_grades),
                 style = MaterialTheme.typography.bodyMedium
