@@ -25,6 +25,8 @@ import kotlinx.coroutines.launch
 import me.tomasan7.jecnaapi.CanteenClient
 import me.tomasan7.jecnaapi.JecnaClient
 import me.tomasan7.jecnaapi.data.canteen.DayMenu
+import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
+import me.tomasan7.jecnaapi.data.canteen.ItemDescription
 import me.tomasan7.jecnaapi.data.canteen.MenuItem
 import me.tomasan7.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -130,9 +132,55 @@ class CanteenViewModel @Inject constructor(
             try
             {
                 val newCredit = canteenClient.order(menuItem)
-                val newDayMenu = canteenClient.getDayMenu(dayMenuDate)
-                updateMenu(newDayMenu)
-                changeUiState(loading = false, credit = newCredit)
+
+                when (newCredit)
+                {
+                    null -> showMessage(R.string.error_order)
+                    -1f -> changeUiState(loading = false, credit = null)
+                    else ->
+                    {
+                        val newDayMenu = canteenClient.getDayMenu(dayMenuDate)
+                        updateMenu(newDayMenu)
+                        changeUiState(loading = false, credit = newCredit)
+                    }
+                }
+            }
+            catch (e: UnresolvedAddressException)
+            {
+                e.printStackTrace()
+                showMessage(R.string.no_internet_connection)
+            }
+            catch (e: CancellationException)
+            {
+                /* To not catch cancellation exception with the following catch block.  */
+                throw e
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+                showMessage(R.string.error_order)
+            }
+
+            changeUiState(orderInProcess = false)
+        }
+    }
+
+
+    fun orderExchangeItem(item: ExchangeItem)
+    {
+        if (uiState.orderInProcess)
+            return
+
+        changeUiState(orderInProcess = true)
+
+        viewModelScope.launch {
+            try
+            {
+                val newCredit = canteenClient.order(item)
+                if (newCredit == null)
+                    showMessage(R.string.error_order)
+                else
+                    loadExchangeData()
             }
             catch (e: UnresolvedAddressException)
             {
@@ -237,6 +285,45 @@ class CanteenViewModel @Inject constructor(
         }
     }
 
+    private suspend fun loadExchangeData() {
+        val exchange = canteenClient.getExchange()
+            .groupBy { it.day }
+            .map { (day, items) -> ExchangeDay(day, items) }
+            .sortedBy { it.day }
+        changeUiState(exchange = exchange, loading = false)
+    }
+
+    fun fetchExchange()
+    {
+        changeUiState(loading = true)
+
+        viewModelScope.launch {
+            loginjob?.join()
+
+            try
+            {
+                loadExchangeData()
+            }
+            catch (e: UnresolvedAddressException)
+            {
+                showMessage(R.string.no_internet_connection)
+                changeUiState(loading = false)
+            }
+            catch (e: ParseException)
+            {
+                e.printStackTrace()
+                showMessage(R.string.error_unsupported_menu)
+                changeUiState(loading = false)
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+                showMessage(R.string.error_load)
+                changeUiState(loading = false)
+            }
+        }
+    }
+
     private fun getDays(): List<LocalDate>
     {
         val result = generateSequence(LocalDate.now()) { it.plusDays(1) }
@@ -289,7 +376,9 @@ class CanteenViewModel @Inject constructor(
 
     fun LocalDate.isWeekend() = dayOfWeek in listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)
 
-    fun reload() = loadMenu()
+    fun reloadMenu() = loadMenu()
+
+    fun reloadExchange() = fetchExchange()
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
@@ -321,6 +410,7 @@ class CanteenViewModel @Inject constructor(
         loading: Boolean = uiState.loading,
         orderInProcess: Boolean = uiState.orderInProcess,
         menu: Set<DayMenu> = uiState.menu,
+        exchange: List<ExchangeDay> = uiState.exchange,
         credit: Float? = uiState.credit,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )
@@ -328,6 +418,7 @@ class CanteenViewModel @Inject constructor(
         uiState = uiState.copy(
             loading = loading,
             menu = menu,
+            exchange = exchange,
             credit = credit,
             orderInProcess = orderInProcess,
             snackBarMessageEvent = snackBarMessageEvent,
