@@ -28,6 +28,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ViewModule
@@ -44,8 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.VerticalDivider
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -57,12 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -101,7 +96,6 @@ import me.tomasan7.jecnamobile.ui.theme.grade_absence_warning
 import me.tomasan7.jecnamobile.ui.theme.grade_excused
 import me.tomasan7.jecnamobile.ui.theme.grade_grades_warning
 import me.tomasan7.jecnamobile.ui.theme.jm_label
-import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import me.tomasan7.jecnamobile.util.calculateAverageWithPredictions
 import me.tomasan7.jecnamobile.util.getGradeColor
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
@@ -130,15 +124,8 @@ fun GradesSubScreen(
     val uiState = viewModel.uiState
     val objectDialogState = rememberObjectDialogState<Grade>()
     val predictionDialogState = rememberObjectDialogState<Subject>()
-    val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
     val settings by settingsAsState()
-
-    PullToRefreshHandler(
-        state = pullToRefreshState,
-        shown = uiState.loading,
-        onRefresh = { viewModel.reload() }
-    )
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -151,10 +138,13 @@ fun GradesSubScreen(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_grades, navDrawerController) {
                 OfflineDataIndicator(
-                    modifier = Modifier.padding(end = 16.dp),
                     underlyingIcon = SubScreenDestination.Grades.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
+                )
+                PredictionToggleButton(
+                    enabled = uiState.showPredictions,
+                    onClick = { viewModel.setShowPredictions(!uiState.showPredictions) }
                 )
                 ViewModeButton(
                     viewMode = settings.gradesViewMode,
@@ -164,10 +154,12 @@ fun GradesSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.loading,
+            onRefresh = { viewModel.reload() },
             modifier = Modifier
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 .padding(paddingValues)
+                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -194,6 +186,7 @@ fun GradesSubScreen(
                                 Settings.GradesViewMode.LIST -> ListSubject(
                                     subject = subject,
                                     predictedGrades = predictedGrades,
+                                    showAddPredictionButton = uiState.showPredictions,
                                     onGradeClick = { objectDialogState.show(it) },
                                     onAddPredictionClick = { predictionDialogState.show(subject) },
                                     onPredictedGradeClick = { viewModel.removePredictedGrade(subject, it) }
@@ -202,6 +195,7 @@ fun GradesSubScreen(
                                 Settings.GradesViewMode.GRID -> Subject(
                                     subject = subject,
                                     predictedGrades = predictedGrades,
+                                    showAddPredictionButton = uiState.showPredictions,
                                     onGradeClick = { objectDialogState.show(it) },
                                     onAddPredictionClick = { predictionDialogState.show(subject) },
                                     onPredictedGradeClick = { viewModel.removePredictedGrade(subject, it) }
@@ -213,11 +207,6 @@ fun GradesSubScreen(
                     Behaviour(uiState.gradesPage.behaviour)
                 }
             }
-
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
 
             ObjectDialog(
                 state = objectDialogState,
@@ -388,6 +377,7 @@ private fun Container(
 private fun Subject(
     subject: Subject,
     predictedGrades: List<PredictedGrade> = emptyList(),
+    showAddPredictionButton: Boolean = true,
     onGradeClick: (Grade) -> Unit = {},
     onAddPredictionClick: () -> Unit = {},
     onPredictedGradeClick: (PredictedGrade) -> Unit = {}
@@ -418,18 +408,19 @@ private fun Subject(
                             style = MaterialTheme.typography.labelSmall
                         )
                 }
-                IconButton(
-                    onClick = onAddPredictionClick,
-                    modifier = Modifier
-                        .size(Constants.gradeWidth)
-                        .align(Alignment.CenterVertically)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = stringResource(R.string.grade_predictor_add_prediction),
-                        tint = MaterialTheme.colorScheme.secondary
-                    )
-                }
+                if (showAddPredictionButton)
+                    IconButton(
+                        onClick = onAddPredictionClick,
+                        modifier = Modifier
+                            .size(Constants.gradeWidth)
+                            .align(Alignment.CenterVertically)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = stringResource(R.string.grade_predictor_add_prediction),
+                            tint = MaterialTheme.colorScheme.secondary
+                        )
+                    }
             }
         },
         rightColumnVisible = subject.finalGrade != null || average != null,
@@ -450,7 +441,7 @@ private fun Subject(
             }
         }
     ) {
-        if (subject.grades.isEmpty())
+        if (subject.grades.isEmpty() && predictedGrades.isEmpty())
             Text(
                 text = stringResource(R.string.no_grades),
                 style = MaterialTheme.typography.bodyMedium
@@ -481,6 +472,7 @@ private fun Subject(
 private fun ListSubject(
     subject: Subject,
     predictedGrades: List<PredictedGrade> = emptyList(),
+    showAddPredictionButton: Boolean = true,
     onGradeClick: (Grade) -> Unit = {},
     onAddPredictionClick: () -> Unit = {},
     onPredictedGradeClick: (PredictedGrade) -> Unit = {}
@@ -507,6 +499,7 @@ private fun ListSubject(
             ) {
                 Row(
                     modifier = Modifier.weight(1f),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Column {
@@ -521,18 +514,20 @@ private fun ListSubject(
                             )
                     }
 
-                    IconButton(
-                        onClick = onAddPredictionClick,
-                        modifier = Modifier
-                            .size(Constants.gradeWidth)
-                            .align(Alignment.CenterVertically)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Add,
-                            contentDescription = stringResource(R.string.grade_predictor_add_prediction),
-                            tint = MaterialTheme.colorScheme.secondary
-                        )
-                    }
+                    if (showAddPredictionButton)
+                        IconButton(
+                            onClick = onAddPredictionClick,
+                            modifier = Modifier
+                                .size(Constants.gradeWidth)
+                                .padding(end = 20.dp)
+                                .align(Alignment.CenterVertically)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Add,
+                                contentDescription = stringResource(R.string.grade_predictor_add_prediction),
+                                tint = MaterialTheme.colorScheme.secondary
+                            )
+                        }
                 }
 
                 if (subject.finalGrade != null || average != null)
@@ -556,7 +551,7 @@ private fun ListSubject(
         rightColumnVisible = false,
         rightColumnContent = {},
     ) {
-        if (subject.grades.isEmpty())
+        if (subject.grades.isEmpty() && predictedGrades.isEmpty())
             Text(
                 text = stringResource(R.string.no_grades),
                 style = MaterialTheme.typography.bodyMedium
@@ -583,6 +578,23 @@ private fun ListSubject(
                         )
                 }
         }
+    }
+}
+
+@Composable
+private fun PredictionToggleButton(
+    enabled: Boolean,
+    onClick: () -> Unit,
+)
+{
+    val tint = if (enabled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.onSurfaceVariant
+
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = Icons.Filled.Lightbulb,
+            contentDescription = null,
+            tint = tint
+        )
     }
 }
 

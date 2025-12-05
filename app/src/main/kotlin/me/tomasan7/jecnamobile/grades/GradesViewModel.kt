@@ -205,6 +205,14 @@ class GradesViewModel @Inject constructor(
         changeUiState(predictedGrades = currentPredictions)
     }
 
+    fun setShowPredictions(show: Boolean)
+    {
+        if (!show)
+            changeUiState(predictedGrades = emptyMap(), showPredictions = false)
+        else
+            changeUiState(showPredictions = true)
+    }
+
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         gradesPage: GradesPage? = uiState.gradesPage,
@@ -213,7 +221,8 @@ class GradesViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYearHalf: SchoolYearHalf = uiState.selectedSchoolYearHalf,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
-        predictedGrades: Map<Subject, List<PredictedGrade>> = uiState.predictedGrades
+        predictedGrades: Map<Subject, List<PredictedGrade>> = uiState.predictedGrades,
+        showPredictions: Boolean = uiState.showPredictions,
     )
     {
         uiState = uiState.copy(
@@ -224,7 +233,8 @@ class GradesViewModel @Inject constructor(
             selectedSchoolYear = selectedSchoolYear,
             selectedSchoolYearHalf = selectedSchoolYearHalf,
             snackBarMessageEvent = snackBarMessageEvent,
-            predictedGrades = predictedGrades
+            predictedGrades = predictedGrades,
+            showPredictions = showPredictions,
         )
     }
 

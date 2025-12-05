@@ -31,8 +31,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -70,7 +68,6 @@ import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
 import me.tomasan7.jecnamobile.ui.theme.jm_label
-import me.tomasan7.jecnamobile.util.PullToRefreshHandler
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -82,15 +79,8 @@ fun NewsSubScreen(
 )
 {
     val uiState = viewModel.uiState
-    val pullToRefreshState = rememberPullToRefreshState()
     val snackbarHostState = remember { SnackbarHostState() }
     val dialogState = rememberObjectDialogState<List<String>>()
-
-    PullToRefreshHandler(
-        state = pullToRefreshState,
-        shown = uiState.loading,
-        onRefresh = { viewModel.reload() }
-    )
 
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
@@ -117,10 +107,12 @@ fun NewsSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        Box(
+        PullToRefreshBox(
+            isRefreshing = uiState.loading,
+            onRefresh = { viewModel.reload() },
             modifier = Modifier
-                .nestedScroll(pullToRefreshState.nestedScrollConnection)
                 .padding(paddingValues)
+                .fillMaxSize()
         ) {
             Column(
                 modifier = Modifier
@@ -140,11 +132,6 @@ fun NewsSubScreen(
 
                 Spacer(Modifier.height(16.dp))
             }
-
-            PullToRefreshContainer(
-                state = pullToRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter)
-            )
 
             ObjectDialog(
                 state = dialogState,
