@@ -1,7 +1,7 @@
 [versions]
 plugin-android = "8.13.2"
 plugin-kotlin = "2.2.21"
-plugin-ksp = "2.2.20-2.0.3"
+plugin-ksp = "2.3.3"
 
 jecnaAPI = "7.0.1"
 
