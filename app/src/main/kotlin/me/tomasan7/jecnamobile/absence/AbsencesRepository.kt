@@ -4,7 +4,7 @@ import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 
 interface AbsencesRepository {
-    suspend fun getAbsences(): AbsencesPage
 
-    suspend fun getAbsences(schoolYear: SchoolYear): AbsencesPage
+    suspend fun getAbsencesPage(schoolYear: SchoolYear): AbsencesPage
+    suspend fun getAbsencesPage() : AbsencesPage
 }

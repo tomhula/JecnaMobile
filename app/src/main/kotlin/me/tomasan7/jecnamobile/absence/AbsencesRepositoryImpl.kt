@@ -8,7 +8,7 @@ class AbsencesRepositoryImpl @Inject constructor(
     val jecnaClient: JecnaClient
 ) : AbsencesRepository
 {
-    override suspend fun getAbsences() = jecnaClient.getAbsencesPage()
+    override suspend fun getAbsencesPage() = jecnaClient.getAbsencesPage()
 
-    override suspend fun getAbsences(schoolYear: SchoolYear) = jecnaClient.getAbsencesPage(schoolYear)
+    override suspend fun getAbsencesPage(schoolYear: SchoolYear) = jecnaClient.getAbsencesPage(schoolYear)
 }
