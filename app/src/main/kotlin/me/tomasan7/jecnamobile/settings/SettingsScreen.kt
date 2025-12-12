@@ -26,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.destinations.AbsencesSubScreenDestination
 import me.tomasan7.jecnamobile.destinations.AttendancesSubScreenDestination
 import me.tomasan7.jecnamobile.destinations.CanteenSubScreenDestination
 import me.tomasan7.jecnamobile.destinations.GradesSubScreenDestination
@@ -68,6 +69,7 @@ private fun Settings(viewModel: SettingsViewModel)
         TimetableSubScreenDestination.route to stringResource(R.string.sidebar_timetable),
         CanteenSubScreenDestination.route to stringResource(R.string.sidebar_canteen),
         AttendancesSubScreenDestination.route to stringResource(R.string.sidebar_attendances),
+        AbsencesSubScreenDestination.route to stringResource(R.string.sidebar_absences),
         TeachersSubScreenDestination.route to stringResource(R.string.sidebar_teachers),
     )
 

@@ -3,6 +3,8 @@ package me.tomasan7.jecnamobile.di
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.migration.DisableInstallInCheck
+import me.tomasan7.jecnamobile.absence.AbsencesRepository
+import me.tomasan7.jecnamobile.absence.AbsencesRepositoryImpl
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepositoryImpl
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
@@ -21,8 +23,7 @@ import javax.inject.Singleton
 
 @DisableInstallInCheck
 @Module
-interface AppModuleBindings
-{
+interface AppModuleBindings {
     @Binds
     @Singleton
     fun bindAuthRepository(repository: SharedPreferencesAuthRepository): AuthRepository
@@ -50,4 +51,8 @@ interface AppModuleBindings
     @Binds
     @Singleton
     fun bindGradesChangeChecker(gradesChecker: GradesChangeCheckerImpl): GradesChangeChecker
+
+    @Binds
+    @Singleton
+    fun bindAbsencesRepository(repository: AbsencesRepositoryImpl): AbsencesRepository
 }

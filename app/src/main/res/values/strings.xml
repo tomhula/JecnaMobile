@@ -34,6 +34,7 @@
 
     <string name="sidebar_grades">Známky</string>
     <string name="sidebar_attendances">Příchody</string>
+    <string name="sidebar_absences">Absence</string>
     <string name="sidebar_timetable">Rozvrh</string>
     <string name="sidebar_news">Novinky</string>
     <string name="sidebar_teachers">Učitelé</string>
@@ -120,6 +121,10 @@
     <!-- ##### Absences SubScreen ##### -->
 
     <string name="absences_load_error">Při načítání absencí došlo k chybě.</string>
+    <string name="absences_no_absences">V tomto období nemáš žádné záznamy.</string>
+    <string name="absences_hours_absent">Zameškané hodiny</string>
+    <string name="absences_unexcused_hours">Neomluvené hodiny</string>
+    <string name="absences_late_entries">Počet pozdních příchodů</string>
 
     <!-- ##### Teachers SubScreen ##### -->
 
