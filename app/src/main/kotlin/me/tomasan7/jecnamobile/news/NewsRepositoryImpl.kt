@@ -1,6 +1,6 @@
 package me.tomasan7.jecnamobile.news
 
-import me.tomasan7.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.JecnaClient
 import javax.inject.Inject
 
 class NewsRepositoryImpl @Inject constructor(

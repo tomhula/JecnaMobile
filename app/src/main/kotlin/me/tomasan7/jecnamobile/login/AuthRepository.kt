@@ -1,6 +1,6 @@
 package me.tomasan7.jecnamobile.login
 
-import me.tomasan7.jecnaapi.web.Auth
+import io.github.tomhula.jecnaapi.web.Auth
 
 interface AuthRepository
 {

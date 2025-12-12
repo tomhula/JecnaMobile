@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ViewModule
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -67,13 +68,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
-import me.tomasan7.jecnaapi.data.grade.Behaviour
-import me.tomasan7.jecnaapi.data.grade.FinalGrade
-import me.tomasan7.jecnaapi.data.grade.Grade
-import me.tomasan7.jecnaapi.data.grade.Subject
-import me.tomasan7.jecnaapi.data.schoolStaff.TeacherReference
-import me.tomasan7.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.data.grade.Behaviour
+import io.github.tomhula.jecnaapi.data.grade.FinalGrade
+import io.github.tomhula.jecnaapi.data.grade.Grade
+import io.github.tomhula.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.data.notification.NotificationReference
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
@@ -968,7 +970,7 @@ private fun Behaviour(behaviour: Behaviour)
 }
 
 @Composable
-private fun BehaviourNotification(behaviourNotification: Behaviour.Notification)
+private fun BehaviourNotification(behaviourNotification: NotificationReference)
 {
     Surface(
         tonalElevation = 10.dp,
@@ -984,18 +986,23 @@ private fun BehaviourNotification(behaviourNotification: Behaviour.Notification)
             )
             when (behaviourNotification.type)
             {
-                Behaviour.NotificationType.GOOD ->
+                NotificationReference.NotificationType.GOOD ->
                     Icon(
                         imageVector = Icons.Filled.Check,
                         contentDescription = null,
                         tint = getGradeColor(1)
                     )
 
-                Behaviour.NotificationType.BAD  ->
+                NotificationReference.NotificationType.BAD  ->
                     Icon(
                         imageVector = Icons.Filled.Close,
                         contentDescription = null,
                         tint = getGradeColor(5)
+                    )
+                NotificationReference.NotificationType.INFORMATION ->
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = null,
                     )
             }
         }

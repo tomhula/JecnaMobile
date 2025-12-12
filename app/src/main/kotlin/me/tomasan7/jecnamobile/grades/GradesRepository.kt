@@ -1,8 +1,8 @@
 package me.tomasan7.jecnamobile.grades
 
-import me.tomasan7.jecnaapi.data.grade.GradesPage
-import me.tomasan7.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.data.grade.GradesPage
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 
 interface GradesRepository
 {

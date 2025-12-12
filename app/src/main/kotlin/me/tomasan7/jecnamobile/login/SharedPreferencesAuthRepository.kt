@@ -2,7 +2,7 @@ package me.tomasan7.jecnamobile.login
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import me.tomasan7.jecnaapi.web.Auth
+import io.github.tomhula.jecnaapi.web.Auth
 import javax.inject.Inject
 
 class SharedPreferencesAuthRepository @Inject constructor(

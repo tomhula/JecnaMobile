@@ -9,8 +9,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.web.Auth
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.web.Auth
 import javax.inject.Inject
 
 @HiltViewModel

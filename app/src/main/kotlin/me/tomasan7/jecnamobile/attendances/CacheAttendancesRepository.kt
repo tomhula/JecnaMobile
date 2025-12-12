@@ -6,8 +6,8 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import me.tomasan7.jecnaapi.data.attendance.AttendancesPage
-import me.tomasan7.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
+import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.util.CachedData
 import java.io.File
 import java.time.Month

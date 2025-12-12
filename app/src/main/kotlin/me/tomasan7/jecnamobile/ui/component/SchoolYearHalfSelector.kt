@@ -3,7 +3,7 @@ package me.tomasan7.jecnamobile.ui.component
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.R
 
 @Composable

@@ -1,6 +1,6 @@
 package me.tomasan7.jecnamobile.teachers
 
-import me.tomasan7.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.JecnaClient
 import javax.inject.Inject
 
 class TeachersRepositoryImpl @Inject constructor(

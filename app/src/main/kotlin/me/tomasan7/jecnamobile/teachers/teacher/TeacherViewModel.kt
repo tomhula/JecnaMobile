@@ -19,11 +19,11 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.data.schoolStaff.Teacher
-import me.tomasan7.jecnaapi.data.schoolStaff.TeacherReference
-import me.tomasan7.jecnaapi.parser.ParseException
-import me.tomasan7.jecnaapi.web.jecna.JecnaWebClient
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
+import io.github.tomhula.jecnaapi.parser.ParseException
+import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.teachers.TeachersRepository

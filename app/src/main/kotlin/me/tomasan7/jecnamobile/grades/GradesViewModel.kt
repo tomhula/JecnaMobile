@@ -16,11 +16,11 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.data.grade.GradesPage
-import me.tomasan7.jecnaapi.data.grade.Subject
-import me.tomasan7.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.grade.GradesPage
+import io.github.tomhula.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.settings.Settings

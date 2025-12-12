@@ -1,6 +1,6 @@
 package me.tomasan7.jecnamobile.gradenotifications.change
 
-import me.tomasan7.jecnaapi.data.grade.Grade
+import io.github.tomhula.jecnaapi.data.grade.Grade
 
 sealed interface GradesChange
 {

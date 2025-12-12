@@ -55,9 +55,9 @@ import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnaapi.data.canteen.DayMenu
-import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
-import me.tomasan7.jecnaapi.data.canteen.MenuItem
+import io.github.tomhula.jecnaapi.data.canteen.DayMenu
+import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
+import io.github.tomhula.jecnaapi.data.canteen.MenuItem
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.canteen.ExchangeDay
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController

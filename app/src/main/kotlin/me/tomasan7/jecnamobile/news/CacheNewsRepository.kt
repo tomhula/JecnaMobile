@@ -6,7 +6,7 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import me.tomasan7.jecnaapi.data.article.NewsPage
+import io.github.tomhula.jecnaapi.data.article.NewsPage
 import me.tomasan7.jecnamobile.util.CachedData
 import java.io.File
 import javax.inject.Inject

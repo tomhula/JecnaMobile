@@ -3,8 +3,8 @@ package me.tomasan7.jecnamobile.canteen
 import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
-import me.tomasan7.jecnaapi.data.canteen.DayMenu
-import me.tomasan7.jecnaapi.data.canteen.ExchangeItem
+import io.github.tomhula.jecnaapi.data.canteen.DayMenu
+import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import java.time.LocalDate
 import java.time.LocalTime
 

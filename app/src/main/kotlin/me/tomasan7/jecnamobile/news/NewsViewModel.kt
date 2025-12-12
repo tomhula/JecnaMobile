@@ -25,10 +25,10 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.data.article.ArticleFile
-import me.tomasan7.jecnaapi.data.article.NewsPage
-import me.tomasan7.jecnaapi.web.jecna.JecnaWebClient
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.article.ArticleFile
+import io.github.tomhula.jecnaapi.data.article.NewsPage
+import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver

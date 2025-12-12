@@ -56,8 +56,8 @@ import coil.request.ImageRequest
 import com.ireward.htmlcompose.HtmlText
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
-import me.tomasan7.jecnaapi.data.article.Article
-import me.tomasan7.jecnaapi.data.article.ArticleFile
+import io.github.tomhula.jecnaapi.data.article.Article
+import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination

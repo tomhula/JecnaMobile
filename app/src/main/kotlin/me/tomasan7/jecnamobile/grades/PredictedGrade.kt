@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 
 /**
  * Represents a hypothetical grade used for grade average predictions.
- * These are separate from real [me.tomasan7.jecnaapi.data.grade.Grade] objects from the API.
+ * These are separate from real [io.github.tomhula.jecnaapi.data.grade.Grade] objects from the API.
  */
 @Immutable
 data class PredictedGrade(

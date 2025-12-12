@@ -1,8 +1,8 @@
 package me.tomasan7.jecnamobile.grades
 
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import javax.inject.Inject
 
 class GradesRepositoryImpl @Inject constructor(

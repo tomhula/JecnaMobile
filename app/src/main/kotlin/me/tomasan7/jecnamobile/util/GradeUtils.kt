@@ -1,8 +1,8 @@
 package me.tomasan7.jecnamobile.util
 
-import me.tomasan7.jecnaapi.data.grade.Grade
-import me.tomasan7.jecnaapi.data.grade.Grades
-import me.tomasan7.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.data.grade.Grade
+import io.github.tomhula.jecnaapi.data.grade.Grades
+import io.github.tomhula.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnamobile.grades.PredictedGrade
 import me.tomasan7.jecnamobile.ui.theme.grade_0
 import me.tomasan7.jecnamobile.ui.theme.grade_1

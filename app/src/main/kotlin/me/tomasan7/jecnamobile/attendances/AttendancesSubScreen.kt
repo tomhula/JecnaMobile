@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
-import me.tomasan7.jecnaapi.data.attendance.Attendance
-import me.tomasan7.jecnaapi.data.attendance.AttendanceType
-import me.tomasan7.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.data.attendance.Attendance
+import io.github.tomhula.jecnaapi.data.attendance.AttendanceType
+import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination

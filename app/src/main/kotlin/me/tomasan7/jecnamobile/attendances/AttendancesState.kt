@@ -3,8 +3,8 @@ package me.tomasan7.jecnamobile.attendances
 import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
-import me.tomasan7.jecnaapi.data.attendance.AttendancesPage
-import me.tomasan7.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
+import io.github.tomhula.jecnaapi.util.SchoolYear
 import java.time.Instant
 import java.time.LocalDate
 import java.time.Month

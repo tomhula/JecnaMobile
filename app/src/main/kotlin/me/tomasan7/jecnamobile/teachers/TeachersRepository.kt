@@ -1,8 +1,8 @@
 package me.tomasan7.jecnamobile.teachers
 
-import me.tomasan7.jecnaapi.data.schoolStaff.Teacher
-import me.tomasan7.jecnaapi.data.schoolStaff.TeacherReference
-import me.tomasan7.jecnaapi.data.schoolStaff.TeachersPage
+import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
 
 interface TeachersRepository
 {

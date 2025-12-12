@@ -1,7 +1,7 @@
 package me.tomasan7.jecnamobile.attendances
 
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.util.SchoolYear
 import java.time.Month
 import javax.inject.Inject
 

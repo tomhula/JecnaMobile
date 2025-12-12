@@ -21,9 +21,9 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnaapi.CanteenClient
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.web.AuthenticationException
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository

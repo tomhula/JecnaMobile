@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import me.tomasan7.jecnaapi.CanteenClient
-import me.tomasan7.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.JecnaClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 

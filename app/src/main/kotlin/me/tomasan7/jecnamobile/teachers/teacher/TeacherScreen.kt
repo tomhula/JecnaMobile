@@ -44,8 +44,8 @@ import coil.request.ImageRequest
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
-import me.tomasan7.jecnaapi.data.schoolStaff.Teacher
-import me.tomasan7.jecnaapi.data.schoolStaff.TeacherReference
+import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer

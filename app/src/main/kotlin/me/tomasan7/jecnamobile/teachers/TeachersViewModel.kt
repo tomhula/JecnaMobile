@@ -16,9 +16,9 @@ import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnaapi.JecnaClient
-import me.tomasan7.jecnaapi.data.schoolStaff.TeachersPage
-import me.tomasan7.jecnaapi.parser.ParseException
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
+import io.github.tomhula.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver

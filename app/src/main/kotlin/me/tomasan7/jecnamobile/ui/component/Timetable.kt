@@ -17,8 +17,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import me.tomasan7.jecnaapi.data.schoolStaff.TeacherReference
-import me.tomasan7.jecnaapi.data.timetable.*
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
+import io.github.tomhula.jecnaapi.data.timetable.*
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.util.getWeekDayName

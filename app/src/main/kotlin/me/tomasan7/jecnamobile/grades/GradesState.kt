@@ -4,10 +4,10 @@ import android.icu.text.Collator
 import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
-import me.tomasan7.jecnaapi.data.grade.GradesPage
-import me.tomasan7.jecnaapi.data.grade.Subject
-import me.tomasan7.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnaapi.util.SchoolYearHalf
+import io.github.tomhula.jecnaapi.data.grade.GradesPage
+import io.github.tomhula.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import java.time.Instant
 import java.util.Locale
 
