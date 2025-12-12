@@ -3,7 +3,6 @@ package me.tomasan7.jecnamobile.absence
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
-import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
@@ -23,7 +22,7 @@ class CacheAbsencesRepository @Inject constructor(
     fun isCacheAvailable() = cacheFile.exists()
     @OptIn(ExperimentalSerializationApi::class)
 
-    fun getCachedAbsences(): CachedData<AttendancesPage>?
+    fun getCachedAbsences(): CachedData<AbsencesPage>?
     {
         if (!isCacheAvailable())
             return null

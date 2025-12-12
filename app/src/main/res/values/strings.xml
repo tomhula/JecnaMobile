@@ -50,7 +50,7 @@
     <string name="article_school_only">Pouze pro školu</string>
     <string name="article_images">Obrázky</string>
     <string name="error_unable_to_open_file">Soubor nelze otevřít.</string>
-    <string name="article_load_error">Při načítání známek novinek k chybě.</string>
+    <string name="article_load_error">Při načítání novinek došlo k chybě.</string>
 
     <!-- ##### Grades SubScreen ##### -->
 
@@ -116,6 +116,10 @@
     <string name="attendances_attendance_type_exit">Odchod</string>
     <string name="attendances_no_attendances">V tomto období nemáš žádné záznamy.</string>
     <string name="attendances_load_error">Při načítání příchodů došlo k chybě.</string>
+
+    <!-- ##### Absences SubScreen ##### -->
+
+    <string name="absences_load_error">Při načítání absencí došlo k chybě.</string>
 
     <!-- ##### Teachers SubScreen ##### -->
 
