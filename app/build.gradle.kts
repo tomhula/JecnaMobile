@@ -9,14 +9,14 @@ plugins {
 }
 
 android {
-    compileSdk = 35
+    compileSdk = 36
 
     namespace = "me.tomasan7.jecnamobile"
 
     defaultConfig {
         applicationId = "me.tomasan7.jecnamobile"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 35
         versionName = "2.5.3"
 
