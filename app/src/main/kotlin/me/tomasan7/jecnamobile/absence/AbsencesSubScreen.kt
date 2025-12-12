@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.absence
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -90,6 +91,31 @@ fun AbsencesSubScreen(
                     {
                         val daysSorted = uiState.absencesPage.days.sortedDescending()
 
+                        // Calculate totals
+                        var totalHoursAbsent = 0
+                        var totalUnexcusedHours = 0
+                        var totalLateEntries = 0
+
+                        daysSorted.forEach { day ->
+                            uiState.absencesPage[day]?.let { info ->
+                                totalHoursAbsent += info.hoursAbsent
+                                totalUnexcusedHours += info.unexcusedHours
+                                totalLateEntries += info.lateEntryCount
+                            }
+                        }
+
+                        val totalExcusedHours = totalHoursAbsent - totalUnexcusedHours
+
+                        // Show totals summary
+                        if (daysSorted.isNotEmpty()) {
+                            AbsencesTotalSummary(
+                                totalHoursAbsent = totalHoursAbsent,
+                                totalExcusedHours = totalExcusedHours,
+                                totalUnexcusedHours = totalUnexcusedHours,
+                                totalLateEntries = totalLateEntries
+                            )
+                        }
+
                         if (daysSorted.isEmpty())
                             NoAbsencesMessage(
                                 modifier = Modifier
@@ -109,6 +135,65 @@ fun AbsencesSubScreen(
                     VerticalSpacer(0.dp)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AbsencesTotalSummary(
+    totalHoursAbsent: Int,
+    totalExcusedHours: Int,
+    totalUnexcusedHours: Int,
+    totalLateEntries: Int,
+    modifier: Modifier = Modifier
+)
+{
+    Card(
+        title = {
+            Text(
+                text = stringResource(R.string.absences_total_summary),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.fillMaxWidth()
+            )
+        },
+        modifier  = modifier.border(
+            width = 2.dp,
+            color = MaterialTheme.colorScheme.primary,
+            shape = MaterialTheme.shapes.medium
+        )
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            AbsenceInfoRow(
+                label = stringResource(R.string.absences_total_hours_absent),
+                value = totalHoursAbsent.toString(),
+                highlighted = totalHoursAbsent > 0
+            )
+
+            HorizontalDivider(
+                modifier = Modifier.padding(top = 8.dp),
+                thickness = 1.dp,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            AbsenceInfoRow(
+                label = stringResource(R.string.absences_total_excused_hours),
+                value = totalExcusedHours.toString()
+            )
+
+            AbsenceInfoRow(
+                label = stringResource(R.string.absences_total_unexcused_hours),
+                value = totalUnexcusedHours.toString(),
+                highlighted = totalUnexcusedHours > 0
+            )
+
+            AbsenceInfoRow(
+                label = stringResource(R.string.absences_total_late_entries),
+                value = totalLateEntries.toString(),
+                highlighted = totalLateEntries > 0
+            )
         }
     }
 }

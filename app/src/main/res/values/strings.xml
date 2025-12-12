@@ -125,6 +125,11 @@
     <string name="absences_hours_absent">Zameškané hodiny</string>
     <string name="absences_unexcused_hours">Neomluvené hodiny</string>
     <string name="absences_late_entries">Počet pozdních příchodů</string>
+    <string name="absences_total_summary">Celkem za období</string>
+    <string name="absences_total_hours_absent">Celkem zameškáno</string>
+    <string name="absences_total_excused_hours">Omluvené hodiny</string>
+    <string name="absences_total_unexcused_hours">Neomluvené hodiny</string>
+    <string name="absences_total_late_entries">Celkem pozdních příchodů</string>
 
     <!-- ##### Teachers SubScreen ##### -->
 
