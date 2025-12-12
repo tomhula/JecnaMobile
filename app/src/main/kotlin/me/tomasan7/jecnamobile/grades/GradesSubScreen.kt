@@ -617,22 +617,29 @@ private fun SubjectPart(
         )
 
     FlowRow(
-        verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.Top),
-        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start),
+        // Workaround for: https://issuetracker.google.com/issues/468027790
+        /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.Top),
+        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start),*/
     ) {
         grades.forEach { grade ->
-            Grade(
-                grade = grade,
-                modifier = Modifier.align(Alignment.CenterVertically),
-                onClick = { onGradeClick(grade) }
-            )
+            // Workaround for: https://issuetracker.google.com/issues/468027790
+            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
+                Grade(
+                    grade = grade,
+                    modifier = Modifier,
+                    onClick = { onGradeClick(grade) }
+                )
+            }
         }
 
         predictedGrades.forEach { predictedGrade ->
-            PredictedGrade(
-                predictedGrade = predictedGrade,
-                modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = {onPredictedGradeClick(predictedGrade)})
-            )
+            // Workaround for: https://issuetracker.google.com/issues/468027790
+            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
+                PredictedGrade(
+                    predictedGrade = predictedGrade,
+                    modifier = Modifier.clickable(onClick = {onPredictedGradeClick(predictedGrade)})
+                )
+            }
         }
     }
 }
@@ -959,11 +966,15 @@ private fun Behaviour(behaviour: Behaviour)
         }
     ) {
         FlowRow(
-            verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)
+            // Workaround for: https://issuetracker.google.com/issues/468027790
+            /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
+            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)*/
         ) {
             behaviour.notifications.forEach {
-                BehaviourNotification(it)
+                // Workaround for: https://issuetracker.google.com/issues/468027790
+                Box(Modifier.padding(2.5.dp)) {
+                    BehaviourNotification(it)
+                }
             }
         }
     }
