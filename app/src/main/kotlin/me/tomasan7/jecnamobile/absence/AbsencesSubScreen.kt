@@ -25,6 +25,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
+import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import java.time.LocalDate
@@ -143,10 +144,9 @@ private fun AbsencesTotalSummary(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        modifier  = modifier.border(
-            width = 2.dp,
-            color = MaterialTheme.colorScheme.primary,
-        )
+        modifier  = modifier,
+        tonalElevation = ElevationLevel.level4,
+        shadowElevation = ElevationLevel.level4
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
