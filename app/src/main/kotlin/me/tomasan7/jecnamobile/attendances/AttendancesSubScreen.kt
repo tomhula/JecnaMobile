@@ -166,9 +166,9 @@ private fun AttendancesDay(
         modifier = modifier
     ) {
         FlowRow(
-            Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(7.dp),
-            verticalArrangement = Arrangement.spacedBy(7.dp)
+            modifier = Modifier.fillMaxWidth(),
+            horizontalSpacing = 7.dp,
+            verticalSpacing = 7.dp
         ) {
             attendanceRow.second.forEach { attendance ->
                 AttendanceChip(attendance)

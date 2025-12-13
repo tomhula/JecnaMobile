@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -84,6 +83,7 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.DialogRow
+import me.tomasan7.jecnamobile.ui.component.FlowRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
@@ -617,29 +617,22 @@ private fun SubjectPart(
         )
 
     FlowRow(
-        // Workaround for: https://issuetracker.google.com/issues/468027790
-        /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.Top),
-        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start),*/
+        verticalSpacing = 5.dp,
+        horizontalSpacing = 5.dp,
     ) {
         grades.forEach { grade ->
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
-                Grade(
-                    grade = grade,
-                    modifier = Modifier,
-                    onClick = { onGradeClick(grade) }
-                )
-            }
+            Grade(
+                grade = grade,
+                modifier = Modifier.align(Alignment.CenterVertically),
+                onClick = { onGradeClick(grade) }
+            )
         }
 
         predictedGrades.forEach { predictedGrade ->
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
-                PredictedGrade(
-                    predictedGrade = predictedGrade,
-                    modifier = Modifier.clickable(onClick = {onPredictedGradeClick(predictedGrade)})
-                )
-            }
+            PredictedGrade(
+                predictedGrade = predictedGrade,
+                modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = {onPredictedGradeClick(predictedGrade)})
+            )
         }
     }
 }
@@ -953,7 +946,6 @@ private fun GradeDialogContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Behaviour(behaviour: Behaviour)
 {
@@ -966,15 +958,12 @@ private fun Behaviour(behaviour: Behaviour)
         }
     ) {
         FlowRow(
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)*/
+            modifier = Modifier.fillMaxWidth(),
+            horizontalSpacing = 5.dp,
+            verticalSpacing = 5.dp
         ) {
             behaviour.notifications.forEach {
-                // Workaround for: https://issuetracker.google.com/issues/468027790
-                Box(Modifier.padding(2.5.dp)) {
-                    BehaviourNotification(it)
-                }
+                BehaviourNotification(it)
             }
         }
     }
