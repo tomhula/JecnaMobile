@@ -168,6 +168,12 @@
     <string name="notification_grade_size_small">malá</string>
     <string name="notification_grade_size_big">velká</string>
 
+    <!-- ##### Notification Dialog ##### -->
+    <string name="notification_dialog_date">Datum</string>
+    <string name="notification_dialog_issued_by">Udělil/a</string>
+    <string name="notification_dialog_case_number">Číslo jednací</string>
+    <string name="notification_dialog_message">Sdělení</string>
+
     <!-- ##### General ##### -->
 
     <string name="monday">Pondělí</string>

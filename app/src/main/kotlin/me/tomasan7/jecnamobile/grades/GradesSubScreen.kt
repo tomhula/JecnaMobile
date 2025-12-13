@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ViewModule
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -205,7 +206,11 @@ fun GradesSubScreen(
                         }
                     }
 
-                    Behaviour(uiState.gradesPage.behaviour)
+                    Behaviour(
+                        behaviour = uiState.gradesPage.behaviour,
+                        loadingNotificationReference = uiState.loadingNotification,
+                        onNotificationClick = { viewModel.onBehaviourNotificationClick(it) }
+                    )
                 }
             }
 
@@ -220,6 +225,13 @@ fun GradesSubScreen(
                     )
                 }
             )
+
+            if (uiState.dialogNotification != null)
+                NotificationDialog(
+                    onDismissRequest = { viewModel.onNotificationDialogDismiss() },
+                    onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
+                    notification = uiState.dialogNotification
+                )
 
             ObjectDialog(
                 state = predictionDialogState,
@@ -947,7 +959,11 @@ private fun GradeDialogContent(
 }
 
 @Composable
-private fun Behaviour(behaviour: Behaviour)
+private fun Behaviour(
+    behaviour: Behaviour,
+    onNotificationClick: (NotificationReference) -> Unit,
+    loadingNotificationReference: NotificationReference? = null
+)
 {
     Container(
         modifier = Modifier.fillMaxWidth(),
@@ -963,18 +979,27 @@ private fun Behaviour(behaviour: Behaviour)
             verticalSpacing = 5.dp
         ) {
             behaviour.notifications.forEach {
-                BehaviourNotification(it)
+                BehaviourNotification(
+                    behaviourNotification = it,
+                    isLoading = loadingNotificationReference === it,
+                    onClick = { onNotificationClick(it) }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun BehaviourNotification(behaviourNotification: NotificationReference)
+private fun BehaviourNotification(
+    behaviourNotification: NotificationReference,
+    isLoading: Boolean = false,
+    onClick: () -> Unit
+)
 {
     Surface(
         tonalElevation = 10.dp,
-        shape = RoundedCornerShape(7.dp)
+        shape = RoundedCornerShape(7.dp),
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier.padding(5.dp),
@@ -984,27 +1009,30 @@ private fun BehaviourNotification(behaviourNotification: NotificationReference)
                 modifier = Modifier.padding(end = 5.dp),
                 text = behaviourNotification.message
             )
-            when (behaviourNotification.type)
-            {
-                NotificationReference.NotificationType.GOOD ->
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = getGradeColor(1)
-                    )
-
-                NotificationReference.NotificationType.BAD  ->
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = null,
-                        tint = getGradeColor(5)
-                    )
-                NotificationReference.NotificationType.INFORMATION ->
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = null,
-                    )
-            }
+            if (isLoading)
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else
+                when (behaviourNotification.type)
+                {
+                    NotificationReference.NotificationType.GOOD ->
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = getGradeColor(1)
+                        )
+    
+                    NotificationReference.NotificationType.BAD  ->
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            tint = getGradeColor(5)
+                        )
+                    NotificationReference.NotificationType.INFORMATION ->
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = null,
+                        )
+                }
         }
     }
 }
