@@ -1,8 +1,6 @@
 package me.tomasan7.jecnamobile.absence
 
 import androidx.annotation.PluralsRes
-import androidx.annotation.StringRes
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -213,8 +211,10 @@ private fun AbsenceDay(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            if (absenceInfo.hoursAbsent != 0)
-                AbsenceChip(R.plurals.absences_hours_absent, absenceInfo.hoursAbsent)
+            val excusedHours = absenceInfo.hoursAbsent - absenceInfo.unexcusedHours
+            
+            if (excusedHours != 0)
+                AbsenceChip(R.plurals.absences_hours_excused, excusedHours)
             
             if (absenceInfo.unexcusedHours != 0)
                 AbsenceChip(R.plurals.absences_unexcused_hours, absenceInfo.unexcusedHours)
