@@ -953,7 +953,6 @@ private fun GradeDialogContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun Behaviour(behaviour: Behaviour)
 {
@@ -966,15 +965,12 @@ private fun Behaviour(behaviour: Behaviour)
         }
     ) {
         FlowRow(
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)*/
+            modifier = Modifier.fillMaxWidth(),
+            horizontalSpacing = 5.dp,
+            verticalSpacing = 5.dp
         ) {
             behaviour.notifications.forEach {
-                // Workaround for: https://issuetracker.google.com/issues/468027790
-                Box(Modifier.padding(2.5.dp)) {
-                    BehaviourNotification(it)
-                }
+                BehaviourNotification(it)
             }
         }
     }
