@@ -89,31 +89,17 @@ fun AbsencesSubScreen(
 
                     if (uiState.absencesPage != null)
                     {
-                        val daysSorted = uiState.absencesPage.days.sortedDescending()
+                        val daysSorted = uiState.daysSorted
 
-                        // Calculate totals
-                        var totalHoursAbsent = 0
-                        var totalUnexcusedHours = 0
-                        var totalLateEntries = 0
-
-                        daysSorted.forEach { day ->
-                            uiState.absencesPage[day]?.let { info ->
-                                totalHoursAbsent += info.hoursAbsent
-                                totalUnexcusedHours += info.unexcusedHours
-                                totalLateEntries += info.lateEntryCount
+                        uiState.summary?.let { summary ->
+                            if (daysSorted.isNotEmpty()) {
+                                AbsencesTotalSummary(
+                                    totalHoursAbsent = summary.totalHoursAbsent,
+                                    totalExcusedHours = summary.totalExcusedHours,
+                                    totalUnexcusedHours = summary.totalUnexcusedHours,
+                                    totalLateEntries = summary.totalLateEntries
+                                )
                             }
-                        }
-
-                        val totalExcusedHours = totalHoursAbsent - totalUnexcusedHours
-
-                        // Show totals summary
-                        if (daysSorted.isNotEmpty()) {
-                            AbsencesTotalSummary(
-                                totalHoursAbsent = totalHoursAbsent,
-                                totalExcusedHours = totalExcusedHours,
-                                totalUnexcusedHours = totalUnexcusedHours,
-                                totalLateEntries = totalLateEntries
-                            )
                         }
 
                         if (daysSorted.isEmpty())
@@ -159,7 +145,6 @@ private fun AbsencesTotalSummary(
         modifier  = modifier.border(
             width = 2.dp,
             color = MaterialTheme.colorScheme.primary,
-            shape = MaterialTheme.shapes.medium
         )
     ) {
         Column(
