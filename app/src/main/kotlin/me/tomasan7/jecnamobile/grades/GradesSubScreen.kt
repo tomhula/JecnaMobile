@@ -85,6 +85,7 @@ import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.DialogRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
+import me.tomasan7.jecnamobile.ui.component.NotificationDialog
 import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
 import me.tomasan7.jecnamobile.ui.component.SchoolYearHalfSelector
@@ -124,6 +125,7 @@ fun GradesSubScreen(
 
     val uiState = viewModel.uiState
     val objectDialogState = rememberObjectDialogState<Grade>()
+    val notificationDialogState = rememberObjectDialogState<NotificationReference>()
     val predictionDialogState = rememberObjectDialogState<Subject>()
     val snackbarHostState = remember { SnackbarHostState() }
     val settings by settingsAsState()
@@ -205,7 +207,10 @@ fun GradesSubScreen(
                         }
                     }
 
-                    Behaviour(uiState.gradesPage.behaviour)
+                    Behaviour(
+                        behaviour = uiState.gradesPage.behaviour,
+                        onNotificationClick = { notificationDialogState.show(it) }
+                    )
                 }
             }
 
@@ -220,6 +225,17 @@ fun GradesSubScreen(
                     )
                 }
             )
+
+            ObjectDialog(
+                state = notificationDialogState,
+                onDismissRequest = { notificationDialogState.hide() }
+            ) { notificationReference ->
+                NotificationDialog(
+                    onDismissRequest = { notificationDialogState.hide() },
+                    notificationReference = notificationReference,
+                    jecnaClient = viewModel.jecnaClient
+                )
+            }
 
             ObjectDialog(
                 state = predictionDialogState,
@@ -955,7 +971,10 @@ private fun GradeDialogContent(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun Behaviour(behaviour: Behaviour)
+private fun Behaviour(
+    behaviour: Behaviour,
+    onNotificationClick: (NotificationReference) -> Unit
+)
 {
     Container(
         modifier = Modifier.fillMaxWidth(),
@@ -973,7 +992,10 @@ private fun Behaviour(behaviour: Behaviour)
             behaviour.notifications.forEach {
                 // Workaround for: https://issuetracker.google.com/issues/468027790
                 Box(Modifier.padding(2.5.dp)) {
-                    BehaviourNotification(it)
+                    BehaviourNotification(
+                        behaviourNotification = it,
+                        onClick = { onNotificationClick(it) }
+                    )
                 }
             }
         }
@@ -981,11 +1003,15 @@ private fun Behaviour(behaviour: Behaviour)
 }
 
 @Composable
-private fun BehaviourNotification(behaviourNotification: NotificationReference)
+private fun BehaviourNotification(
+    behaviourNotification: NotificationReference,
+    onClick: () -> Unit
+)
 {
     Surface(
         tonalElevation = 10.dp,
-        shape = RoundedCornerShape(7.dp)
+        shape = RoundedCornerShape(7.dp),
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier.padding(5.dp),

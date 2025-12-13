@@ -37,7 +37,7 @@ import javax.inject.Inject
 class GradesViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
-    jecnaClient: JecnaClient,
+    val jecnaClient: JecnaClient,
     private val repository: CacheGradesRepository
 ) : ViewModel()
 {
