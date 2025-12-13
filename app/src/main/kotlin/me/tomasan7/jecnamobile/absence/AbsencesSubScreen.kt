@@ -89,10 +89,8 @@ fun AbsencesSubScreen(
 
                     if (uiState.absencesPage != null)
                     {
-                        val daysSorted = uiState.daysSorted
-
                         uiState.summary?.let { summary ->
-                            if (daysSorted.isNotEmpty()) {
+                            if (uiState.daysSorted.isNotEmpty()) {
                                 AbsencesTotalSummary(
                                     totalHoursAbsent = summary.totalHoursAbsent,
                                     totalExcusedHours = summary.totalExcusedHours,
@@ -102,14 +100,14 @@ fun AbsencesSubScreen(
                             }
                         }
 
-                        if (daysSorted.isEmpty())
+                        if (uiState.daysSorted.isEmpty())
                             NoAbsencesMessage(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .height(500.dp)
                             )
                         else
-                            daysSorted.forEach { day ->
+                            uiState.daysSorted.forEach { day ->
                                 val absenceInfo = uiState.absencesPage[day]
                                 key(day) {
                                     AbsenceDay(day to absenceInfo)
