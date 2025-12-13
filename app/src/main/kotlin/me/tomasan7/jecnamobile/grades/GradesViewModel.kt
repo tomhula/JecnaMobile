@@ -19,6 +19,8 @@ import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.data.notification.Notification
+import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -37,7 +39,7 @@ import javax.inject.Inject
 class GradesViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
-    jecnaClient: JecnaClient,
+    private val jecnaClient: JecnaClient,
     private val repository: CacheGradesRepository
 ) : ViewModel()
 {
@@ -212,6 +214,20 @@ class GradesViewModel @Inject constructor(
         else
             changeUiState(showPredictions = true)
     }
+    
+    fun onBehaviourNotificationClick(notificationReference: NotificationReference)
+    {
+        changeUiState(loadingNotification = notificationReference)
+        viewModelScope.launch {
+            val notification = jecnaClient.getNotification(notificationReference)
+            changeUiState(loadingNotification = null, dialogNotification = notification)
+        }
+    }
+    
+    fun onNotificationDialogDismiss()
+    {
+        changeUiState(dialogNotification = null)
+    }
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
@@ -223,6 +239,8 @@ class GradesViewModel @Inject constructor(
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
         predictedGrades: Map<Subject, List<PredictedGrade>> = uiState.predictedGrades,
         showPredictions: Boolean = uiState.showPredictions,
+        loadingNotification: NotificationReference? = uiState.loadingNotification,
+        dialogNotification: Notification? = uiState.dialogNotification
     )
     {
         uiState = uiState.copy(
@@ -235,6 +253,8 @@ class GradesViewModel @Inject constructor(
             snackBarMessageEvent = snackBarMessageEvent,
             predictedGrades = predictedGrades,
             showPredictions = showPredictions,
+            loadingNotification = loadingNotification,
+            dialogNotification = dialogNotification
         )
     }
 

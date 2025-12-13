@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +31,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ViewModule
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -84,6 +84,7 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.DialogRow
+import me.tomasan7.jecnamobile.ui.component.FlowRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
@@ -205,7 +206,11 @@ fun GradesSubScreen(
                         }
                     }
 
-                    Behaviour(uiState.gradesPage.behaviour)
+                    Behaviour(
+                        behaviour = uiState.gradesPage.behaviour,
+                        loadingNotificationReference = uiState.loadingNotification,
+                        onNotificationClick = { viewModel.onBehaviourNotificationClick(it) }
+                    )
                 }
             }
 
@@ -220,6 +225,13 @@ fun GradesSubScreen(
                     )
                 }
             )
+
+            if (uiState.dialogNotification != null)
+                NotificationDialog(
+                    onDismissRequest = { viewModel.onNotificationDialogDismiss() },
+                    onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
+                    notification = uiState.dialogNotification
+                )
 
             ObjectDialog(
                 state = predictionDialogState,
@@ -617,29 +629,22 @@ private fun SubjectPart(
         )
 
     FlowRow(
-        // Workaround for: https://issuetracker.google.com/issues/468027790
-        /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.Top),
-        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start),*/
+        verticalSpacing = 5.dp,
+        horizontalSpacing = 5.dp,
     ) {
         grades.forEach { grade ->
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
-                Grade(
-                    grade = grade,
-                    modifier = Modifier,
-                    onClick = { onGradeClick(grade) }
-                )
-            }
+            Grade(
+                grade = grade,
+                modifier = Modifier.align(Alignment.CenterVertically),
+                onClick = { onGradeClick(grade) }
+            )
         }
 
         predictedGrades.forEach { predictedGrade ->
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            Box(Modifier.padding(2.5.dp).align(Alignment.CenterVertically)) {
-                PredictedGrade(
-                    predictedGrade = predictedGrade,
-                    modifier = Modifier.clickable(onClick = {onPredictedGradeClick(predictedGrade)})
-                )
-            }
+            PredictedGrade(
+                predictedGrade = predictedGrade,
+                modifier = Modifier.align(Alignment.CenterVertically).clickable(onClick = {onPredictedGradeClick(predictedGrade)})
+            )
         }
     }
 }
@@ -953,9 +958,12 @@ private fun GradeDialogContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun Behaviour(behaviour: Behaviour)
+private fun Behaviour(
+    behaviour: Behaviour,
+    onNotificationClick: (NotificationReference) -> Unit,
+    loadingNotificationReference: NotificationReference? = null
+)
 {
     Container(
         modifier = Modifier.fillMaxWidth(),
@@ -966,26 +974,32 @@ private fun Behaviour(behaviour: Behaviour)
         }
     ) {
         FlowRow(
-            // Workaround for: https://issuetracker.google.com/issues/468027790
-            /*verticalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterVertically),
-            horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.Start)*/
+            modifier = Modifier.fillMaxWidth(),
+            horizontalSpacing = 5.dp,
+            verticalSpacing = 5.dp
         ) {
             behaviour.notifications.forEach {
-                // Workaround for: https://issuetracker.google.com/issues/468027790
-                Box(Modifier.padding(2.5.dp)) {
-                    BehaviourNotification(it)
-                }
+                BehaviourNotification(
+                    behaviourNotification = it,
+                    isLoading = loadingNotificationReference === it,
+                    onClick = { onNotificationClick(it) }
+                )
             }
         }
     }
 }
 
 @Composable
-private fun BehaviourNotification(behaviourNotification: NotificationReference)
+private fun BehaviourNotification(
+    behaviourNotification: NotificationReference,
+    isLoading: Boolean = false,
+    onClick: () -> Unit
+)
 {
     Surface(
         tonalElevation = 10.dp,
-        shape = RoundedCornerShape(7.dp)
+        shape = RoundedCornerShape(7.dp),
+        modifier = Modifier.clickable(onClick = onClick)
     ) {
         Row(
             modifier = Modifier.padding(5.dp),
@@ -995,27 +1009,30 @@ private fun BehaviourNotification(behaviourNotification: NotificationReference)
                 modifier = Modifier.padding(end = 5.dp),
                 text = behaviourNotification.message
             )
-            when (behaviourNotification.type)
-            {
-                NotificationReference.NotificationType.GOOD ->
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = getGradeColor(1)
-                    )
-
-                NotificationReference.NotificationType.BAD  ->
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = null,
-                        tint = getGradeColor(5)
-                    )
-                NotificationReference.NotificationType.INFORMATION ->
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = null,
-                    )
-            }
+            if (isLoading)
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else
+                when (behaviourNotification.type)
+                {
+                    NotificationReference.NotificationType.GOOD ->
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = getGradeColor(1)
+                        )
+    
+                    NotificationReference.NotificationType.BAD  ->
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            tint = getGradeColor(5)
+                        )
+                    NotificationReference.NotificationType.INFORMATION ->
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = null,
+                        )
+                }
         }
     }
 }

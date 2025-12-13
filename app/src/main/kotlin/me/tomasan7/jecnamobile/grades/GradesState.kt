@@ -6,6 +6,8 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.grade.Subject
+import io.github.tomhula.jecnaapi.data.notification.Notification
+import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import java.time.Instant
@@ -22,6 +24,9 @@ data class GradesState(
     val snackBarMessageEvent: StateEventWithContent<String> = consumed(),
     val predictedGrades: Map<Subject, List<PredictedGrade>> = emptyMap(),
     val showPredictions: Boolean = false,
+    /** `null` if no notification is loading, or the [NotificationReference] that was clicked if it is loading. */
+    val loadingNotification: NotificationReference? = null,
+    val dialogNotification: Notification? = null,
 )
 {
     /**
