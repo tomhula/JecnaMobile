@@ -207,9 +207,10 @@ private fun AbsenceDay(
         },
         modifier = modifier
     ) {
-        Column(
+        FlowRow(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalSpacing = 7.dp,
+            verticalSpacing = 7.dp
         ) {
             val excusedHours = absenceInfo.hoursAbsent - absenceInfo.unexcusedHours
             
