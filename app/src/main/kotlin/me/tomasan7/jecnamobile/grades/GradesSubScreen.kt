@@ -31,6 +31,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.ViewModule
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -85,7 +86,6 @@ import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.DialogRow
 import me.tomasan7.jecnamobile.ui.component.FlowRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
-import me.tomasan7.jecnamobile.ui.component.NotificationDialog
 import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
 import me.tomasan7.jecnamobile.ui.component.SchoolYearHalfSelector
@@ -125,7 +125,6 @@ fun GradesSubScreen(
 
     val uiState = viewModel.uiState
     val objectDialogState = rememberObjectDialogState<Grade>()
-    val notificationDialogState = rememberObjectDialogState<NotificationReference>()
     val predictionDialogState = rememberObjectDialogState<Subject>()
     val snackbarHostState = remember { SnackbarHostState() }
     val settings by settingsAsState()
@@ -209,7 +208,8 @@ fun GradesSubScreen(
 
                     Behaviour(
                         behaviour = uiState.gradesPage.behaviour,
-                        onNotificationClick = { notificationDialogState.show(it) }
+                        loadingNotificationReference = uiState.loadingNotification,
+                        onNotificationClick = { viewModel.onBehaviourNotificationClick(it) }
                     )
                 }
             }
@@ -226,17 +226,12 @@ fun GradesSubScreen(
                 }
             )
 
-            ObjectDialog(
-                state = notificationDialogState,
-                onDismissRequest = { notificationDialogState.hide() }
-            ) { notificationReference ->
+            if (uiState.dialogNotification != null)
                 NotificationDialog(
-                    onDismissRequest = { notificationDialogState.hide() },
-                    notificationReference = notificationReference,
+                    onDismissRequest = { viewModel.onNotificationDialogDismiss() },
                     onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
-                    jecnaClient = viewModel.jecnaClient
+                    notification = uiState.dialogNotification
                 )
-            }
 
             ObjectDialog(
                 state = predictionDialogState,
@@ -966,7 +961,8 @@ private fun GradeDialogContent(
 @Composable
 private fun Behaviour(
     behaviour: Behaviour,
-    onNotificationClick: (NotificationReference) -> Unit
+    onNotificationClick: (NotificationReference) -> Unit,
+    loadingNotificationReference: NotificationReference? = null
 )
 {
     Container(
@@ -985,6 +981,7 @@ private fun Behaviour(
             behaviour.notifications.forEach {
                 BehaviourNotification(
                     behaviourNotification = it,
+                    isLoading = loadingNotificationReference === it,
                     onClick = { onNotificationClick(it) }
                 )
             }
@@ -995,6 +992,7 @@ private fun Behaviour(
 @Composable
 private fun BehaviourNotification(
     behaviourNotification: NotificationReference,
+    isLoading: Boolean = false,
     onClick: () -> Unit
 )
 {
@@ -1011,27 +1009,30 @@ private fun BehaviourNotification(
                 modifier = Modifier.padding(end = 5.dp),
                 text = behaviourNotification.message
             )
-            when (behaviourNotification.type)
-            {
-                NotificationReference.NotificationType.GOOD ->
-                    Icon(
-                        imageVector = Icons.Filled.Check,
-                        contentDescription = null,
-                        tint = getGradeColor(1)
-                    )
-
-                NotificationReference.NotificationType.BAD  ->
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = null,
-                        tint = getGradeColor(5)
-                    )
-                NotificationReference.NotificationType.INFORMATION ->
-                    Icon(
-                        imageVector = Icons.Filled.Info,
-                        contentDescription = null,
-                    )
-            }
+            if (isLoading)
+                CircularProgressIndicator(modifier = Modifier.size(24.dp))
+            else
+                when (behaviourNotification.type)
+                {
+                    NotificationReference.NotificationType.GOOD ->
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = null,
+                            tint = getGradeColor(1)
+                        )
+    
+                    NotificationReference.NotificationType.BAD  ->
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = null,
+                            tint = getGradeColor(5)
+                        )
+                    NotificationReference.NotificationType.INFORMATION ->
+                        Icon(
+                            imageVector = Icons.Filled.Info,
+                            contentDescription = null,
+                        )
+                }
         }
     }
 }
