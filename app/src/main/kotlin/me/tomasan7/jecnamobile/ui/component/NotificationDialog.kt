@@ -15,12 +15,14 @@ import androidx.compose.ui.window.Dialog
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.notification.Notification
 import io.github.tomhula.jecnaapi.data.notification.NotificationReference
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun NotificationDialog(
     onDismissRequest: () -> Unit,
+    onTeacherClick: (TeacherReference) -> Unit = {},
     notificationReference: NotificationReference,
     jecnaClient: JecnaClient
 )
@@ -55,7 +57,8 @@ fun NotificationDialog(
                     notification.issuedBy?.let {
                         DialogRow(
                             label = stringResource(R.string.notification_dialog_issued_by),
-                            value = it.fullName
+                            value = it.fullName,
+                            onClick = { onTeacherClick(TeacherReference(it.fullName, it.tag)) }
                         )
                     }
                     notification.caseNumber?.let {

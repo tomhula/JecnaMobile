@@ -233,6 +233,7 @@ fun GradesSubScreen(
                 NotificationDialog(
                     onDismissRequest = { notificationDialogState.hide() },
                     notificationReference = notificationReference,
+                    onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
                     jecnaClient = viewModel.jecnaClient
                 )
             }
