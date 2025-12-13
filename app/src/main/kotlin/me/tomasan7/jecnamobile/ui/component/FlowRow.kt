@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.grades
+package me.tomasan7.jecnamobile.ui.component
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable

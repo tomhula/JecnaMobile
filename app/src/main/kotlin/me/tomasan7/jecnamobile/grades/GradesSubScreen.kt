@@ -83,6 +83,7 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.DialogRow
+import me.tomasan7.jecnamobile.ui.component.FlowRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
