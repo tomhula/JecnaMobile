@@ -1,8 +1,12 @@
 package me.tomasan7.jecnamobile.absence
 
+import androidx.annotation.PluralsRes
+import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -12,6 +16,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -208,22 +213,14 @@ private fun AbsenceDay(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            AbsenceInfoRow(
-                label = stringResource(R.string.absences_hours_absent),
-                value = absenceInfo.hoursAbsent.toString()
-            )
+            if (absenceInfo.hoursAbsent != 0)
+                AbsenceChip(R.plurals.absences_hours_absent, absenceInfo.hoursAbsent)
+            
+            if (absenceInfo.unexcusedHours != 0)
+                AbsenceChip(R.plurals.absences_unexcused_hours, absenceInfo.unexcusedHours)
 
-            AbsenceInfoRow(
-                label = stringResource(R.string.absences_unexcused_hours),
-                value = absenceInfo.unexcusedHours.toString(),
-                highlighted = absenceInfo.unexcusedHours > 0
-            )
-
-            AbsenceInfoRow(
-                label = stringResource(R.string.absences_late_entries),
-                value = absenceInfo.lateEntryCount.toString(),
-                highlighted = absenceInfo.lateEntryCount > 0
-            )
+            if (absenceInfo.lateEntryCount != 0)
+                AbsenceChip(R.plurals.absences_late_entries, absenceInfo.lateEntryCount)
         }
     }
 }
@@ -250,6 +247,20 @@ private fun AbsenceInfoRow(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
             color = if (highlighted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+        )
+    }
+}
+
+@Composable
+private fun AbsenceChip(@PluralsRes string: Int, number: Int)
+{
+    Surface(
+        tonalElevation = 10.dp,
+        shape = RoundedCornerShape(10.dp)
+    ) {
+        Text(
+            text = pluralStringResource(string, number, number),
+            modifier = Modifier.padding(10.dp)
         )
     }
 }

@@ -122,9 +122,21 @@
 
     <string name="absences_load_error">Při načítání absencí došlo k chybě.</string>
     <string name="absences_no_absences">V tomto období nemáš žádné záznamy.</string>
-    <string name="absences_hours_absent">Zameškané hodiny</string>
-    <string name="absences_unexcused_hours">Neomluvené hodiny</string>
-    <string name="absences_late_entries">Počet pozdních příchodů</string>
+    <plurals name="absences_hours_absent">
+        <item quantity="one">%d zameškaná hodina</item>
+        <item quantity="few">%d zameškané hodiny</item>
+        <item quantity="other">%d zameškaných hodin</item>
+    </plurals>
+    <plurals name="absences_unexcused_hours">
+        <item quantity="one">%d neomluvená hodina</item>
+        <item quantity="few">%d neomluvené hodiny</item>
+        <item quantity="other">%d neomluvených hodin</item>
+    </plurals>
+    <plurals name="absences_late_entries">
+        <item quantity="one">%d pozdní příchod</item>
+        <item quantity="few">%d pozdní příchody</item>
+        <item quantity="other">%d pozdních příchodů</item>
+    </plurals>
     <string name="absences_total_summary">Celkem za období</string>
     <string name="absences_total_hours_absent">Celkem zameškáno</string>
     <string name="absences_total_excused_hours">Omluvené hodiny</string>
