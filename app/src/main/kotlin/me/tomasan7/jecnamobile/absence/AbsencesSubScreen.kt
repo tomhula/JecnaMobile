@@ -159,7 +159,7 @@ private fun AbsencesTotalSummary(
             )
 
             HorizontalDivider(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier.padding(vertical = 4.dp),
                 thickness = 1.dp,
                 color = MaterialTheme.colorScheme.primary
             )
