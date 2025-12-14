@@ -197,6 +197,8 @@ private fun AbsenceDay(
     val dayName = getWeekDayName(day.dayOfWeek)
     val dayDate = day.format(DATE_FORMATTER)
 
+    val hasOutline = absenceInfo.unexcusedHours > 0 || absenceInfo.lateEntryCount > 0
+
     Card(
         title = {
             Text(
@@ -205,7 +207,16 @@ private fun AbsenceDay(
                 modifier = Modifier.fillMaxWidth()
             )
         },
-        modifier = modifier
+        modifier = modifier.then(
+            if (hasOutline)
+                Modifier.border(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.error,
+                    shape = RoundedCornerShape(8.dp)
+                )
+            else
+                Modifier
+        )
     ) {
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -261,7 +272,7 @@ private fun AbsenceChip(@PluralsRes string: Int, number: Int)
     ) {
         Text(
             text = pluralStringResource(string, number, number),
-            modifier = Modifier.padding(10.dp)
+            modifier = Modifier.padding(10.dp),
         )
     }
 }
