@@ -138,9 +138,9 @@
         <item quantity="other">%d pozdních příchodů</item>
     </plurals>
     <string name="absences_total_summary">Celkem za období</string>
-    <string name="absences_total_hours_absent">Celkem zameškáno</string>
-    <string name="absences_total_excused_hours">Omluvené hodiny</string>
-    <string name="absences_total_unexcused_hours">Neomluvené hodiny</string>
+    <string name="absences_total_hours_absent">Celkem zameškáných hodin</string>
+    <string name="absences_total_excused_hours">Z toho omluveno</string>
+    <string name="absences_total_unexcused_hours">Z toho neomluveno</string>
     <string name="absences_total_late_entries">Celkem pozdních příchodů</string>
 
     <!-- ##### Teachers SubScreen ##### -->
