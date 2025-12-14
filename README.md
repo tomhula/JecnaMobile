@@ -1,6 +1,8 @@
 # Ječná Mobile
 
-Ječná Mobile je android aplikace, vytvořená pro studenty [SPŠE Ječná v Praze](https://www.spsejecna.cz/). Byla vytvořena
+##### [English version here](README_en.md)
+
+Ječná Mobile je Android aplikace, vytvořená pro studenty [SPŠE Ječná v Praze](https://www.spsejecna.cz/). Byla vytvořena
 z důvodů pohodlnosti čtení školního portálu. Aplikace je **NEOFICIÁLNÍ** a tím pádem **nemá nic společného se školním
 softwarem**.
 
@@ -8,8 +10,8 @@ Můžete se podílet na vývoji: [Kontribuce](#Kontribuce)
 
 ## Instalace
 
-Aplikaci si nainstalujte z [Google Play](https://play.google.com/store/apps/details?id=me.tomasan7.jecnamobile).  
-Minimální podporovaný android je `Android 8.0 (Oreo)`.
+[<img src="readme-res/get_it_on.png" alt="Get it on Google Play" height="50">](https://play.google.com/store/apps/details?id=me.tomasan7.jecnamobile)  
+Minimální podporovaný Android je `Android 8.0 (Oreo)`.
 
 ## Funkce
 
@@ -59,8 +61,8 @@ Za váš příspěvek bude rád každý Ječňák s Androidem, takže neváhej p
 Předem upozorňuji, že kód aplikace je velmi nekvalitní a neměli byste se ním inspirovat. Je to z důvodu relativně velké složitosti vývoje pro Android a času.
 
 ### Info
-- Ječná Mobile je zeložena na knihovně [JecnaAPI](https://github.com/Tomasan7/JecnaAPI), takže pokud budete chtít přidat nějakou novou funkci, týkající se stránek, budete muset upravit i JecnaAPI.
-- Celá aplikace kód je v [Kotlinu](https://kotlinlang.org/docs/getting-started.html).
+- Ječná Mobile je zeložena na knihovně [JecnaAPI](https://github.com/tomhula/JecnaAPI), takže pokud budete chtít přidat nějakou novou funkci, týkající se stránek, budete muset upravit i JecnaAPI.
+- Celá aplikace je napsaná v [Kotlinu](https://kotlinlang.org/docs/getting-started.html).
 
 ### Instalace
 
