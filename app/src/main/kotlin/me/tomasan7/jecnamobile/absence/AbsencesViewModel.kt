@@ -13,8 +13,10 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.absence.AbsenceInfo
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.schoolYear
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -84,9 +86,14 @@ class AbsencesViewModel @Inject constructor(
                     repository.getRealAbsences()
                 else
                     repository.getRealAbsences(uiState.selectedSchoolYear)
-
+                
+                val absPage = AbsencesPage.builder().apply { 
+                    setSelectedSchoolYear(2025.schoolYear())
+                    setAbsence(LocalDate.now(), AbsenceInfo(5, 3, 1))
+                }.build()
+                
                 changeUiState(
-                    absencesPage = realAbsences,
+                    absencesPage = absPage,
                     lastUpdateTimestamp = Instant.now(),
                     isCache = false
                 )
