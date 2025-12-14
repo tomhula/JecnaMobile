@@ -34,6 +34,7 @@
 
     <string name="sidebar_grades">Známky</string>
     <string name="sidebar_attendances">Příchody</string>
+    <string name="sidebar_absences">Absence</string>
     <string name="sidebar_timetable">Rozvrh</string>
     <string name="sidebar_news">Novinky</string>
     <string name="sidebar_teachers">Učitelé</string>
@@ -50,7 +51,7 @@
     <string name="article_school_only">Pouze pro školu</string>
     <string name="article_images">Obrázky</string>
     <string name="error_unable_to_open_file">Soubor nelze otevřít.</string>
-    <string name="article_load_error">Při načítání známek novinek k chybě.</string>
+    <string name="article_load_error">Při načítání novinek došlo k chybě.</string>
 
     <!-- ##### Grades SubScreen ##### -->
 
@@ -116,6 +117,31 @@
     <string name="attendances_attendance_type_exit">Odchod</string>
     <string name="attendances_no_attendances">V tomto období nemáš žádné záznamy.</string>
     <string name="attendances_load_error">Při načítání příchodů došlo k chybě.</string>
+
+    <!-- ##### Absences SubScreen ##### -->
+
+    <string name="absences_load_error">Při načítání absencí došlo k chybě.</string>
+    <string name="absences_no_absences">V tomto období nemáš žádné záznamy.</string>
+    <plurals name="absences_hours_excused">
+        <item quantity="one">%d omluvená hodina</item>
+        <item quantity="few">%d omluvené hodiny</item>
+        <item quantity="other">%d omluvených hodin</item>
+    </plurals>
+    <plurals name="absences_unexcused_hours">
+        <item quantity="one">%d neomluvená hodina</item>
+        <item quantity="few">%d neomluvené hodiny</item>
+        <item quantity="other">%d neomluvených hodin</item>
+    </plurals>
+    <plurals name="absences_late_entries">
+        <item quantity="one">%d pozdní příchod</item>
+        <item quantity="few">%d pozdní příchody</item>
+        <item quantity="other">%d pozdních příchodů</item>
+    </plurals>
+    <string name="absences_total_summary">Přehled</string>
+    <string name="absences_total_hours_absent">Celkem zameškáných hodin</string>
+    <string name="absences_total_excused_hours">Omluveno</string>
+    <string name="absences_total_unexcused_hours">Neomluveno</string>
+    <string name="absences_total_late_entries">Pozdních příchodů</string>
 
     <!-- ##### Teachers SubScreen ##### -->
 
