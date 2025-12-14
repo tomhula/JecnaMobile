@@ -87,13 +87,8 @@ class AbsencesViewModel @Inject constructor(
                 else
                     repository.getRealAbsences(uiState.selectedSchoolYear)
                 
-                val absPage = AbsencesPage.builder().apply { 
-                    setSelectedSchoolYear(2025.schoolYear())
-                    setAbsence(LocalDate.now(), AbsenceInfo(5, 3, 1))
-                }.build()
-                
                 changeUiState(
-                    absencesPage = absPage,
+                    absencesPage = realAbsences,
                     lastUpdateTimestamp = Instant.now(),
                     isCache = false
                 )
