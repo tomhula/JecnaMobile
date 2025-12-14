@@ -139,8 +139,8 @@
     </plurals>
     <string name="absences_total_summary">Přehled</string>
     <string name="absences_total_hours_absent">Celkem zameškáných hodin</string>
-    <string name="absences_total_excused_hours">Omluveno</string>
-    <string name="absences_total_unexcused_hours">Neomluveno</string>
+    <string name="absences_total_excused_hours">Z toho omluveno</string>
+    <string name="absences_total_unexcused_hours">Z toho neomluveno</string>
     <string name="absences_total_late_entries">Pozdních příchodů</string>
 
     <!-- ##### Teachers SubScreen ##### -->
