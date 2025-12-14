@@ -60,7 +60,7 @@ I should warn you in advance that the app’s code quality is quite poor and you
 
 ### Info
 
-- Ječná Mobile is based on the [JecnaAPI](https://github.com/Tomasan7/JecnaAPI) library, so if you want to add a new feature related with the website, you will also need to modify JecnaAPI  
+- Ječná Mobile is based on the [JecnaAPI](https://github.com/tomhula/JecnaAPI) library, so if you want to add a new feature related with the website, you will also need to modify JecnaAPI  
 - The entire app is written in [Kotlin](https://kotlinlang.org/docs/getting-started.html)
 
 ### Setup
