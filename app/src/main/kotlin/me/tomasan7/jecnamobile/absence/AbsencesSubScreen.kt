@@ -155,7 +155,6 @@ private fun AbsencesTotalSummary(
             AbsenceInfoRow(
                 label = stringResource(R.string.absences_total_hours_absent),
                 value = totalHoursAbsent.toString(),
-                highlighted = totalHoursAbsent > 0
             )
 
             HorizontalDivider(
@@ -178,7 +177,6 @@ private fun AbsencesTotalSummary(
             AbsenceInfoRow(
                 label = stringResource(R.string.absences_total_late_entries),
                 value = totalLateEntries.toString(),
-                highlighted = totalLateEntries > 0
             )
         }
     }
@@ -239,15 +237,18 @@ private fun AbsenceInfoRow(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
+        val textColor = if (highlighted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+        
         Text(
             text = label,
-            style = MaterialTheme.typography.bodyMedium
+            style = MaterialTheme.typography.bodyMedium,
+            color = textColor
         )
 
         Text(
             text = value,
             style = MaterialTheme.typography.bodyLarge,
-            color = if (highlighted) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface
+            color = textColor
         )
     }
 }
