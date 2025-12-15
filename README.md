@@ -84,3 +84,7 @@ I přesto, že můj kód je hnus, váš být nemusí :)
 Klidně můžete i pročistit/vylepšit stávající kód.
 
 Jakmile přidáte svůj kód, udělejte pull-request a napište smysluplný popis.
+
+## License
+
+[GNU GPLv3](LICENSE) © Tomáš Hůla

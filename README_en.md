@@ -83,3 +83,7 @@ Even though my code is ugly, yours doesn’t have to be :)
 Feel free to clean up or improve the existing code as well.
 
 Once you add your code, create a pull request and write a meaningful description.
+
+## License
+
+[GNU GPLv3](LICENSE) © Tomáš Hůla
