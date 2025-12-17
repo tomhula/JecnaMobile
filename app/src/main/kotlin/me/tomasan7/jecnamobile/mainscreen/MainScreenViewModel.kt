@@ -48,6 +48,9 @@ class MainScreenViewModel @Inject constructor(
     var currentStudent: Student? by mutableStateOf(null)
         private set
 
+    var showLockerDialog: Boolean by mutableStateOf(false)
+        private set
+
     private val connectivityManager =
         getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
@@ -194,5 +197,13 @@ class MainScreenViewModel @Inject constructor(
     inner class NetworkAvailabilityCallback : ConnectivityManager.NetworkCallback()
     {
         override fun onAvailable(network: android.net.Network) = onNetworkAvailable()
+    }
+
+    fun onLockerClick() {
+        showLockerDialog = true
+    }
+
+    fun onLockerDialogDismiss() {
+        showLockerDialog = false
     }
 }

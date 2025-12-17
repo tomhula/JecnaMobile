@@ -17,6 +17,8 @@ import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.news.NewsRepositoryImpl
 import me.tomasan7.jecnamobile.student.StudentRepository
 import me.tomasan7.jecnamobile.student.StudentRepositoryImpl
+import me.tomasan7.jecnamobile.student.locker.LockerRepository
+import me.tomasan7.jecnamobile.student.locker.LockerRepositoryImpl
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.teachers.TeachersRepositoryImpl
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
@@ -61,4 +63,8 @@ interface AppModuleBindings {
     @Binds
     @Singleton
     fun bindStudentRepository(repository: StudentRepositoryImpl): StudentRepository
+
+    @Binds
+    @Singleton
+    fun bindLockerRepository(repository: LockerRepositoryImpl): LockerRepository
 }

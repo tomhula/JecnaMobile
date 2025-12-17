@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
@@ -37,8 +38,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavArgs
-import androidx.navigation.NavArgument
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -60,6 +59,7 @@ import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
 import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
 import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
+import me.tomasan7.jecnamobile.student.locker.LockerDialog
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
@@ -180,6 +180,10 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(StudentProfileScreenDestination)
                         },
+                        onLockerClick = {
+                            scope.launch { drawerState.close() }
+                            viewModel.onLockerClick()
+                        },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(SettingsScreenDestination)
@@ -208,6 +212,12 @@ fun MainScreen(
                     }
                 }
             )
+
+            if (viewModel.showLockerDialog) {
+                LockerDialog(
+                    onDismiss = { viewModel.onLockerDialogDismiss() }
+                )
+            }
         }
     )
 }
@@ -229,6 +239,7 @@ private fun RequestNotificationsPermission()
 @Composable
 private fun SidebarButtonsRow(
     onProfileClick: () -> Unit,
+    onLockerClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 )
@@ -239,6 +250,10 @@ private fun SidebarButtonsRow(
     ) {
         IconButton(onClick = onProfileClick) {
             Icon(Icons.Outlined.AccountCircle, contentDescription = null)
+        }
+
+        IconButton(onClick = onLockerClick) {
+            Icon(Icons.Outlined.Lock, contentDescription = null)
         }
 
         IconButton(onClick = onSettingsClick) {
