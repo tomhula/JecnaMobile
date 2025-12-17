@@ -14,6 +14,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.student.Locker
 import io.github.tomhula.jecnaapi.parser.ParseException
 import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import io.ktor.http.Cookie
@@ -32,10 +33,19 @@ class StudentProfileViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
     private val jecnaClient: JecnaClient,
-    private val repository: StudentRepository
+    private val repository: StudentProfileRepository
 ) : ViewModel() {
 
     var uiState by mutableStateOf(StudentProfileState())
+        private set
+
+    var locker: Locker? by mutableStateOf(null)
+        private set
+    var lockerLoading: Boolean by mutableStateOf(false)
+        private set
+    var lockerError: String? by mutableStateOf(null)
+        private set
+    var showLockerDialog: Boolean by mutableStateOf(false)
         private set
 
     private var loadStudentJob: Job? = null
@@ -74,6 +84,7 @@ class StudentProfileViewModel @Inject constructor(
         loadStudentJob = viewModelScope.launch {
             try {
                 changeUiState(student = repository.getCurrentStudent())
+                loadLocker()
             } catch (e: UnresolvedAddressException) {
                 changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()))
             } catch (e: ParseException) {
@@ -89,6 +100,39 @@ class StudentProfileViewModel @Inject constructor(
                 changeUiState(loading = false)
             }
         }
+    }
+
+    fun loadLocker() {
+        if (lockerLoading || locker != null)
+            return
+
+        lockerLoading = true
+        lockerError = null
+
+        viewModelScope.launch {
+            try {
+                locker = repository.getLocker()
+                if (locker == null) {
+                    lockerError = appContext.getString(R.string.locker_load_error)
+                }
+            } catch (e: Exception) {
+                lockerError = appContext.getString(R.string.locker_load_error)
+                e.printStackTrace()
+            } finally {
+                lockerLoading = false
+            }
+        }
+    }
+
+    fun onLockerClick() {
+        showLockerDialog = true
+        if (locker == null && !lockerLoading) {
+            loadLocker()
+        }
+    }
+
+    fun onLockerDialogDismiss() {
+        showLockerDialog = false
     }
 
     private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)

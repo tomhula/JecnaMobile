@@ -21,7 +21,9 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
 import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,10 +33,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,9 +55,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.student.Guardian
+import io.github.tomhula.jecnaapi.data.student.Locker
 import io.github.tomhula.jecnaapi.data.student.Student
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
+import me.tomasan7.jecnamobile.ui.component.DialogRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +111,23 @@ fun StudentProfileScreen(
                     )
 
                     StudentInfoTable(student)
+
+                    LockerSection(
+                        locker = viewModel.locker,
+                        loading = viewModel.lockerLoading,
+                        error = viewModel.lockerError,
+                        onClick = { viewModel.onLockerClick() }
+                    )
                 }
+            }
+
+            if (viewModel.showLockerDialog) {
+                LockerDialogContent(
+                    locker = viewModel.locker,
+                    loading = viewModel.lockerLoading,
+                    error = viewModel.lockerError,
+                    onDismiss = { viewModel.onLockerDialogDismiss() }
+                )
             }
         }
     }
@@ -325,3 +349,71 @@ private fun InfoRow(
     value: String,
     modifier: Modifier = Modifier
 ) = InfoRow(stringResource(label), value, modifier)
+
+@Composable
+private fun LockerSection(
+    locker: Locker?,
+    loading: Boolean,
+    error: String?,
+    onClick: () -> Unit
+) {
+    val label = stringResource(R.string.locker_title)
+    val value = when {
+        loading -> stringResource(R.string.loading)
+        error != null -> error
+        locker != null -> locker.number
+        else -> stringResource(R.string.locker_load_error)
+    }
+
+    DialogRow(
+        label = label,
+        value = value,
+        onClick = onClick
+    )
+}
+
+@Composable
+private fun LockerDialogContent(
+    locker: Locker?,
+    loading: Boolean,
+    error: String?,
+    onDismiss: () -> Unit
+) {
+    androidx.compose.material3.AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(R.string.locker_title))
+        },
+        text = {
+            when {
+                loading -> {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+                error != null -> {
+                    Text(text = error)
+                }
+                locker != null -> {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(text = stringResource(R.string.locker_number) + ": \n" + locker.number)
+                        Text(text = stringResource(R.string.locker_description) + ": \n" + locker.description)
+                        Text(text = stringResource(R.string.locker_assigned_from) + ": \n" + locker.assignedFrom.toString())
+                        Text(text = stringResource(R.string.locker_assigned_until) + ": \n" + (locker.assignedUntil?.toString() ?: "současnosti"))
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.close))
+            }
+        }
+    )
+}
