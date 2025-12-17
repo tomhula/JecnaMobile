@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -34,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,7 +58,6 @@ import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
 import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
 import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
-import me.tomasan7.jecnamobile.student.locker.LockerDialog
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
@@ -119,23 +116,23 @@ fun MainScreen(
                     modifier = Modifier.padding(all = 28.dp)
                 )
 
-                viewModel.currentStudent?.let { student ->
-                    val className = student.className ?: ""
-                    if (student.fullName.isNotBlank() && className.isNotBlank()) {
-                        Text(
-                            text = stringResource(
-                                R.string.profile_welcome,
-                                student.fullName,
-                                className
-                            ),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 28.dp).padding(vertical = 10.dp)
-                        )
-                    }
+                val name = viewModel.currentStudentName ?: ""
+                val className = viewModel.currentStudentClassName ?: ""
+                if (name.isNotBlank() && className.isNotBlank()) {
+                    Text(
+                        text = stringResource(
+                            R.string.profile_welcome,
+                            name,
+                            className
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 28.dp)
+                            .padding(vertical = 10.dp)
+                    )
                 }
 
                 destinationItems.forEach { item ->
@@ -181,10 +178,6 @@ fun MainScreen(
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(StudentProfileScreenDestination)
                         },
-                        onLockerClick = {
-                            scope.launch { drawerState.close() }
-                            viewModel.onLockerClick()
-                        },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(SettingsScreenDestination)
@@ -213,12 +206,6 @@ fun MainScreen(
                     }
                 }
             )
-
-            if (viewModel.showLockerDialog) {
-                LockerDialog(
-                    onDismiss = { viewModel.onLockerDialogDismiss() }
-                )
-            }
         }
     )
 }
@@ -240,7 +227,6 @@ private fun RequestNotificationsPermission()
 @Composable
 private fun SidebarButtonsRow(
     onProfileClick: () -> Unit,
-    onLockerClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 )
@@ -251,10 +237,6 @@ private fun SidebarButtonsRow(
     ) {
         IconButton(onClick = onProfileClick) {
             Icon(Icons.Outlined.AccountCircle, contentDescription = null)
-        }
-
-        IconButton(onClick = onLockerClick) {
-            Icon(painterResource(R.drawable.locker), contentDescription = null, modifier = Modifier.size(24.dp))
         }
 
         IconButton(onClick = onSettingsClick) {

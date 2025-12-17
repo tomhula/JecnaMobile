@@ -17,19 +17,19 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.web.AuthenticationException
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import io.github.tomhula.jecnaapi.CanteenClient
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.student.Student
-import io.github.tomhula.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
-import me.tomasan7.jecnamobile.student.StudentRepository
+import me.tomasan7.jecnamobile.student.StudentProfileRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
+import java.nio.channels.UnresolvedAddressException
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,13 +39,16 @@ class MainScreenViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
     private val canteenClient: CanteenClient,
-    private val studentRepository: StudentRepository
-) : ViewModel()
-{
+    private val studentRepository: StudentProfileRepository
+) : ViewModel() {
+
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
         private set
 
-    var currentStudent: Student? by mutableStateOf(null)
+    // Only used for welcome text in the drawer
+    var currentStudentName: String? by mutableStateOf(null)
+        private set
+    var currentStudentClassName: String? by mutableStateOf(null)
         private set
 
     var showLockerDialog: Boolean by mutableStateOf(false)
@@ -60,8 +63,13 @@ class MainScreenViewModel @Inject constructor(
         loadCurrentStudent()
     }
 
-    init
-    {
+    private val prefs = appContext.getSharedPreferences("main_screen_cache", Context.MODE_PRIVATE)
+    private val CACHE_NAME_KEY = "student_cache_name"
+    private val CACHE_CLASS_KEY = "student_cache_class"
+    private val CACHE_TIME_KEY = "student_cache_time"
+    private val CACHE_DURATION_MS = TimeUnit.HOURS.toMillis(168) // 168 hours
+
+    init {
         registerNetworkAvailabilityListener()
 
         // If we already have a successful login, we can load the student immediately.
@@ -79,7 +87,27 @@ class MainScreenViewModel @Inject constructor(
     private fun loadCurrentStudent() {
         viewModelScope.launch {
             try {
-                currentStudent = studentRepository.getCurrentStudent()
+                val now = System.currentTimeMillis()
+                val cachedName = prefs.getString(CACHE_NAME_KEY, null)
+                val cachedClassName = prefs.getString(CACHE_CLASS_KEY, null)
+                val cachedTime = prefs.getLong(CACHE_TIME_KEY, 0L)
+
+                if (cachedName != null && cachedClassName != null && (now - cachedTime) < CACHE_DURATION_MS) {
+                    // Use cached values directly for welcome text
+                    currentStudentName = cachedName
+                    currentStudentClassName = cachedClassName
+                } else {
+                    val student = studentRepository.getCurrentStudent()
+
+                    currentStudentName = student.fullName
+                    currentStudentClassName = student.className
+
+                    prefs.edit()
+                        .putString(CACHE_NAME_KEY, student.fullName)
+                        .putString(CACHE_CLASS_KEY, student.className)
+                        .putLong(CACHE_TIME_KEY, now)
+                        .apply()
+                }
             } catch (_: Exception) {
                 // Ignore, will just not show welcome text
             }
