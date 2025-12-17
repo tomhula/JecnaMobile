@@ -156,12 +156,7 @@ private fun StudentInfoTable(student: Student) {
         modifier = Modifier.fillMaxWidth()
     ) {
 
-        Text(
-            text = student.fullName,
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.SemiBold,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
+        InfoRow(stringResource(R.string.profile_full_name), student.fullName)
 
         student.className?.let {
             InfoRow(R.string.profile_class, it)
@@ -194,7 +189,7 @@ private fun StudentInfoTable(student: Student) {
         }
 
         student.age?.let {
-            InfoRow(R.string.profile_age, it.toString())
+            InfoRow(R.string.profile_age, it.toString() + " let")
         }
 
         if (student.guardians.isNotEmpty()) {
