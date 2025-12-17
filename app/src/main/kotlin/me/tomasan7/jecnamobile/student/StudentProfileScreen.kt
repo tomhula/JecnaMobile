@@ -209,7 +209,7 @@ private fun StudentInfoTable(student: Student) {
 @Composable
 private fun GuardiansRow(guardians: List<Guardian>) {
     Row(Modifier.height(IntrinsicSize.Min)) {
-        // Reuse the left label cell styling
+
         Surface(
             tonalElevation = 20.dp,
             shape = RoundedCornerShape(4.dp),
