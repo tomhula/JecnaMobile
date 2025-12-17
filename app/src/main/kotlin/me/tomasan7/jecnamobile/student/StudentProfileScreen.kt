@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -196,7 +198,7 @@ private fun StudentInfoTable(student: Student) {
         }
 
         if (student.guardians.isNotEmpty()) {
-            InfoRow(R.string.profile_guardians, formatGuardians(student.guardians))
+            GuardiansRow(student.guardians)
         }
 
         student.sposaVariableSymbol?.let {
@@ -209,21 +211,70 @@ private fun StudentInfoTable(student: Student) {
     }
 }
 
-private fun formatGuardians(guardians: List<Guardian>): String =
-    guardians.joinToString(separator = "; ") { guardian ->
-        buildString {
-            append(guardian.name)
-            guardian.phoneNumber?.let {
-                append(" (")
-                append(it)
-                append(")")
+@Composable
+private fun GuardiansRow(guardians: List<Guardian>) {
+    Row(Modifier.height(IntrinsicSize.Min)) {
+        // Reuse the left label cell styling
+        Surface(
+            tonalElevation = 20.dp,
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(150.dp)
+        ) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
+            ) {
+                Text(
+                    text = stringResource(R.string.profile_guardians),
+                    modifier = Modifier.padding(16.dp)
+                )
             }
-            guardian.email?.let {
-                append(" - ")
-                append(it)
+        }
+
+        HorizontalSpacer(size = 5.dp)
+
+        Surface(
+            tonalElevation = 4.dp,
+            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                guardians.forEach { guardian ->
+                    GuardianSubRow(guardian)
+                }
             }
         }
     }
+}
+
+@Composable
+private fun GuardianSubRow(guardian: Guardian) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+
+        Text(text = guardian.name, style = MaterialTheme.typography.bodyMedium)
+
+        val contactParts = buildList {
+            guardian.phoneNumber?.takeIf { it.isNotBlank() }?.let { add(it) }
+            guardian.email?.takeIf { it.isNotBlank() }?.let { add(it) }
+        }
+
+        if (contactParts.isNotEmpty()) {
+            Spacer(modifier = Modifier.size(2.dp))
+            Text(
+                text = contactParts.joinToString(" • "),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
 
 @Composable
 private fun InfoRow(
