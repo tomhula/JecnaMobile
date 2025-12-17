@@ -132,7 +132,7 @@ fun MainScreen(
                             textAlign = TextAlign.Center,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 28.dp)
+                                .padding(horizontal = 28.dp).padding(vertical = 10.dp)
                         )
                     }
                 }

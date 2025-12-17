@@ -29,6 +29,7 @@ import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.student.StudentRepository
+import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,10 +52,25 @@ class MainScreenViewModel @Inject constructor(
         getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
 
+    private val loginBroadcastReceiver = createBroadcastReceiver { _, _ ->
+        // Once we know login succeeded, (re)load the student
+        loadCurrentStudent()
+    }
+
     init
     {
         registerNetworkAvailabilityListener()
-        loadCurrentStudent()
+
+        // If we already have a successful login, we can load the student immediately.
+        if (jecnaClient.lastSuccessfulLoginTime != null)
+            loadCurrentStudent()
+
+        // Otherwise, wait for a successful login broadcast.
+        appContext.registerReceiver(
+            loginBroadcastReceiver,
+            android.content.IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
+            Context.RECEIVER_NOT_EXPORTED
+        )
     }
 
     private fun loadCurrentStudent() {
@@ -170,6 +186,7 @@ class MainScreenViewModel @Inject constructor(
     private fun unregisterNetworkAvailabilityListener()
     {
         connectivityManager.unregisterNetworkCallback(networkAvailabilityCallback)
+        appContext.unregisterReceiver(loginBroadcastReceiver)
     }
 
     override fun onCleared() = unregisterNetworkAvailabilityListener()
