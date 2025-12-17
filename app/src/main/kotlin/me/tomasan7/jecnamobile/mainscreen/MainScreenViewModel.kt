@@ -23,10 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.student.Student
 import io.github.tomhula.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
+import me.tomasan7.jecnamobile.student.StudentRepository
 import javax.inject.Inject
 
 @HiltViewModel
@@ -35,10 +37,14 @@ class MainScreenViewModel @Inject constructor(
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
-    private val canteenClient: CanteenClient
+    private val canteenClient: CanteenClient,
+    private val studentRepository: StudentRepository
 ) : ViewModel()
 {
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
+        private set
+
+    var currentStudent: Student? by mutableStateOf(null)
         private set
 
     private val connectivityManager =
@@ -48,6 +54,17 @@ class MainScreenViewModel @Inject constructor(
     init
     {
         registerNetworkAvailabilityListener()
+        loadCurrentStudent()
+    }
+
+    private fun loadCurrentStudent() {
+        viewModelScope.launch {
+            try {
+                currentStudent = studentRepository.getCurrentStudent()
+            } catch (_: Exception) {
+                // Ignore, will just not show welcome text
+            }
+        }
     }
 
     fun tryLogin()

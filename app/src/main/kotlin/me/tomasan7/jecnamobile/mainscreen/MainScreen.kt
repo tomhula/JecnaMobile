@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
@@ -57,6 +58,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
 import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
+import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
 import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
@@ -116,6 +118,25 @@ fun MainScreen(
                     modifier = Modifier.padding(all = 28.dp)
                 )
 
+                viewModel.currentStudent?.let { student ->
+                    val className = student.className ?: ""
+                    if (student.fullName.isNotBlank() && className.isNotBlank()) {
+                        Text(
+                            text = stringResource(
+                                R.string.profile_welcome,
+                                student.fullName,
+                                className
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 28.dp)
+                        )
+                    }
+                }
+
                 destinationItems.forEach { item ->
                     val selected = item === selectedItem
                     DestinationItem(
@@ -155,6 +176,10 @@ fun MainScreen(
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     SidebarButtonsRow(
+                        onProfileClick = {
+                            scope.launch { drawerState.close() }
+                            subScreensNavigator.navigate(StudentProfileScreenDestination)
+                        },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(SettingsScreenDestination)
@@ -203,6 +228,7 @@ private fun RequestNotificationsPermission()
 
 @Composable
 private fun SidebarButtonsRow(
+    onProfileClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 )
@@ -211,6 +237,10 @@ private fun SidebarButtonsRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
+        IconButton(onClick = onProfileClick) {
+            Icon(Icons.Outlined.AccountCircle, contentDescription = null)
+        }
+
         IconButton(onClick = onSettingsClick) {
             Icon(Icons.Outlined.Settings, contentDescription = null)
         }
