@@ -71,7 +71,7 @@ private fun LockerContent(locker: Locker) {
         LockerField(label = stringResource(R.string.locker_number), value = locker.number)
         LockerField(label = stringResource(R.string.locker_description), value = locker.description)
         LockerField(label = stringResource(R.string.locker_assigned_from), value = locker.assignedFrom.toString())
-        LockerField(label = stringResource(R.string.locker_assigned_until), value = locker.assignedUntil.toString())
+        LockerField(label = stringResource(R.string.locker_assigned_until), value = locker.assignedUntil?.toString() ?: "součastnosti")
     }
 }
 
