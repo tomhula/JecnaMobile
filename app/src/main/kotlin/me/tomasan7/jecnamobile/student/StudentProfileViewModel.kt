@@ -39,15 +39,6 @@ class StudentProfileViewModel @Inject constructor(
     var uiState by mutableStateOf(StudentProfileState())
         private set
 
-    var locker: Locker? by mutableStateOf(null)
-        private set
-    var lockerLoading: Boolean by mutableStateOf(false)
-        private set
-    var lockerError: String? by mutableStateOf(null)
-        private set
-    var showLockerDialog: Boolean by mutableStateOf(false)
-        private set
-
     private var loadStudentJob: Job? = null
 
     private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
@@ -87,10 +78,6 @@ class StudentProfileViewModel @Inject constructor(
                 loadLocker()
             } catch (e: UnresolvedAddressException) {
                 changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()))
-            } catch (e: ParseException) {
-                changeUiState(
-                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_teacher))
-                )
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
@@ -103,36 +90,37 @@ class StudentProfileViewModel @Inject constructor(
     }
 
     fun loadLocker() {
-        if (lockerLoading || locker != null)
+        if (uiState.lockerLoading || uiState.locker != null)
             return
 
-        lockerLoading = true
-        lockerError = null
+        changeUiState(lockerLoading = true, lockerError = null)
 
         viewModelScope.launch {
             try {
-                locker = repository.getLocker()
+                val locker = repository.getLocker()
                 if (locker == null) {
-                    lockerError = appContext.getString(R.string.locker_load_error)
+                    changeUiState(locker = null, lockerError = appContext.getString(R.string.locker_load_error))
+                } else {
+                    changeUiState(locker = locker, lockerError = null)
                 }
             } catch (e: Exception) {
-                lockerError = appContext.getString(R.string.locker_load_error)
+                changeUiState(lockerError = appContext.getString(R.string.locker_load_error))
                 e.printStackTrace()
             } finally {
-                lockerLoading = false
+                changeUiState(lockerLoading = false)
             }
         }
     }
 
     fun onLockerClick() {
-        showLockerDialog = true
-        if (locker == null && !lockerLoading) {
+        changeUiState(showLockerDialog = true)
+        if (uiState.locker == null && !uiState.lockerLoading) {
             loadLocker()
         }
     }
 
     fun onLockerDialogDismiss() {
-        showLockerDialog = false
+        changeUiState(showLockerDialog = false)
     }
 
     private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)
@@ -144,12 +132,20 @@ class StudentProfileViewModel @Inject constructor(
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         student: io.github.tomhula.jecnaapi.data.student.Student? = uiState.student,
-        snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent
+        snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
+        locker: Locker? = uiState.locker,
+        lockerLoading: Boolean = uiState.lockerLoading,
+        lockerError: String? = uiState.lockerError,
+        showLockerDialog: Boolean = uiState.showLockerDialog
     ) {
         uiState = StudentProfileState(
             loading = loading,
             student = student,
-            snackBarMessageEvent = snackBarMessageEvent
+            snackBarMessageEvent = snackBarMessageEvent,
+            locker = locker,
+            lockerLoading = lockerLoading,
+            lockerError = lockerError,
+            showLockerDialog = showLockerDialog
         )
     }
 
