@@ -116,25 +116,6 @@ fun MainScreen(
                     modifier = Modifier.padding(all = 28.dp)
                 )
 
-                val name = viewModel.currentStudentName ?: ""
-                val className = viewModel.currentStudentClassName ?: ""
-                if (name.isNotBlank() && className.isNotBlank()) {
-                    Text(
-                        text = stringResource(
-                            R.string.profile_welcome,
-                            name,
-                            className
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 28.dp)
-                            .padding(vertical = 10.dp)
-                    )
-                }
-
                 destinationItems.forEach { item ->
                     val selected = item === selectedItem
                     DestinationItem(
