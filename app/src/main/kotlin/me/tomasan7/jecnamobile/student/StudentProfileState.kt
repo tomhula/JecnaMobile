@@ -13,5 +13,4 @@ data class StudentProfileState(
     val locker: Locker? = null,
     val lockerLoading: Boolean = false,
     val lockerError: String? = null,
-    val showLockerDialog: Boolean = false
 )

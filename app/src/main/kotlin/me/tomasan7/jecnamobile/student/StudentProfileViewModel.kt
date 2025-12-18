@@ -112,17 +112,6 @@ class StudentProfileViewModel @Inject constructor(
         }
     }
 
-    fun onLockerClick() {
-        changeUiState(showLockerDialog = true)
-        if (uiState.locker == null && !uiState.lockerLoading) {
-            loadLocker()
-        }
-    }
-
-    fun onLockerDialogDismiss() {
-        changeUiState(showLockerDialog = false)
-    }
-
     private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)
 
     fun reload() = if (!uiState.loading) loadReal() else Unit
@@ -136,7 +125,6 @@ class StudentProfileViewModel @Inject constructor(
         locker: Locker? = uiState.locker,
         lockerLoading: Boolean = uiState.lockerLoading,
         lockerError: String? = uiState.lockerError,
-        showLockerDialog: Boolean = uiState.showLockerDialog
     ) {
         uiState = StudentProfileState(
             loading = loading,
@@ -145,7 +133,6 @@ class StudentProfileViewModel @Inject constructor(
             locker = locker,
             lockerLoading = lockerLoading,
             lockerError = lockerError,
-            showLockerDialog = showLockerDialog
         )
     }
 

@@ -113,21 +113,11 @@ fun StudentProfileScreen(
                     StudentInfoTable(student)
 
                     LockerSection(
-                        locker = viewModel.locker,
-                        loading = viewModel.lockerLoading,
-                        error = viewModel.lockerError,
-                        onClick = { viewModel.onLockerClick() }
+                        locker = uiState.locker,
+                        loading = uiState.lockerLoading,
+                        error = uiState.lockerError
                     )
                 }
-            }
-
-            if (viewModel.showLockerDialog) {
-                LockerDialogContent(
-                    locker = viewModel.locker,
-                    loading = viewModel.lockerLoading,
-                    error = viewModel.lockerError,
-                    onDismiss = { viewModel.onLockerDialogDismiss() }
-                )
             }
         }
     }
@@ -355,7 +345,6 @@ private fun LockerSection(
     locker: Locker?,
     loading: Boolean,
     error: String?,
-    onClick: () -> Unit
 ) {
     val label = stringResource(R.string.locker_title)
     val value = when {
@@ -368,52 +357,5 @@ private fun LockerSection(
     DialogRow(
         label = label,
         value = value,
-        onClick = onClick
-    )
-}
-
-@Composable
-private fun LockerDialogContent(
-    locker: Locker?,
-    loading: Boolean,
-    error: String?,
-    onDismiss: () -> Unit
-) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(text = stringResource(R.string.locker_title))
-        },
-        text = {
-            when {
-                loading -> {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        CircularProgressIndicator()
-                    }
-                }
-                error != null -> {
-                    Text(text = error)
-                }
-                locker != null -> {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(text = stringResource(R.string.locker_number) + ": \n" + locker.number)
-                        Text(text = stringResource(R.string.locker_description) + ": \n" + locker.description)
-                        Text(text = stringResource(R.string.locker_assigned_from) + ": \n" + locker.assignedFrom.toString())
-                        Text(text = stringResource(R.string.locker_assigned_until) + ": \n" + (locker.assignedUntil?.toString() ?: "současnosti"))
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(text = stringResource(R.string.close))
-            }
-        }
     )
 }
