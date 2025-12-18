@@ -340,10 +340,18 @@ private fun LockerSection(
     error: String?,
 ) {
     val label = stringResource(R.string.locker_title)
+
     val value = when {
         loading -> stringResource(R.string.loading)
         error != null -> error
-        locker != null -> locker.number
+        locker != null -> locker.run {
+            """
+            ${stringResource(R.string.locker_number)}: $number
+            ${stringResource(R.string.locker_description)}: $description
+            ${stringResource(R.string.locker_assigned_from)}: $assignedFrom
+            ${stringResource(R.string.locker_assigned_until)}: ${assignedUntil ?: "součastnosti"}
+            """.trimIndent()
+        }
         else -> stringResource(R.string.locker_load_error)
     }
 
@@ -352,3 +360,4 @@ private fun LockerSection(
         value = value,
     )
 }
+
