@@ -176,7 +176,7 @@ private fun StudentInfoTable(student: Student, locker: Locker?) {
         }
 
         student.birthDate?.let {
-            InfoRow(R.string.profile_birth_date, it.toString().format(DATE_FORMATTER))
+            InfoRow(R.string.profile_birth_date, it.format(DATE_FORMATTER))
         }
 
         student.birthPlace?.let {
@@ -416,7 +416,7 @@ private fun LockerRow(
                 ) {
                     SelectionContainer {
                         Text(
-                            text = locker.assignedFrom.toString().format(DATE_FORMATTER),
+                            text = locker.assignedFrom?.format(DATE_FORMATTER) ?: "současnosti",
                             modifier = Modifier.padding(16.dp)
                         )
                     }
