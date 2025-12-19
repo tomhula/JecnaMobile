@@ -114,7 +114,7 @@ fun StudentProfileScreen(
                         imageRequestCreator = viewModel::createImageRequest
                     )
 
-                    StudentInfoTable(student, uiState.locker)
+                    StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
                 }
             }
         }
@@ -162,7 +162,7 @@ private fun StudentPicture(
 }
 
 @Composable
-private fun StudentInfoTable(student: Student, locker: Locker?) {
+private fun StudentInfoTable(student: Student, locker: Locker?, lockerLoading: Boolean = false, lockerError: String? = null) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
@@ -216,8 +216,17 @@ private fun StudentInfoTable(student: Student, locker: Locker?) {
             InfoRow(R.string.profile_sposa_account, it)
         }
         
-        locker?.let {
-            LockerRow(locker)
+
+        when {
+            lockerLoading -> {
+                InfoRow(stringResource(R.string.locker_title), stringResource(R.string.locker_loading))
+            }
+            lockerError != null && lockerError.isNotBlank() -> {
+                InfoRow(stringResource(R.string.locker_title), lockerError)
+            }
+            locker != null -> {
+                LockerRow(locker)
+            }
         }
     }
 }
