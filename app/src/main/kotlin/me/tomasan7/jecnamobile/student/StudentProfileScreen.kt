@@ -84,12 +84,6 @@ fun StudentProfileScreen(
     }
 
 
-    if (uiState.lockerError?.isNotBlank() == true) {
-        LaunchedEffect(snackbarHostState, uiState.lockerError) {
-            snackbarHostState.showSnackbar(uiState.lockerError)
-        }
-    }
-
     Scaffold(
         topBar = { TopAppBar(stringResource(R.string.profile_title), navigator::popBackStack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
