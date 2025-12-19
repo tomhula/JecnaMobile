@@ -224,7 +224,13 @@ private fun StudentInfoTable(student: Student, locker: Locker?) {
 
 @Composable
 private fun GuardiansRow(guardians: List<Guardian>) {
-    Row(Modifier.height(IntrinsicSize.Min)) {
+    Row(
+        modifier = Modifier
+            .height(IntrinsicSize.Min)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
+    ) {
 
         Surface(
             tonalElevation = 20.dp,
@@ -255,7 +261,8 @@ private fun GuardiansRow(guardians: List<Guardian>) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 guardians.forEach { guardian ->
                     GuardianSubRow(guardian)
@@ -267,9 +274,16 @@ private fun GuardiansRow(guardians: List<Guardian>) {
 
 @Composable
 private fun GuardianSubRow(guardian: Guardian) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
 
-        Text(text = guardian.name, style = MaterialTheme.typography.bodyMedium)
+        Text(
+            text = guardian.name,
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.align(Alignment.CenterHorizontally)
+        )
 
         val contactParts = buildList {
             guardian.phoneNumber?.takeIf { it.isNotBlank() }?.let { add(it) }
@@ -281,7 +295,8 @@ private fun GuardianSubRow(guardian: Guardian) {
             Text(
                 text = contactParts.joinToString(" • "),
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
         }
     }
