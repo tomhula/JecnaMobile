@@ -281,5 +281,6 @@
     <string name="locker_assigned_until">Přidělena do</string>
     <string name="locker_load_error">Nepodařilo se načíst informace o skříňce</string>
     <string name="locker_loading">Načítání..</string>
+    <string name="present">součastnosti</string>
 
 </resources>

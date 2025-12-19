@@ -348,7 +348,7 @@ private fun LockerRow(
             valueContent = {
                 SelectionContainer {
                     Text(
-                        text = locker.assignedFrom?.format(DATE_FORMATTER) ?: "současnosti",
+                        text = locker.assignedFrom?.format(DATE_FORMATTER) ?: stringResource(R.string.present),
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -361,7 +361,7 @@ private fun LockerRow(
             valueContent = {
                 SelectionContainer {
                     Text(
-                        text = locker.assignedUntil?.format(DATE_FORMATTER) ?: "současnosti",
+                        text = locker.assignedUntil?.format(DATE_FORMATTER) ?: stringResource(R.string.present),
                         modifier = Modifier.padding(16.dp)
                     )
                 }
