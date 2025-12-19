@@ -38,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
@@ -282,185 +281,119 @@ private fun GuardianSubRow(guardian: Guardian) {
 
 @Composable
 private fun LockerRow(
-    locker: Locker,
-    modifier: Modifier = Modifier
+    locker: Locker
+) {
+    val separatorColor = MaterialTheme.colorScheme.surface.manipulate(0f)
+    fun Modifier.separator() = this.drawWithContent {
+        drawContent()
+        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+    }
+    Column {
+        LabelValueRow(
+            label = stringResource(R.string.locker_title),
+            valueContent = {
+                SelectionContainer {
+                    Text(
+                        text = locker.number,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            },
+            labelShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
+            valueShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
+            labelDrawWithContent = { separator() },
+            valueDrawWithContent = { separator() }
+        )
+        LabelValueRow(
+            label = stringResource(R.string.locker_description),
+            valueContent = {
+                SelectionContainer {
+                    Text(
+                        text = locker.description,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            },
+            labelDrawWithContent = { separator() },
+            valueDrawWithContent = { separator() }
+        )
+        LabelValueRow(
+            label = stringResource(R.string.locker_assigned_from),
+            valueContent = {
+                SelectionContainer {
+                    Text(
+                        text = locker.assignedFrom?.format(DATE_FORMATTER) ?: "současnosti",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            },
+            labelDrawWithContent = { separator() },
+            valueDrawWithContent = { separator() }
+        )
+        LabelValueRow(
+            label = stringResource(R.string.locker_assigned_until),
+            valueContent = {
+                SelectionContainer {
+                    Text(
+                        text = locker.assignedUntil?.format(DATE_FORMATTER) ?: "současnosti",
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            },
+            labelShape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
+            valueShape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp)
+        )
+    }
+}
+
+@Composable
+private fun LabelValueRow(
+    label: String,
+    valueContent: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    labelShape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    valueShape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    valueModifier: Modifier = Modifier,
+    labelTonalElevation: Int = 20,
+    valueTonalElevation: Int = 4,
+    labelDrawWithContent: (Modifier.() -> Modifier)? = null,
+    valueDrawWithContent: (Modifier.() -> Modifier)? = null
 )
 {
-    val separatorColor = MaterialTheme.colorScheme.surface.manipulate(0f)
-    
-    Column {
-        Row(modifier.height(IntrinsicSize.Min)) {
-            Surface(
-                tonalElevation = 20.dp,
-                shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .drawWithContent { 
-                        drawContent()
-                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                    }
-                    .width(150.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.locker_title),
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
-            HorizontalSpacer(size = 5.dp)
-
-            Surface(
-                tonalElevation = 4.dp,
-                shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
-                modifier = Modifier.fillMaxSize().drawWithContent {
-                    drawContent()
-                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    SelectionContainer {
-                        Text(
-                            text = locker.number,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+    Row(Modifier.height(IntrinsicSize.Min)) {
+        var labelMod = modifier.fillMaxHeight().width(150.dp)
+        if (labelDrawWithContent != null) labelMod = labelMod.labelDrawWithContent()
+        Surface(
+            tonalElevation = labelTonalElevation.dp,
+            shape = labelShape,
+            modifier = labelMod
+        )
+        {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
+            )
+            {
+                Text(
+                    text = label,
+                    modifier = Modifier.padding(16.dp)
+                )
             }
         }
-        Row(modifier.height(IntrinsicSize.Min)) {
-            Surface(
-                tonalElevation = 20.dp,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(150.dp)
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                    }
+        HorizontalSpacer(size = 5.dp)
+        var valueMod = valueModifier.fillMaxSize()
+        if (valueDrawWithContent != null) valueMod = valueMod.valueDrawWithContent()
+        Surface(
+            tonalElevation = valueTonalElevation.dp,
+            shape = valueShape,
+            modifier = valueMod
+        )
+        {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.CenterStart
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.locker_description),
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
-            HorizontalSpacer(size = 5.dp)
-
-            Surface(
-                tonalElevation = 4.dp,
-                modifier = Modifier.fillMaxSize().drawWithContent {
-                    drawContent()
-                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    SelectionContainer {
-                        Text(
-                            text = locker.description,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
-            }
-        }
-        Row(modifier.height(IntrinsicSize.Min)) {
-            Surface(
-                tonalElevation = 20.dp,
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(150.dp)
-                    .drawWithContent {
-                        drawContent()
-                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                    }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.locker_assigned_from),
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
-            HorizontalSpacer(size = 5.dp)
-
-            Surface(
-                tonalElevation = 4.dp,
-                modifier = Modifier.fillMaxSize().drawWithContent {
-                    drawContent()
-                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
-                }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    SelectionContainer {
-                        Text(
-                            text = locker.assignedFrom?.format(DATE_FORMATTER) ?: "současnosti",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
-            }
-        }
-        Row(modifier.height(IntrinsicSize.Min)) {
-
-            Surface(
-                tonalElevation = 20.dp,
-                shape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(150.dp)
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    Text(
-                        text = stringResource(R.string.locker_assigned_until),
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-
-            HorizontalSpacer(size = 5.dp)
-
-            Surface(
-                tonalElevation = 4.dp,
-                shape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.CenterStart
-                ) {
-                    SelectionContainer {
-                        Text(
-                            text = locker.assignedUntil?.format(DATE_FORMATTER) ?: "současnosti",
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                }
+                valueContent()
             }
         }
     }
@@ -471,54 +404,31 @@ private fun InfoRow(
     label: String,
     value: String,
     modifier: Modifier = Modifier
-) {
-    Row(modifier.height(IntrinsicSize.Min)) {
-        Surface(
-            tonalElevation = 20.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(150.dp)
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
+)
+{
+    LabelValueRow(
+        label = label,
+        valueContent = {
+            SelectionContainer {
                 Text(
-                    text = label,
+                    text = value,
                     modifier = Modifier.padding(16.dp)
                 )
             }
-        }
-
-        HorizontalSpacer(size = 5.dp)
-
-        Surface(
-            tonalElevation = 4.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                SelectionContainer {
-                    Text(
-                        text = value,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
+        },
+        modifier = modifier
+    )
 }
 
 @Composable
 private fun InfoRow(
-    @StringRes
-    label: Int,
+    @StringRes label: Int,
     value: String,
-    modifier: Modifier = Modifier,
-) = InfoRow(stringResource(label), value, modifier)
+    modifier: Modifier = Modifier
+)
+{
+    InfoRow(label = stringResource(label), value = value, modifier = modifier)
+}
+
 
 private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.y")
