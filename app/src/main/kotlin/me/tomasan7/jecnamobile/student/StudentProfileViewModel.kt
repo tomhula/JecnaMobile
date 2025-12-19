@@ -34,7 +34,8 @@ class StudentProfileViewModel @Inject constructor(
     private val appContext: Context,
     private val jecnaClient: JecnaClient,
     private val repository: StudentProfileRepository
-) : ViewModel() {
+) : ViewModel()
+{
 
     var uiState by mutableStateOf(StudentProfileState())
         private set
@@ -125,7 +126,8 @@ class StudentProfileViewModel @Inject constructor(
         locker: Locker? = uiState.locker,
         lockerLoading: Boolean = uiState.lockerLoading,
         lockerError: String? = uiState.lockerError,
-    ) {
+    )
+    {
         uiState = StudentProfileState(
             loading = loading,
             student = student,

@@ -5,7 +5,8 @@ import javax.inject.Inject
 
 class StudentProfileRepositoryImpl @Inject constructor(
     private val jecnaClient: JecnaClient
-) : StudentProfileRepository {
+) : StudentProfileRepository
+{
     override suspend fun getCurrentStudent() = jecnaClient.getStudentProfile()
     override suspend fun getLocker() = jecnaClient.getLocker()
 }
