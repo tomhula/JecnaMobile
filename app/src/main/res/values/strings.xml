@@ -276,7 +276,6 @@
 
     <!-- ##### Locker Dialog ##### -->
     <string name="locker_title">Šatní skříňka</string>
-    <string name="locker_number">Číslo</string>
     <string name="locker_description">Umístění</string>
     <string name="locker_assigned_from">Přidělena od</string>
     <string name="locker_assigned_until">Přidělena do</string>
