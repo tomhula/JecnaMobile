@@ -38,6 +38,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -52,8 +55,8 @@ import io.github.tomhula.jecnaapi.data.student.Locker
 import io.github.tomhula.jecnaapi.data.student.Student
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.DialogRow
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
+import me.tomasan7.jecnamobile.util.manipulate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -103,13 +106,7 @@ fun StudentProfileScreen(
                         imageRequestCreator = viewModel::createImageRequest
                     )
 
-                    StudentInfoTable(student)
-
-                    LockerSection(
-                        locker = uiState.locker,
-                        loading = uiState.lockerLoading,
-                        error = uiState.lockerError
-                    )
+                    StudentInfoTable(student, uiState.locker)
                 }
             }
         }
@@ -157,7 +154,7 @@ private fun StudentPicture(
 }
 
 @Composable
-private fun StudentInfoTable(student: Student) {
+private fun StudentInfoTable(student: Student, locker: Locker?) {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
@@ -209,6 +206,10 @@ private fun StudentInfoTable(student: Student) {
 
         student.sposaBankAccount?.let {
             InfoRow(R.string.profile_sposa_account, it)
+        }
+        
+        locker?.let {
+            LockerRow(locker)
         }
     }
 }
@@ -279,6 +280,192 @@ private fun GuardianSubRow(guardian: Guardian) {
 }
 
 @Composable
+private fun LockerRow(
+    locker: Locker,
+    modifier: Modifier = Modifier
+)
+{
+    val separatorColor = MaterialTheme.colorScheme.surface.manipulate(0f)
+    
+    Column {
+        Row(modifier.height(IntrinsicSize.Min)) {
+            Surface(
+                tonalElevation = 20.dp,
+                shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .drawWithContent { 
+                        drawContent()
+                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                    }
+                    .width(150.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.locker_title),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            HorizontalSpacer(size = 5.dp)
+
+            Surface(
+                tonalElevation = 4.dp,
+                shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
+                modifier = Modifier.fillMaxSize().drawWithContent {
+                    drawContent()
+                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = locker.number,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+        Row(modifier.height(IntrinsicSize.Min)) {
+            Surface(
+                tonalElevation = 20.dp,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(150.dp)
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                    }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.locker_description),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            HorizontalSpacer(size = 5.dp)
+
+            Surface(
+                tonalElevation = 4.dp,
+                modifier = Modifier.fillMaxSize().drawWithContent {
+                    drawContent()
+                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = locker.description,
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+        Row(modifier.height(IntrinsicSize.Min)) {
+            Surface(
+                tonalElevation = 20.dp,
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(150.dp)
+                    .drawWithContent {
+                        drawContent()
+                        drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                    }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.locker_assigned_from),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            HorizontalSpacer(size = 5.dp)
+
+            Surface(
+                tonalElevation = 4.dp,
+                modifier = Modifier.fillMaxSize().drawWithContent {
+                    drawContent()
+                    drawLine(color = separatorColor, Offset(0f, size.height), Offset(size.width, size.height))
+                }
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = locker.assignedFrom.toString(),
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+        Row(modifier.height(IntrinsicSize.Min)) {
+
+            Surface(
+                tonalElevation = 20.dp,
+                shape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .width(150.dp)
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    Text(
+                        text = stringResource(R.string.locker_assigned_until),
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+            }
+
+            HorizontalSpacer(size = 5.dp)
+
+            Surface(
+                tonalElevation = 4.dp,
+                shape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    SelectionContainer {
+                        Text(
+                            text = locker.assignedUntil.toString(),
+                            modifier = Modifier.padding(16.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 private fun InfoRow(
     label: String,
     value: String,
@@ -330,34 +517,5 @@ private fun InfoRow(
     @StringRes
     label: Int,
     value: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) = InfoRow(stringResource(label), value, modifier)
-
-@Composable
-private fun LockerSection(
-    locker: Locker?,
-    loading: Boolean,
-    error: String?,
-) {
-    val label = stringResource(R.string.locker_title)
-
-    val value = when {
-        loading -> stringResource(R.string.loading)
-        error != null -> error
-        locker != null -> locker.run {
-            """
-            ${stringResource(R.string.locker_number)}: $number
-            ${stringResource(R.string.locker_description)}: $description
-            ${stringResource(R.string.locker_assigned_from)}: $assignedFrom
-            ${stringResource(R.string.locker_assigned_until)}: ${assignedUntil ?: "součastnosti"}
-            """.trimIndent()
-        }
-        else -> stringResource(R.string.locker_load_error)
-    }
-
-    DialogRow(
-        label = label,
-        value = value,
-    )
-}
-
