@@ -57,6 +57,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.util.manipulate
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -175,7 +176,7 @@ private fun StudentInfoTable(student: Student, locker: Locker?) {
         }
 
         student.birthDate?.let {
-            InfoRow(R.string.profile_birth_date, it.toString())
+            InfoRow(R.string.profile_birth_date, it.toString().format(DATE_FORMATTER))
         }
 
         student.birthPlace?.let {
@@ -193,7 +194,7 @@ private fun StudentInfoTable(student: Student, locker: Locker?) {
         }
 
         student.age?.let {
-            InfoRow(R.string.profile_age, it.toString() + " let")
+            InfoRow(R.string.profile_age, "$it let")
         }
 
         if (student.guardians.isNotEmpty()) {
@@ -415,7 +416,7 @@ private fun LockerRow(
                 ) {
                     SelectionContainer {
                         Text(
-                            text = locker.assignedFrom.toString(),
+                            text = locker.assignedFrom.toString().format(DATE_FORMATTER),
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -455,7 +456,7 @@ private fun LockerRow(
                 ) {
                     SelectionContainer {
                         Text(
-                            text = locker.assignedUntil.toString(),
+                            text = locker.assignedUntil?.format(DATE_FORMATTER) ?: "současnosti",
                             modifier = Modifier.padding(16.dp)
                         )
                     }
@@ -519,3 +520,5 @@ private fun InfoRow(
     value: String,
     modifier: Modifier = Modifier,
 ) = InfoRow(stringResource(label), value, modifier)
+
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.y")
