@@ -194,7 +194,7 @@ private fun GuardiansTableField(guardians: List<Guardian>)
         label = stringResource(R.string.profile_guardians),
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+            verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
             modifier = Modifier.padding(16.dp)
         ) {
             guardians.forEach { guardian ->
