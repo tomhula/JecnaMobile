@@ -223,7 +223,7 @@ private fun StudentInfoTable(
             lockerLoading -> {
                 InfoRow(stringResource(R.string.profile_locker_title), stringResource(R.string.profile_locker_loading))
             }
-            lockerError != null && lockerError.isNotBlank() -> {
+            lockerError != null -> {
                 InfoRow(stringResource(R.string.profile_locker_title), lockerError)
             }
             locker != null -> {
