@@ -457,4 +457,4 @@ private fun InfoRow(
 }
 
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.y")
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy")
