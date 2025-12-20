@@ -316,9 +316,7 @@ private fun GuardianSubRow(guardian: Guardian)
 }
 
 @Composable
-private fun LockerRow(
-    locker: Locker
-) 
+private fun LockerRow(locker: Locker)
 {
     val separatorColor = MaterialTheme.colorScheme.surface.manipulate(0f)
     fun Modifier.separator() = this.drawWithContent {
