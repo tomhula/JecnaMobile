@@ -40,8 +40,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -334,8 +336,7 @@ private fun LockerRow(locker: Locker)
                     )
                 }
             },
-            labelShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
-            valueShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
+            roundedTop = true,
             labelDrawWithContent = { separator() },
             valueDrawWithContent = { separator() }
         )
@@ -375,8 +376,7 @@ private fun LockerRow(locker: Locker)
                     )
                 }
             },
-            labelShape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp),
-            valueShape = RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp)
+            roundedBottom = true
         )
     }
 }
@@ -386,21 +386,29 @@ private fun LabelValueRow(
     label: String,
     valueContent: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    labelShape: RoundedCornerShape = RoundedCornerShape(4.dp),
-    valueShape: RoundedCornerShape = RoundedCornerShape(4.dp),
+    roundedTop: Boolean = false,
+    roundedBottom: Boolean = false,
     valueModifier: Modifier = Modifier,
-    labelTonalElevation: Int = 20,
-    valueTonalElevation: Int = 4,
     labelDrawWithContent: (Modifier.() -> Modifier)? = null,
     valueDrawWithContent: (Modifier.() -> Modifier)? = null
 )
 {
+    var shapeTopCornerRadius = 0.dp
+    var shapeBottomCornerRadius = 0.dp
+
+    if (roundedBottom)
+        shapeBottomCornerRadius = 4.dp
+    else if (roundedTop)
+        shapeTopCornerRadius = 4.dp
+
+    val shape = RoundedCornerShape(topStart = shapeTopCornerRadius, topEnd = shapeTopCornerRadius, bottomStart = shapeBottomCornerRadius, bottomEnd = shapeBottomCornerRadius)
+
     Row(Modifier.height(IntrinsicSize.Min)) {
         var labelMod = modifier.fillMaxHeight().width(150.dp)
         if (labelDrawWithContent != null) labelMod = labelMod.labelDrawWithContent()
         Surface(
-            tonalElevation = labelTonalElevation.dp,
-            shape = labelShape,
+            tonalElevation = 20.dp,
+            shape = shape,
             modifier = labelMod
         )
         {
@@ -419,8 +427,8 @@ private fun LabelValueRow(
         var valueMod = valueModifier.fillMaxSize()
         if (valueDrawWithContent != null) valueMod = valueMod.valueDrawWithContent()
         Surface(
-            tonalElevation = valueTonalElevation.dp,
-            shape = valueShape,
+            tonalElevation = 4.dp,
+            shape = shape,
             modifier = valueMod
         )
         {
