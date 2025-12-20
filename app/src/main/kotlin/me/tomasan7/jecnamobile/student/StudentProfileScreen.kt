@@ -83,7 +83,6 @@ fun StudentProfileScreen(
         snackbarHostState.showSnackbar(it)
     }
 
-
     Scaffold(
         topBar = { TopAppBar(stringResource(R.string.profile_title), navigator::popBackStack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
