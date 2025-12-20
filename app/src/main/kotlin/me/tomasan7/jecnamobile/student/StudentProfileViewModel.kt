@@ -15,7 +15,6 @@ import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.student.Locker
-import io.github.tomhula.jecnaapi.parser.ParseException
 import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import io.ktor.http.Cookie
 import io.ktor.util.network.UnresolvedAddressException
@@ -105,14 +104,14 @@ class StudentProfileViewModel @Inject constructor(
             {
                 val locker = repository.getLocker()
                 if (locker == null) {
-                    changeUiState(locker = null, lockerError = appContext.getString(R.string.locker_load_error))
+                    changeUiState(locker = null, lockerError = appContext.getString(R.string.profile_locker_load_error))
                 } else {
                     changeUiState(locker = locker, lockerError = null)
                 }
             }
             catch (e: Exception)
             {
-                changeUiState(lockerError = appContext.getString(R.string.locker_load_error))
+                changeUiState(lockerError = appContext.getString(R.string.profile_locker_load_error))
                 e.printStackTrace()
             }
             finally

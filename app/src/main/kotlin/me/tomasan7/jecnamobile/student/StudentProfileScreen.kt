@@ -34,7 +34,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -223,10 +222,10 @@ private fun StudentInfoTable(
         when 
         {
             lockerLoading -> {
-                InfoRow(stringResource(R.string.locker_title), stringResource(R.string.locker_loading))
+                InfoRow(stringResource(R.string.profile_locker_title), stringResource(R.string.profile_locker_loading))
             }
             lockerError != null && lockerError.isNotBlank() -> {
-                InfoRow(stringResource(R.string.locker_title), lockerError)
+                InfoRow(stringResource(R.string.profile_locker_title), lockerError)
             }
             locker != null -> {
                 LockerRow(locker)
@@ -329,7 +328,7 @@ private fun LockerRow(
     }
     Column {
         LabelValueRow(
-            label = stringResource(R.string.locker_title),
+            label = stringResource(R.string.profile_locker_title),
             valueContent = {
                 SelectionContainer {
                     Text(
@@ -344,7 +343,7 @@ private fun LockerRow(
             valueDrawWithContent = { separator() }
         )
         LabelValueRow(
-            label = stringResource(R.string.locker_description),
+            label = stringResource(R.string.profile_locker_description),
             valueContent = {
                 SelectionContainer {
                     Text(
@@ -357,11 +356,11 @@ private fun LockerRow(
             valueDrawWithContent = { separator() }
         )
         LabelValueRow(
-            label = stringResource(R.string.locker_assigned_from),
+            label = stringResource(R.string.profile_locker_assigned_from),
             valueContent = {
                 SelectionContainer {
                     Text(
-                        text = locker.assignedFrom?.format(DATE_FORMATTER) ?: stringResource(R.string.present),
+                        text = locker.assignedFrom?.format(DATE_FORMATTER) ?: stringResource(R.string.profile_locker_present),
                         modifier = Modifier.padding(16.dp)
                     )
                 }
@@ -370,11 +369,11 @@ private fun LockerRow(
             valueDrawWithContent = { separator() }
         )
         LabelValueRow(
-            label = stringResource(R.string.locker_assigned_until),
+            label = stringResource(R.string.profile_locker_assigned_until),
             valueContent = {
                 SelectionContainer {
                     Text(
-                        text = locker.assignedUntil?.format(DATE_FORMATTER) ?: stringResource(R.string.present),
+                        text = locker.assignedUntil?.format(DATE_FORMATTER) ?: stringResource(R.string.profile_locker_present),
                         modifier = Modifier.padding(16.dp)
                     )
                 }

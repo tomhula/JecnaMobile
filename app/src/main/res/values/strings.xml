@@ -273,12 +273,12 @@
     <string name="profile_sposa_account">SPOSA bankovní účet</string>
     <string name="profile_load_error">Nepodařilo se načíst profil studenta</string>
     <string name="profile_full_name">Celé jméno</string>
-    <string name="locker_title">Šatní skříňka</string>
-    <string name="locker_description">Umístění</string>
-    <string name="locker_assigned_from">Přidělena od</string>
-    <string name="locker_assigned_until">Přidělena do</string>
-    <string name="locker_load_error">Nepodařilo se načíst informace o skříňce</string>
-    <string name="locker_loading">Načítání..</string>
-    <string name="present">součastnosti</string>
+    <string name="profile_locker_title">Šatní skříňka</string>
+    <string name="profile_locker_description">Umístění</string>
+    <string name="profile_locker_assigned_from">Přidělena od</string>
+    <string name="profile_locker_assigned_until">Přidělena do</string>
+    <string name="profile_locker_load_error">Nepodařilo se načíst informace o skříňce</string>
+    <string name="profile_locker_loading">Načítání..</string>
+    <string name="profile_locker_present">součastnosti</string>
 
 </resources>
