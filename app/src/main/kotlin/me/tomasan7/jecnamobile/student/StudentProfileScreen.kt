@@ -293,7 +293,6 @@ private fun TextTableField(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.CenterStart
         ) {
-
             SelectionContainer {
                 Text(
                     text = value ?: "",
