@@ -65,7 +65,8 @@ import java.time.format.DateTimeFormatter
 fun StudentProfileScreen(
     viewModel: StudentProfileViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
-) {
+)
+{
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
         onDispose {
@@ -120,7 +121,8 @@ fun StudentProfileScreen(
 private fun TopAppBar(
     title: String,
     onBackClick: () -> Unit = {},
-) {
+)
+{
     CenterAlignedTopAppBar(
         title = { Text(title) },
         navigationIcon = {
@@ -136,7 +138,8 @@ private fun StudentPicture(
     picturePath: String?,
     modifier: Modifier = Modifier,
     imageRequestCreator: (String) -> ImageRequest
-) {
+)
+{
     Surface(
         modifier = modifier,
         tonalElevation = 4.dp,
@@ -156,7 +159,13 @@ private fun StudentPicture(
 }
 
 @Composable
-private fun StudentInfoTable(student: Student, locker: Locker?, lockerLoading: Boolean = false, lockerError: String? = null) {
+private fun StudentInfoTable(
+    student: Student,
+    locker: Locker?,
+    lockerLoading: Boolean = false,
+    lockerError: String? = null
+)
+{
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier.fillMaxWidth()
@@ -211,7 +220,8 @@ private fun StudentInfoTable(student: Student, locker: Locker?, lockerLoading: B
         }
         
 
-        when {
+        when 
+        {
             lockerLoading -> {
                 InfoRow(stringResource(R.string.locker_title), stringResource(R.string.locker_loading))
             }
@@ -226,7 +236,8 @@ private fun StudentInfoTable(student: Student, locker: Locker?, lockerLoading: B
 }
 
 @Composable
-private fun GuardiansRow(guardians: List<Guardian>) {
+private fun GuardiansRow(guardians: List<Guardian>)
+{
     Row(
         modifier = Modifier
             .height(IntrinsicSize.Min)
@@ -276,7 +287,8 @@ private fun GuardiansRow(guardians: List<Guardian>) {
 }
 
 @Composable
-private fun GuardianSubRow(guardian: Guardian) {
+private fun GuardianSubRow(guardian: Guardian)
+{
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -308,7 +320,8 @@ private fun GuardianSubRow(guardian: Guardian) {
 @Composable
 private fun LockerRow(
     locker: Locker
-) {
+) 
+{
     val separatorColor = MaterialTheme.colorScheme.surface.manipulate(0f)
     fun Modifier.separator() = this.drawWithContent {
         drawContent()

@@ -52,7 +52,8 @@ class StudentProfileViewModel @Inject constructor(
         }
     }
 
-    fun enteredComposition() {
+    fun enteredComposition()
+    {
         if (jecnaClient.autoLoginAuth != null)
             loadReal()
 
@@ -63,12 +64,14 @@ class StudentProfileViewModel @Inject constructor(
         )
     }
 
-    fun leftComposition() {
+    fun leftComposition()
+    {
         loadStudentJob?.cancel()
         appContext.unregisterReceiver(loginBroadcastReceiver)
     }
 
-    private fun loadReal() {
+    private fun loadReal()
+    {
         loadStudentJob?.cancel()
 
         changeUiState(loading = true)
@@ -90,24 +93,30 @@ class StudentProfileViewModel @Inject constructor(
         }
     }
 
-    fun loadLocker() {
+    fun loadLocker()
+    {
         if (uiState.lockerLoading || uiState.locker != null)
             return
 
         changeUiState(lockerLoading = true, lockerError = null)
 
         viewModelScope.launch {
-            try {
+            try
+            {
                 val locker = repository.getLocker()
                 if (locker == null) {
                     changeUiState(locker = null, lockerError = appContext.getString(R.string.locker_load_error))
                 } else {
                     changeUiState(locker = locker, lockerError = null)
                 }
-            } catch (e: Exception) {
+            }
+            catch (e: Exception)
+            {
                 changeUiState(lockerError = appContext.getString(R.string.locker_load_error))
                 e.printStackTrace()
-            } finally {
+            }
+            finally
+            {
                 changeUiState(lockerLoading = false)
             }
         }

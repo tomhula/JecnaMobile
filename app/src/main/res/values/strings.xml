@@ -273,8 +273,6 @@
     <string name="profile_sposa_account">SPOSA bankovní účet</string>
     <string name="profile_load_error">Nepodařilo se načíst profil studenta</string>
     <string name="profile_full_name">Celé jméno</string>
-
-    <!-- ##### Locker Dialog ##### -->
     <string name="locker_title">Šatní skříňka</string>
     <string name="locker_description">Umístění</string>
     <string name="locker_assigned_from">Přidělena od</string>
