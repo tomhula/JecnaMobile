@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -175,8 +176,7 @@ private fun StudentInfoTable(
         TextTableField(R.string.profile_private_email, student.privateMail)
         TextTableField(R.string.profile_age, student.age?.let { stringResource(R.string.profile_age_value, it) })
         GuardiansTableField(student.guardians)
-        TextTableField(R.string.profile_sposa_vs, student.sposaVariableSymbol)
-        TextTableField(R.string.profile_sposa_account, student.sposaBankAccount)
+        SposaFieldGroup(student.sposaVariableSymbol, student.sposaBankAccount)
 
         when
         {
@@ -230,11 +230,18 @@ private fun GuardiansValue(guardian: Guardian)
 }
 
 @Composable
-private fun LockerFieldGroup(locker: Locker)
+private fun FieldGroup(fields: @Composable ColumnScope.() -> Unit)
 {
     Column(
-        verticalArrangement = Arrangement.spacedBy(1.dp)
-    ) {
+        verticalArrangement = Arrangement.spacedBy(1.dp),
+        content = fields
+    )
+}
+
+@Composable
+private fun LockerFieldGroup(locker: Locker)
+{
+    FieldGroup {
         TextTableField(
             label = R.string.profile_locker_title,
             value = locker.number,
@@ -252,6 +259,23 @@ private fun LockerFieldGroup(locker: Locker)
             label = R.string.profile_locker_assigned_until,
             value = locker.assignedUntil?.format(DATE_FORMATTER) ?: stringResource(R.string.profile_locker_present),
             roundedBottom = true
+        )
+    }
+}
+
+@Composable
+private fun SposaFieldGroup(sposaVariableSymbol: String?, sposaBankAccount: String?)
+{
+    FieldGroup {
+        TextTableField(
+            label = R.string.profile_sposa_vs,
+            value = sposaVariableSymbol,
+            roundedTop = true,
+        )
+        TextTableField(
+            label = R.string.profile_sposa_account,
+            value = sposaBankAccount,
+            roundedBottom = true,
         )
     }
 }
