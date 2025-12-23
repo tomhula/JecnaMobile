@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
+import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.DrawerValue
@@ -36,8 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavArgs
-import androidx.navigation.NavArgument
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -57,6 +56,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
 import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
+import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
 import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
@@ -155,6 +155,10 @@ fun MainScreen(
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     SidebarButtonsRow(
+                        onProfileClick = {
+                            scope.launch { drawerState.close() }
+                            subScreensNavigator.navigate(StudentProfileScreenDestination)
+                        },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
                             subScreensNavigator.navigate(SettingsScreenDestination)
@@ -203,6 +207,7 @@ private fun RequestNotificationsPermission()
 
 @Composable
 private fun SidebarButtonsRow(
+    onProfileClick: () -> Unit,
     onSettingsClick: () -> Unit,
     onLogoutClick: () -> Unit
 )
@@ -211,6 +216,10 @@ private fun SidebarButtonsRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.End
     ) {
+        IconButton(onClick = onProfileClick) {
+            Icon(Icons.Outlined.AccountCircle, contentDescription = null)
+        }
+
         IconButton(onClick = onSettingsClick) {
             Icon(Icons.Outlined.Settings, contentDescription = null)
         }

@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Ječná Mobile</string>
+    <string name="welcome_text">Vítejte v aplikaci Ječná Mobile</string>
 
     <!-- ##### Login Screen ##### -->
 
@@ -253,5 +254,32 @@
     <string name="error_load">Při načítání došlo k chybě.</string>
     <string name="error_load_credit">Při načítání kreditu došlo k chybě.</string>
     <string name="error_download">Při stahování souboru došlo k chybě.</string>
+
+    <!-- ##### Profile Screen ##### -->
+
+    <string name="profile_title">Můj profil</string>
+    <string name="profile_name">Jméno</string>
+    <string name="profile_class">Třída</string>
+    <string name="profile_class_groups">Skupiny</string>
+    <string name="profile_class_registry_id">Číslo v třídním výkazu</string>
+    <string name="profile_birth_date">Datum narození</string>
+    <string name="profile_birth_place">Místo narození</string>
+    <string name="profile_permanent_address">Trvalé bydliště</string>
+    <string name="profile_school_mail">Školní e-mail</string>
+    <string name="profile_private_email">Soukromý e-mail</string>
+    <string name="profile_age">Věk</string>
+    <string name="profile_age_value">%d let</string>
+    <string name="profile_guardians">Zákonní zástupci</string>
+    <string name="profile_sposa_vs">SPOSA variabilní symbol</string>
+    <string name="profile_sposa_account">SPOSA bankovní účet</string>
+    <string name="profile_load_error">Nepodařilo se načíst profil studenta</string>
+    <string name="profile_full_name">Celé jméno</string>
+    <string name="profile_locker_title">Šatní skříňka</string>
+    <string name="profile_locker_description">Umístění</string>
+    <string name="profile_locker_assigned_from">Přidělena od</string>
+    <string name="profile_locker_assigned_until">Přidělena do</string>
+    <string name="profile_locker_load_error">Nepodařilo se načíst informace o skříňce</string>
+    <string name="profile_locker_loading">Načítání..</string>
+    <string name="profile_locker_present">součastnosti</string>
 
 </resources>

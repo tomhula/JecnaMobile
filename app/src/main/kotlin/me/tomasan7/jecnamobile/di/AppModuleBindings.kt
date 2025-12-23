@@ -15,6 +15,8 @@ import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.SharedPreferencesAuthRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.news.NewsRepositoryImpl
+import me.tomasan7.jecnamobile.student.StudentProfileRepository
+import me.tomasan7.jecnamobile.student.StudentProfileRepositoryImpl
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.teachers.TeachersRepositoryImpl
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
@@ -55,4 +57,8 @@ interface AppModuleBindings {
     @Binds
     @Singleton
     fun bindAbsencesRepository(repository: AbsencesRepositoryImpl): AbsencesRepository
+
+    @Binds
+    @Singleton
+    fun bindStudentProfileRepository(repository: StudentProfileRepositoryImpl): StudentProfileRepository
 }
