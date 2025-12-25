@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.classrooms.classroom
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -83,14 +84,18 @@ fun ClassroomScreen(
                 if (uiState.classroom != null)
                 {
                     val classroom = uiState.classroom
-                    
+
                     classroom.floor?.let {
                         InfoRow(R.string.classroom_floor, classroom.floor!!)
                     }
                     classroom.manager?.let {
-                        InfoRow(R.string.classroom_manager, classroom.manager!!.fullName)
+                        InfoRow(R.string.classroom_manager, classroom.manager!!.fullName, Modifier.clickable(onClick = {
+                            navigator.navigate(
+                                TeacherScreenDestination(classroom.manager!!)
+                            )
+                        }))
                     }
-                        
+
                     classroom.mainClassroomOf?.let {
                         InfoRow(R.string.classroom_main_class, it)
                     }
@@ -101,8 +106,9 @@ fun ClassroomScreen(
                             text = stringResource(R.string.teacher_title_timetable),
                             style = MaterialTheme.typography.titleLarge
                         )
-                        Timetable(timetable = classroom.timetable!!,
-                            onTeacherClick = { navigator.navigate(TeacherScreenDestination(it))})
+                        Timetable(
+                            timetable = classroom.timetable!!,
+                            onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) })
                     }
                 }
             }

@@ -134,7 +134,7 @@ private fun FilterFieldRow(
     ) {
         OutlinedTextField(
             modifier = Modifier,
-            placeholder = { Text(stringResource(R.string.teachers_search_placeholder)) },
+            placeholder = { Text(stringResource(R.string.classrooms_search_placeholder)) },
             label = { Text(stringResource(R.string.teachers_search)) },
             value = value,
             singleLine = true,

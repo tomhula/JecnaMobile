@@ -291,6 +291,7 @@
 
     <string name="classroom_floor">Patro</string>
     <string name="classroom_manager">Správce</string>
-    <string name="classroom_main_class">Kmenová třída</string>
+    <string name="classroom_main_class">Kmenová učebna</string>
+    <string name="classrooms_search_placeholder">Název učebny/číslo</string>
 
 </resources>
