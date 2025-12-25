@@ -1,34 +1,13 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import me.tomasan7.jecnamobile.ui.component.InfoRow
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -48,7 +27,6 @@ import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -207,59 +185,3 @@ private fun InfoTable(teacher: Teacher)
         }
     }
 }
-
-@Composable
-private fun InfoRow(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-)
-{
-    Row(modifier.height(IntrinsicSize.Min)) {
-        Surface(
-            tonalElevation = 20.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(150.dp)
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = label,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
-        HorizontalSpacer(size = 5.dp)
-
-        Surface(
-            tonalElevation = 4.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                SelectionContainer {
-                    Text(
-                        text = value,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun InfoRow(
-    @StringRes
-    label: Int,
-    value: String,
-    modifier: Modifier = Modifier
-) = InfoRow(stringResource(label), value, modifier)
