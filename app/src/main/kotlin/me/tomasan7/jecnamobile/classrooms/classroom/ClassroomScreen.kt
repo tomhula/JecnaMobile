@@ -30,6 +30,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
@@ -100,7 +101,8 @@ fun ClassroomScreen(
                             text = stringResource(R.string.teacher_title_timetable),
                             style = MaterialTheme.typography.titleLarge
                         )
-                        Timetable(timetable = classroom.timetable!!, onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) })
+                        Timetable(timetable = classroom.timetable!!,
+                            onTeacherClick = { navigator.navigate(TeacherScreenDestination(it))})
                     }
                 }
             }
