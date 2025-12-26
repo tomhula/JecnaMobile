@@ -14,6 +14,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.data.canteen.DayMenu
+import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
+import io.github.tomhula.jecnaapi.data.canteen.ItemDescription
+import io.github.tomhula.jecnaapi.data.canteen.MenuItem
+import io.github.tomhula.jecnaapi.parser.ParseException
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -22,13 +29,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import io.github.tomhula.jecnaapi.CanteenClient
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.canteen.DayMenu
-import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
-import io.github.tomhula.jecnaapi.data.canteen.ItemDescription
-import io.github.tomhula.jecnaapi.data.canteen.MenuItem
-import io.github.tomhula.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
@@ -44,6 +44,7 @@ class CanteenViewModel @Inject constructor(
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val canteenClient: CanteenClient,
+    private val jecnaClient: JecnaClient,
 ) : ViewModel()
 {
     var uiState by mutableStateOf(CanteenState())
@@ -74,7 +75,7 @@ class CanteenViewModel @Inject constructor(
         loginjob = viewModelScope.launch {
             changeUiState(loading = true)
 
-            val auth = authRepository.get()
+            val auth = authRepository.get() ?: jecnaClient.autoLoginAuth
 
             if (auth != null)
                 try

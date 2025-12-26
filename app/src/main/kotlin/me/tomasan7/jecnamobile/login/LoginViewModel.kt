@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.ktor.util.network.UnresolvedAddressException
 import io.ktor.utils.io.CancellationException
 import kotlinx.coroutines.launch
+import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.web.Auth
 import javax.inject.Inject
@@ -16,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
-    private val jecnaClient: JecnaClient
+    private val jecnaClient: JecnaClient,
+    private val canteenClient: CanteenClient
 ) : ViewModel()
 {
     var uiState by mutableStateOf(LoginState())
@@ -97,6 +99,15 @@ class LoginViewModel @Inject constructor(
             {
                 //changeUiState(loginEvent = triggered)
                 changeUiState(loginResult = LoginResult.Success)
+
+                try
+                {
+                    canteenClient.login(auth)
+                }
+                catch (e: Exception)
+                {
+                    e.printStackTrace()
+                }
 
                 if (uiState.rememberAuth)
                     saveAuth(auth)

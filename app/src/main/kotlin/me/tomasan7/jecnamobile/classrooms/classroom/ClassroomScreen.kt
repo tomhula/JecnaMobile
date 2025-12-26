@@ -103,7 +103,7 @@ fun ClassroomScreen(
                     classroom.timetable?.let()
                     {
                         Text(
-                            text = stringResource(R.string.teacher_title_timetable),
+                            text = stringResource(R.string.classroom_title_timetable),
                             style = MaterialTheme.typography.titleLarge
                         )
                         Timetable(
