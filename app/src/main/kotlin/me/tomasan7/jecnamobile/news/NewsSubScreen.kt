@@ -58,6 +58,10 @@ import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.article.Article
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.Padding
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
@@ -357,4 +361,9 @@ private fun ImageDialogSideButton(
     }
 }
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d. MMMM")
+private val DATE_FORMATTER = LocalDate.Format {
+    day(padding = Padding.NONE)
+    chars(". ")
+    // TODO: Localise
+    monthName(MonthNames.ENGLISH_FULL)
+}

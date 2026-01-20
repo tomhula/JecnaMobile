@@ -2,10 +2,10 @@ package me.tomasan7.jecnamobile.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.Month
 import me.tomasan7.jecnamobile.R
 import java.text.Normalizer
-import java.time.DayOfWeek
-import java.time.Month
 import java.util.TreeMap
 
 @Composable

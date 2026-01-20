@@ -2,7 +2,7 @@ package me.tomasan7.jecnamobile.attendances
 
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import java.time.Month
+import kotlinx.datetime.Month
 
 interface AttendancesRepository
 {

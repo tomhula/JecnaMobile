@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.absence
 
 import androidx.annotation.PluralsRes
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +20,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.absence.AbsenceInfo
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
@@ -28,8 +31,6 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.util.getWeekDayName
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -284,4 +285,9 @@ private fun NoAbsencesMessage(
     }
 }
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.")
+private val DATE_FORMATTER = LocalDate.Format { 
+    day(padding = Padding.NONE)
+    char('.')
+    monthNumber(padding = Padding.NONE)
+    char('.')
+}

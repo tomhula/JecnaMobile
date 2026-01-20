@@ -29,17 +29,23 @@ import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import okhttp3.Headers
 import java.io.File
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.util.now
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlin.time.Clock
 
 
 @HiltViewModel
@@ -202,7 +208,7 @@ class NewsViewModel @Inject constructor(
 
                 changeUiState(
                     newsPage = realNews,
-                    lastUpdateTimestamp = Instant.now(),
+                    lastUpdateTimestamp = Clock.System.now(),
                     isCache = false
                 )
             }
@@ -233,18 +239,19 @@ class NewsViewModel @Inject constructor(
     private fun getOfflineMessage(): String?
     {
         val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = LocalDateTime.ofInstant(cacheTimestamp, ZoneId.systemDefault())
-        val localDate = localDateTime.toLocalDate()
+        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDate = localDateTime.date
+        
+        val today = LocalDate.now()
 
-        return if (localDate == LocalDate.now())
+        return if (localDate == today)
         {
-            val time = localDateTime.toLocalTime()
-            val timeStr = time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
+            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
             appContext.getString(R.string.showing_offline_data_time, timeStr)
         }
         else
         {
-            val dateStr = localDateTime.format(OFFLINE_MESSAGE_DATE_FORMATTER)
+            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
             appContext.getString(R.string.showing_offline_data_date, dateStr)
         }
     }
@@ -272,7 +279,15 @@ class NewsViewModel @Inject constructor(
 
     companion object
     {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-        val OFFLINE_MESSAGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M.")
+        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
+            hour(padding = Padding.ZERO)
+            char(':')
+            minute(padding = Padding.ZERO)
+        }
+        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
+            day(padding = Padding.NONE)
+            chars(". ")
+            monthNumber(padding = Padding.NONE)
+        }
     }
 }

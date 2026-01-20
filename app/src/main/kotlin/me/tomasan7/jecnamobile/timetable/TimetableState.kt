@@ -5,7 +5,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import java.time.Instant
+import kotlin.time.Instant
 
 @Immutable
 data class TimetableState(

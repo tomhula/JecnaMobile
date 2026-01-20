@@ -29,11 +29,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.util.now
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,18 +53,19 @@ fun OfflineDataIndicator(
     val tooltipState = rememberTooltipState()
     val scope = rememberCoroutineScope()
     val text = run {
-        val localDateTime = LocalDateTime.ofInstant(lastUpdateTimestamp, ZoneId.systemDefault())
-        val localDate = localDateTime.toLocalDate()
+        val localDateTime = lastUpdateTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDate = localDateTime.date
+        
+        val today = LocalDate.now()
 
-        if (localDate == LocalDate.now())
+        if (localDate == today)
         {
-            val time = localDateTime.toLocalTime()
-            val timeStr = time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
+            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
             stringResource(R.string.showing_offline_data_time_description, timeStr)
         }
         else
         {
-            val dateStr = localDateTime.format(OFFLINE_MESSAGE_DATE_FORMATTER)
+            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
             stringResource(R.string.showing_offline_data_date_description, dateStr)
         }
     }
@@ -109,5 +114,13 @@ fun OfflineDataIndicator(
     }
 }
 
-private val OFFLINE_MESSAGE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-private val OFFLINE_MESSAGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M.")
+val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
+    hour(padding = Padding.ZERO)
+    char(':')
+    minute(padding = Padding.ZERO)
+}
+val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
+    day(padding = Padding.NONE)
+    chars(". ")
+    monthNumber(padding = Padding.NONE)
+}

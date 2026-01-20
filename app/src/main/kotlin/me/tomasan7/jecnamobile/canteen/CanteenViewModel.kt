@@ -23,19 +23,20 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.CanteenClient
-import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
-import io.github.tomhula.jecnaapi.data.canteen.ItemDescription
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
 import io.github.tomhula.jecnaapi.parser.ParseException
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.settingsDataStore
-import java.time.DayOfWeek
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
+import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
 
 @HiltViewModel
@@ -326,7 +327,7 @@ class CanteenViewModel @Inject constructor(
 
     private fun getDays(): List<LocalDate>
     {
-        val result = generateSequence(LocalDate.now()) { it.plusDays(1) }
+        val result = generateSequence(LocalDate.now()) { it.plus(1, DateTimeUnit.DAY) }
             .filterNot { it.isWeekend() }
             .take(DAYS_TO_LOAD_COUNT)
             .toList()
@@ -354,7 +355,7 @@ class CanteenViewModel @Inject constructor(
 
         val currentLatestDay = uiState.menuSorted.lastOrNull()?.day ?: LocalDate.now()
 
-        val newDays = generateSequence(currentLatestDay.plusDays(1)) { it.plusDays(1) }
+        val newDays = generateSequence(currentLatestDay.plus(1, DateTimeUnit.DAY)) { it.plus(1, DateTimeUnit.DAY) }
             .filterNot { it.isWeekend() }
             .take(count)
             .toList()

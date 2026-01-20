@@ -5,9 +5,10 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import java.time.Instant
-import java.time.LocalDate
-import java.time.Month
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.Month
+import me.tomasan7.jecnamobile.util.now
+import kotlin.time.Instant
 
 @Immutable
 data class AttendancesState(

@@ -1,11 +1,11 @@
 package me.tomasan7.jecnamobile.util
 
 import kotlinx.serialization.Serializable
-import java.time.Instant
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Serializable
 data class CachedData<T>(
     val data: T,
-    @Serializable(with = InstantSerializer::class)
-    val timestamp: Instant = Instant.now()
+    val timestamp: Instant = Clock.System.now()
 )

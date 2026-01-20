@@ -4,7 +4,7 @@ import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.article.NewsPage
-import java.time.Instant
+import kotlin.time.Instant
 
 @Immutable
 data class NewsState(

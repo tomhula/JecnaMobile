@@ -10,7 +10,7 @@ import io.github.tomhula.jecnaapi.data.notification.Notification
 import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
-import java.time.Instant
+import kotlin.time.Instant
 import java.util.Locale
 
 @Immutable

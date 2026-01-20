@@ -2,26 +2,28 @@ package me.tomasan7.jecnamobile.grades
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.produceState
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
-import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.notification.Notification
-import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.DialogContainer
 import me.tomasan7.jecnamobile.ui.component.DialogRow
-import java.time.format.DateTimeFormatter
 
-private val jecnaDateFormatter = DateTimeFormatter.ofPattern("d.M.yyyy")
+private val jecnaDateFormatter = LocalDate.Format {
+    day(padding = Padding.NONE)
+    char('.')
+    monthNumber(padding = Padding.NONE)
+    year()
+}
 
 @Composable
 fun NotificationDialog(

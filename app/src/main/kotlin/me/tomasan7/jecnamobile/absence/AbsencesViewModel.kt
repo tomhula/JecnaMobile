@@ -13,23 +13,26 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.absence.AbsenceInfo
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import io.github.tomhula.jecnaapi.util.schoolYear
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
+import kotlinx.datetime.toLocalDateTime
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
+import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 
 @HiltViewModel
@@ -89,7 +92,7 @@ class AbsencesViewModel @Inject constructor(
                 
                 changeUiState(
                     absencesPage = realAbsences,
-                    lastUpdateTimestamp = Instant.now(),
+                    lastUpdateTimestamp = Clock.System.now(),
                     isCache = false
                 )
             }
@@ -164,18 +167,19 @@ class AbsencesViewModel @Inject constructor(
     private fun getOfflineMessage(): String?
     {
         val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = LocalDateTime.ofInstant(cacheTimestamp, ZoneId.systemDefault())
-        val localDate = localDateTime.toLocalDate()
+        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDate = localDateTime.date
 
-        return if (localDate == LocalDate.now())
+        val today = LocalDate.now()
+        
+        return if (localDate == today)
         {
-            val time = localDateTime.toLocalTime()
-            val timeStr = time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
+            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
             appContext.getString(R.string.showing_offline_data_time, timeStr)
         }
         else
         {
-            val dateStr = localDateTime.format(OFFLINE_MESSAGE_DATE_FORMATTER)
+            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
             appContext.getString(R.string.showing_offline_data_date, dateStr)
         }
     }
@@ -187,7 +191,15 @@ class AbsencesViewModel @Inject constructor(
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
     companion object
     {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-        val OFFLINE_MESSAGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M.")
+        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format { 
+            hour(padding = Padding.ZERO)
+            char(':')
+            minute(padding = Padding.ZERO)
+        } 
+        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format { 
+            day(padding = Padding.NONE)
+            chars(". ")
+            monthNumber(padding = Padding.NONE)
+        }
     }
 }
