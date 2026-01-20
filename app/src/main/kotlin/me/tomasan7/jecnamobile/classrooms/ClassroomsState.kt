@@ -17,9 +17,9 @@ data class ClassroomsState(
 )
 {
     val classroomReferencesSorted = classroomsPage?.classroomRefs
-        ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.title })
+        ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.name })
 
     val classroomReferencesSortedFiltered = classroomReferencesSorted
-        ?.filter { it.title.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.symbol.contains(filterFieldValue, ignoreCase = true) }
+        ?.filter { it.name.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.roomCode.contains(filterFieldValue, ignoreCase = true) }
 }
 

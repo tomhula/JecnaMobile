@@ -31,7 +31,6 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
@@ -64,7 +63,7 @@ fun ClassroomScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(classroomReference.title, navigator::popBackStack) },
+        topBar = { TopAppBar(classroomReference.name, navigator::popBackStack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(
@@ -81,9 +80,9 @@ fun ClassroomScreen(
                     .padding(30.dp)
                     .verticalScroll(rememberScrollState())
             ) {
-                if (uiState.classroom != null)
+                if (uiState.room != null)
                 {
-                    val classroom = uiState.classroom
+                    val classroom = uiState.room
 
                     classroom.floor?.let {
                         InfoRow(R.string.classroom_floor, classroom.floor!!)
@@ -96,7 +95,7 @@ fun ClassroomScreen(
                         }))
                     }
 
-                    classroom.mainClassroomOf?.let {
+                    classroom.homeroomOf?.let {
                         InfoRow(R.string.classroom_main_class, it)
                     }
 

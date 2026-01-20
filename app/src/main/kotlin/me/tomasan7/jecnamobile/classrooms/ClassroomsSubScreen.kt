@@ -164,7 +164,7 @@ fun ClassroomCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(buildHighlightedAnnotatedString(text = classroomReference.title, searchQuery = searchQuery))
+            Text(buildHighlightedAnnotatedString(text = classroomReference.name, searchQuery = searchQuery))
         }
     }
 }

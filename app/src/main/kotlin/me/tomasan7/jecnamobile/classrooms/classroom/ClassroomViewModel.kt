@@ -85,7 +85,7 @@ class ClassroomViewModel @Inject constructor(
         loadClassroomJob = viewModelScope.launch {
             try
             {
-                changeUiState(classroom = repository.getClassroom(classroomReference!!))
+                changeUiState(room = repository.getClassroom(classroomReference!!))
             }
             catch (e: UnresolvedAddressException)
             {
@@ -121,13 +121,13 @@ class ClassroomViewModel @Inject constructor(
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        classroom: io.github.tomhula.jecnaapi.data.classroom.Classroom? = uiState.classroom,
+        room: io.github.tomhula.jecnaapi.data.classroom.Room? = uiState.room,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )
     {
         uiState = uiState.copy(
             loading = loading,
-            classroom = classroom,
+            room = room,
             snackBarMessageEvent = snackBarMessageEvent
         )
     }
