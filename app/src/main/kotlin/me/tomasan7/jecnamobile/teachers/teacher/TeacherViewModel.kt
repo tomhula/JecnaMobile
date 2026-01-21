@@ -24,8 +24,10 @@ import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.parser.ParseException
+import io.ktor.http.HttpHeaders
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
@@ -33,103 +35,43 @@ import javax.inject.Inject
 @HiltViewModel
 class TeacherViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
+    appContext: Context,
     private val jecnaClient: JecnaClient,
     private val repository: TeachersRepository
-) : ViewModel()
+) : SubScreenViewModel<Teacher>(appContext)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_teacher)
+    override val loadErrorMessage = appContext.getString(R.string.teacher_load_error)
+    
     private lateinit var teacherReference: TeacherReference
 
     var uiState by mutableStateOf(TeacherState())
         private set
 
-    private var loadTeacherJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadTeacherJob == null || loadTeacherJob!!.isCompleted)
-        {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
-    }
-
-    fun enteredComposition(teacherReference: TeacherReference)
+    /** Must be called before [enteredComposition]. */
+    fun setTeacherReference(teacherReference: TeacherReference)
     {
         this.teacherReference = teacherReference
-
-        if (this::teacherReference.isInitialized && (jecnaClient as WebJecnaClient).autoLoginAuth != null)
-            loadReal()
-
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
     }
 
-    fun leftComposition()
-    {
-        loadTeacherJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
+    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override fun setDataUiState(data: Teacher) = changeUiState(teacher = data)
+    override suspend fun fetchRealData() = repository.getTeacher(teacherReference)
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     fun createImageRequest(path: String) = ImageRequest.Builder(appContext).apply {
         data(WebJecnaClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
-        setHeader("Cookie", sessionCookie.toHeaderString())
-        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
+        setHeader(HttpHeaders.Cookie, sessionCookie.toHeaderString())
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
     }.build()
 
     private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
 
     private fun Cookie.toHeaderString() = "$name=$value"
-
-    private fun loadReal()
-    {
-        loadTeacherJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadTeacherJob = viewModelScope.launch {
-            try
-            {
-                changeUiState(teacher = repository.getTeacher(teacherReference))
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()))
-            }
-            catch (e: ParseException)
-            {
-                changeUiState(
-                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_teacher))
-                )
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.teacher_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-
-    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     fun changeUiState(
         loading: Boolean = uiState.loading,

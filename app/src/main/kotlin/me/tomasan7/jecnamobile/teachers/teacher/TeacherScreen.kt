@@ -61,7 +61,8 @@ fun TeacherScreen(
 )
 {
     DisposableEffect(Unit) {
-        viewModel.enteredComposition(teacherReference)
+        viewModel.setTeacherReference(teacherReference)
+        viewModel.enteredComposition()
         onDispose {
             viewModel.leftComposition()
         }
