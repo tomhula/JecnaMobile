@@ -1,6 +1,7 @@
 package me.tomasan7.jecnamobile
 
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import io.github.tomhula.jecnaapi.util.schoolYear
 import kotlinx.datetime.Month
 import kotlinx.datetime.number
 import kotlinx.serialization.KSerializer
@@ -28,7 +29,7 @@ internal object SchoolYearMonthParamsSerializer : KSerializer<SchoolYearMonthPar
     {
         val string = decoder.decodeString()
         val split = string.split(DIVIDER, limit = 2)
-        return SchoolYearMonthParams(SchoolYear(split[0].toInt()), Month(split[1].toInt()))
+        return SchoolYearMonthParams(split[0].toInt().schoolYear(), Month(split[1].toInt()))
     }
 
     private const val DIVIDER = "|"
