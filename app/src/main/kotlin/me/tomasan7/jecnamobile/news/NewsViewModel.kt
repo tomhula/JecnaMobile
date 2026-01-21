@@ -26,9 +26,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import io.github.tomhula.jecnaapi.data.article.NewsPage
-import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
@@ -38,12 +38,10 @@ import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
 import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.toLocalDateTime
 import me.tomasan7.jecnamobile.util.now
-import java.time.ZoneId
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -82,7 +80,7 @@ class NewsViewModel @Inject constructor(
     init
     {
         loadCache()
-        if (jecnaClient.lastSuccessfulLoginTime != null)
+        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
             loadReal()
     }
 
@@ -107,7 +105,7 @@ class NewsViewModel @Inject constructor(
     }
 
     fun downloadAndOpenArticleFile(articleFile: ArticleFile) = viewModelScope.launch {
-        val url = JecnaWebClient.getUrlForPath(articleFile.downloadPath)
+        val url = WebJecnaClient.getUrlForPath(articleFile.downloadPath)
         val request = DownloadManager.Request(Uri.parse(url)).apply {
             setTitle(articleFile.label)
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
@@ -121,9 +119,9 @@ class NewsViewModel @Inject constructor(
         downloadManager.enqueue(request)
     }
 
-    private fun getSessionCookieBlocking() = runBlocking { jecnaClient.getSessionCookie() }
+    private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
 
-    private suspend fun getSessionCookie() = jecnaClient.getSessionCookie()
+    private suspend fun getSessionCookie() = (jecnaClient as WebJecnaClient).getSessionCookie()
 
     private fun Cookie.toHeaderString() = "$name=$value"
 
@@ -172,11 +170,11 @@ class NewsViewModel @Inject constructor(
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "*/*"
 
     fun createImageRequest(path: String) = ImageRequest.Builder(appContext).apply {
-        data(JecnaWebClient.getUrlForPath(path))
+        data(WebJecnaClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader("Cookie", sessionCookie.toHeaderString())
-        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
     }.build()
 
     private fun loadCache()

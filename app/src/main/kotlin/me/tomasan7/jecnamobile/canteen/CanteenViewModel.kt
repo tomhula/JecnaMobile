@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.WebCanteenClient
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
@@ -56,7 +57,7 @@ class CanteenViewModel @Inject constructor(
 
     private val networkAvailableBroadcastReceiver = createBroadcastReceiver { _, _ ->
         if (!loginInProcess)
-            if (canteenClient.lastSuccessfulLoginAuth == null)
+            if ((canteenClient as WebCanteenClient).lastSuccessfulLoginAuth == null)
                 loginCanteenClient()
             else if (uiState.menu.size < getDays().size)
                 loadMenu()

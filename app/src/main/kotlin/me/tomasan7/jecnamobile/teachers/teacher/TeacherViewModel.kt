@@ -20,15 +20,14 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.parser.ParseException
-import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import okhttp3.Headers
 import javax.inject.Inject
 
 @HiltViewModel
@@ -61,7 +60,7 @@ class TeacherViewModel @Inject constructor(
     {
         this.teacherReference = teacherReference
 
-        if (this::teacherReference.isInitialized && jecnaClient.autoLoginAuth != null)
+        if (this::teacherReference.isInitialized && (jecnaClient as WebJecnaClient).autoLoginAuth != null)
             loadReal()
 
         appContext.registerReceiver(
@@ -78,14 +77,14 @@ class TeacherViewModel @Inject constructor(
     }
 
     fun createImageRequest(path: String) = ImageRequest.Builder(appContext).apply {
-        data(JecnaWebClient.getUrlForPath(path))
+        data(WebJecnaClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader("Cookie", sessionCookie.toHeaderString())
-        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
     }.build()
 
-    private fun getSessionCookieBlocking() = runBlocking { jecnaClient.getSessionCookie() }
+    private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
 
     private fun Cookie.toHeaderString() = "$name=$value"
 
