@@ -18,6 +18,7 @@ import io.github.tomhula.jecnaapi.data.notification.Notification
 import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
+import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.util.settingsDataStore
@@ -33,9 +34,10 @@ import kotlin.time.Clock
 class GradesViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
+    loginStateProvider: LoginStateProvider,
     repository: CacheRepository<GradesPage, SchoolYearHalfParams>,
     private val jecnaClient: JecnaClient
-) : SubScreenCacheViewModel<GradesPage, SchoolYearHalfParams>(appContext, repository)
+) : SubScreenCacheViewModel<GradesPage, SchoolYearHalfParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_grades)
     override val loadErrorMessage = appContext.getString(R.string.grade_load_error)

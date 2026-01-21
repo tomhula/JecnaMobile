@@ -12,6 +12,7 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.*
+import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
@@ -25,8 +26,9 @@ import kotlin.time.Instant
 class AttendancesViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
+    loginStateProvider: LoginStateProvider,
     repository: CacheRepository<AttendancesPage, SchoolYearMonthParams>
-) : SubScreenCacheViewModel<AttendancesPage, SchoolYearMonthParams>(appContext, repository)
+) : SubScreenCacheViewModel<AttendancesPage, SchoolYearMonthParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_attendances)
     override val loadErrorMessage = appContext.getString(R.string.attendances_load_error)

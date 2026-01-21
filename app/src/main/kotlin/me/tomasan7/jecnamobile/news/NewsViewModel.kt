@@ -28,6 +28,7 @@ import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.ktor.http.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.R
@@ -44,9 +45,10 @@ import kotlin.time.Instant
 class NewsViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
+    loginStateProvider: LoginStateProvider,
     repository: CacheRepository<NewsPage, NoParams>,
     private val jecnaClient: JecnaClient
-) : SubScreenCacheViewModel<NewsPage, NoParams>(appContext, repository)
+) : SubScreenCacheViewModel<NewsPage, NoParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_articles)
     override val loadErrorMessage = appContext.getString(R.string.article_load_error)

@@ -11,6 +11,7 @@ import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
@@ -24,8 +25,9 @@ import kotlin.time.Instant
 class AbsencesViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
+    loginStateProvider: LoginStateProvider,
     repository: CacheRepository<AbsencesPage, SchoolYear>
-) : SubScreenCacheViewModel<AbsencesPage, SchoolYear>(appContext, repository) 
+) : SubScreenCacheViewModel<AbsencesPage, SchoolYear>(appContext, loginStateProvider, repository) 
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_absences)
     override val loadErrorMessage = appContext.getString(R.string.absences_load_error)

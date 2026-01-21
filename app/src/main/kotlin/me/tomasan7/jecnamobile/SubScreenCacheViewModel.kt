@@ -19,6 +19,7 @@ import kotlin.time.Instant
 abstract class SubScreenCacheViewModel<T, P>(
     @ApplicationContext
     appContext: Context,
+    protected val loginStateProvider: LoginStateProvider,
     private val cacheRepository: CacheRepository<T, P>
 ) : SubScreenViewModel<T>(appContext)
 {
@@ -42,10 +43,11 @@ abstract class SubScreenCacheViewModel<T, P>(
         registerLoginBroadcastReceiver()
         if (enteredCompositionCounter == 0)
         {
-            loadReal()
+            if (loginStateProvider.afterFirstLogin)
+                loadReal()
             loadCache()
         }
-        else if (isCurrentlyShowingCache())
+        else if (isCurrentlyShowingCache() && loginStateProvider.afterFirstLogin)
             loadReal()
         
         enteredCompositionCounter++
