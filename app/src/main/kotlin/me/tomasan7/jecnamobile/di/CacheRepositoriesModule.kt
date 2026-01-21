@@ -12,11 +12,11 @@ import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.serializer
-import me.tomasan7.jecnamobile.CacheRepository
-import me.tomasan7.jecnamobile.NoParams
-import me.tomasan7.jecnamobile.SchoolYearHalfParams
-import me.tomasan7.jecnamobile.SchoolYearMonthParams
-import me.tomasan7.jecnamobile.SchoolYearPeriodParams
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.NoParams
+import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
+import me.tomasan7.jecnamobile.caching.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.absence.AbsencesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.grades.GradesRepository

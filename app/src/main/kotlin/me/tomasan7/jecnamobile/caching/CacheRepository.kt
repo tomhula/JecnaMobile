@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile
+package me.tomasan7.jecnamobile.caching
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext

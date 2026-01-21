@@ -12,10 +12,10 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.*
-import me.tomasan7.jecnamobile.CacheRepository
+import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.caching.SchoolYearMonthParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import javax.inject.Inject
 import kotlin.time.Clock

@@ -28,8 +28,8 @@ import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.ktor.http.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnamobile.CacheRepository
-import me.tomasan7.jecnamobile.NoParams
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.util.CachedDataNew

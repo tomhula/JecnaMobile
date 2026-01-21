@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile
+package me.tomasan7.jecnamobile.caching
 
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.schoolYear

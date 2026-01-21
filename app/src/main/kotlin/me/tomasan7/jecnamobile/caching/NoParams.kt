@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile
+package me.tomasan7.jecnamobile.caching
 
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable

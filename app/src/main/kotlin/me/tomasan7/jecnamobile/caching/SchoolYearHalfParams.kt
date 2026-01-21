@@ -1,10 +1,8 @@
-package me.tomasan7.jecnamobile
+package me.tomasan7.jecnamobile.caching
 
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import io.github.tomhula.jecnaapi.util.schoolYear
-import kotlinx.datetime.Month
-import kotlinx.datetime.number
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.PrimitiveKind
