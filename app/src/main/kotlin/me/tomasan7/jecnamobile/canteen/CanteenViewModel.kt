@@ -51,7 +51,7 @@ class CanteenViewModel @Inject constructor(
     var uiState by mutableStateOf(CanteenState())
         private set
     private var loadMenuJob: Job? = null
-    private var loginjob: Job? = null
+    private var loginJob: Job? = null
     private var loginInProcess = false
     private val awaitedDays = mutableSetOf<LocalDate>()
 
@@ -73,7 +73,7 @@ class CanteenViewModel @Inject constructor(
     private fun loginCanteenClient()
     {
         loginInProcess = true
-        loginjob = viewModelScope.launch {
+        loginJob = viewModelScope.launch {
             changeUiState(loading = true)
 
             val auth = authRepository.get()
@@ -251,7 +251,7 @@ class CanteenViewModel @Inject constructor(
         loadMenuJob?.cancel()
 
         viewModelScope.launch {
-            loginjob?.join()
+            loginJob?.join()
             val days = getDays()
             awaitedDays.addAll(days)
             loadMenuJob = canteenClient.getMenuAsync(days)
@@ -300,7 +300,7 @@ class CanteenViewModel @Inject constructor(
         changeUiState(loading = true)
 
         viewModelScope.launch {
-            loginjob?.join()
+            loginJob?.join()
 
             try
             {
