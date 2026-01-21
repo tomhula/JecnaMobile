@@ -2,6 +2,7 @@ package me.tomasan7.jecnamobile
 
 import android.content.Context
 import android.content.IntentFilter
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -12,6 +13,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.net.UnknownHostException
+
+const val LOG_TAG = "SubScreenViewModel"
 
 abstract class SubScreenViewModel<T>(
     @param:ApplicationContext
@@ -56,12 +59,14 @@ abstract class SubScreenViewModel<T>(
 
     open fun enteredComposition()
     {
+        Log.d(LOG_TAG, "${this::class.simpleName}: Entered composition")
         registerLoginBroadcastReceiver()
         loadReal()
     }
 
     open fun leftComposition()
     {
+        Log.d(LOG_TAG, "${this::class.simpleName}: Left composition")
         loadRealJob?.cancel()
         unregisterLoginBroadcastReceiver()
     }
