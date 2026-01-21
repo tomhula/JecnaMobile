@@ -38,7 +38,7 @@ class CacheRepository<T, P>(
     {
         Log.d(LOG_TAG, "$key: Reading cache")
         val entireCache = loadEntireCache()
-        return entireCache?.getValue(params)
+        return entireCache?.get(params)
     }
 
     suspend fun getRealAndCache(params: P): T
