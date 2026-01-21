@@ -3,6 +3,8 @@ package me.tomasan7.jecnamobile.caching
 import android.content.Context
 import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.builtins.MapSerializer
@@ -32,7 +34,7 @@ class CacheRepository<T, P>(
     fun isCacheAvailable() = cacheFile.exists()
 
     @OptIn(ExperimentalSerializationApi::class)
-    fun getCache(params: P): CachedDataNew<T, P>?
+    suspend fun getCache(params: P): CachedDataNew<T, P>?
     {
         Log.d(LOG_TAG, "$key: Reading cache")
         val entireCache = loadEntireCache()
@@ -50,44 +52,48 @@ class CacheRepository<T, P>(
     }
     
     @OptIn(ExperimentalSerializationApi::class)
-    private fun loadEntireCache(): Map<P, CachedDataNew<T, P>>?
+    private suspend fun loadEntireCache(): Map<P, CachedDataNew<T, P>>?
     {
         if (!isCacheAvailable())
             return null
-        
-        val inputStream = cacheFile.inputStream()
-        
-        try
-        { 
-            return Json.decodeFromStream(entireCacheSerializer, inputStream)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-            return null
-        }
-        finally
-        {
-            inputStream.close()
+
+        return withContext(Dispatchers.IO) {
+            val inputStream = cacheFile.inputStream()
+
+            try
+            {
+                Json.decodeFromStream(entireCacheSerializer, inputStream)
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+                null
+            }
+            finally
+            {
+                inputStream.close()
+            }
         }
     }
     
     @OptIn(ExperimentalSerializationApi::class)
-    private fun writeEntireCache(entireCache: Map<P, CachedDataNew<T, P>>)
+    private suspend fun writeEntireCache(entireCache: Map<P, CachedDataNew<T, P>>)
     {
-        val outputStream = cacheFile.outputStream()
-        
-        try
-        {
-            Json.encodeToStream(entireCacheSerializer, entireCache, outputStream)
-        }
-        catch (e: Exception)
-        {
-            e.printStackTrace()
-        }
-        finally
-        {
-            outputStream.close()
+        withContext(Dispatchers.IO) {
+            val outputStream = cacheFile.outputStream()
+
+            try
+            {
+                Json.encodeToStream(entireCacheSerializer, entireCache, outputStream)
+            }
+            catch (e: Exception)
+            {
+                e.printStackTrace()
+            }
+            finally
+            {
+                outputStream.close()
+            }   
         }
     }
 }
