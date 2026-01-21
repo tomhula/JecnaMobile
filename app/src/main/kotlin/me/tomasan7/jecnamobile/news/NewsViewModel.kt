@@ -89,12 +89,6 @@ class NewsViewModel @Inject constructor(
         )
     }
 
-    override fun leftComposition()
-    {
-        super.leftComposition()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
-
     fun downloadAndOpenArticleFile(articleFile: ArticleFile) = viewModelScope.launch {
         val url = WebJecnaClient.getUrlForPath(articleFile.downloadPath)
         val request = DownloadManager.Request(Uri.parse(url)).apply {
