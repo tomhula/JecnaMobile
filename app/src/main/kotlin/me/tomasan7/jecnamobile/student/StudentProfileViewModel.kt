@@ -16,7 +16,9 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.student.Locker
+import io.github.tomhula.jecnaapi.data.student.Student
 import io.ktor.http.Cookie
+import io.ktor.http.HttpHeaders
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -24,72 +26,33 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
 
 @HiltViewModel
 class StudentProfileViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
+    appContext: Context,
     private val jecnaClient: JecnaClient,
     private val repository: StudentProfileRepository
-) : ViewModel()
+) : SubScreenViewModel<Student>(appContext)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_student_profile)
+    override val loadErrorMessage = appContext.getString(R.string.profile_load_error)
 
     var uiState by mutableStateOf(StudentProfileState())
         private set
+    
+    override suspend fun fetchRealData() = repository.getCurrentStudent()
+    override fun setDataUiState(data: Student) = changeUiState(student = data)
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
-    private var loadStudentJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadStudentJob == null || loadStudentJob!!.isCompleted) {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
-    }
-
-    fun enteredComposition()
+    override fun loadReal()
     {
-        if ((jecnaClient as WebJecnaClient).autoLoginAuth != null)
-            loadReal()
-
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
-    }
-
-    fun leftComposition()
-    {
-        loadStudentJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
-
-    private fun loadReal()
-    {
-        loadStudentJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadStudentJob = viewModelScope.launch {
-            try {
-                changeUiState(student = repository.getCurrentStudent())
-                loadLocker()
-            } catch (e: UnresolvedAddressException) {
-                changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()))
-            } catch (e: CancellationException) {
-                throw e
-            } catch (e: Exception) {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.profile_load_error)))
-                e.printStackTrace()
-            } finally {
-                changeUiState(loading = false)
-            }
-        }
+        super.loadReal()
+        loadLocker()
     }
 
     fun loadLocker()
@@ -121,15 +84,11 @@ class StudentProfileViewModel @Inject constructor(
         }
     }
 
-    private fun getOfflineMessage() = appContext.getString(R.string.no_internet_connection)
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        student: io.github.tomhula.jecnaapi.data.student.Student? = uiState.student,
+        student: Student? = uiState.student,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
         locker: Locker? = uiState.locker,
         lockerLoading: Boolean = uiState.lockerLoading,
@@ -150,8 +109,8 @@ class StudentProfileViewModel @Inject constructor(
         data(WebJecnaClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
-        setHeader("Cookie", sessionCookie.toHeaderString())
-        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
+        setHeader(HttpHeaders.Cookie, sessionCookie.toHeaderString())
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
     }.build()
 
     private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }

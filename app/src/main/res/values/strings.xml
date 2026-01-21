@@ -250,6 +250,7 @@
     <string name="error_unsupported_menu">Žádané menu je v nepodporovaném formátu.</string>
     <string name="error_unsupported_teachers">Stránka s učiteli je v nepodporovaném formátu.</string>
     <string name="error_unsupported_teacher">Stránka učitele je v nepodporovaném formátu.</string>
+    <string name="error_unsupported_student_profile">Profilová stránka studenta v nepodporovaném formátu.</string>
     <string name="error_unsupported_credit">Kredit je v nepodporovaném formátu.</string>
     <string name="error_order">Při objednávání došlo k chybě. Zkuste to znovu později.</string>
     <string name="error_load">Při načítání došlo k chybě.</string>
