@@ -48,11 +48,9 @@ class NewsViewModel @Inject constructor(
     private val jecnaClient: JecnaClient
 ) : SubScreenCacheViewModel<NewsPage, NoParams>(appContext, repository)
 {
-    override val parseErrorMessage: String
-        get() = appContext.getString(R.string.error_unsupported_articles)
-    override val loadErrorMessage: String
-        get() = appContext.getString(R.string.article_load_error)
-    
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_articles)
+    override val loadErrorMessage = appContext.getString(R.string.article_load_error)
+
     var uiState by mutableStateOf(NewsState())
         private set
 
