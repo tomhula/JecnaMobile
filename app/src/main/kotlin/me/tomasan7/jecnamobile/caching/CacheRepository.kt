@@ -85,5 +85,9 @@ class CacheRepository<T, P>(
         {
             e.printStackTrace()
         }
+        finally
+        {
+            outputStream.close()
+        }
     }
 }
