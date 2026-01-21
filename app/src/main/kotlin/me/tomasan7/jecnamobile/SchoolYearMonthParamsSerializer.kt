@@ -11,8 +11,7 @@ import kotlinx.serialization.encoding.Encoder
 
 internal object SchoolYearMonthParamsSerializer : KSerializer<SchoolYearMonthParams>
 {
-    override val descriptor =
-        PrimitiveSerialDescriptor("SchoolYearMonthParams", PrimitiveKind.STRING)
+    override val descriptor = PrimitiveSerialDescriptor("SchoolYearMonthParams", PrimitiveKind.STRING)
 
     override fun serialize(encoder: Encoder, value: SchoolYearMonthParams) = encoder.encodeString(
         "${value.schoolYear.firstCalendarYear}$DIVIDER${value.month.number}"
