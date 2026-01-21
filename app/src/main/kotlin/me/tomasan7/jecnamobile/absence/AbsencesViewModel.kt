@@ -38,8 +38,7 @@ class AbsencesViewModel @Inject constructor(
         changeUiState(selectedSchoolYear = schoolYear)
         loadReal()
     }
-
-
+    
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     override fun setCacheDataUiState(data: CachedDataNew<AbsencesPage, SchoolYear>) = changeUiState(
