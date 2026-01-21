@@ -8,14 +8,17 @@ import dagger.hilt.migration.DisableInstallInCheck
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
+import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.CacheRepository
 import me.tomasan7.jecnamobile.NoParams
 import me.tomasan7.jecnamobile.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
+import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import javax.inject.Singleton
 
 @DisableInstallInCheck
@@ -65,5 +68,20 @@ internal object CacheRepositoriesModule
         serializer<SchoolYearHalfParams>()
     ) {
         repository.getGradesPage(it.schoolYear, it.schoolYearHalf)
+    }
+
+    @Provides
+    @Singleton
+    fun provideTimetableCacheRepository(
+        @ApplicationContext
+        appContext: Context,
+        repository: TimetableRepository
+    ) = CacheRepository(
+        appContext,
+        "timetable",
+        serializer<TimetablePage>(),
+        serializer<SchoolYearPeriodParams>()
+    ) {
+        repository.getTimetablePage(it.schoolYear, it.periodId)
     }
 }
