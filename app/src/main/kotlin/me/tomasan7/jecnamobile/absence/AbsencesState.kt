@@ -5,8 +5,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import java.time.Instant
-import java.time.LocalDate
+import kotlin.time.Instant
 
 /**
  * State for the Absences screen.

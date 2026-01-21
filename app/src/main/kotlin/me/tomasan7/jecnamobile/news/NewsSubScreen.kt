@@ -58,6 +58,11 @@ import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.article.Article
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.MonthNames
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.toJavaLocalDate
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
@@ -204,13 +209,13 @@ private fun Article(
 
         Text(
             text = if (article.schoolOnly)
-                "${article.date.format(DATE_FORMATTER)} | ${article.author} | ${
+                "${article.date.toJavaLocalDate().format(DATE_FORMATTER)} | ${article.author} | ${
                     stringResource(
                         R.string.article_school_only
                     )
                 }"
             else
-                "${article.date.format(DATE_FORMATTER)} | ${article.author}",
+                "${article.date.toJavaLocalDate().format(DATE_FORMATTER)} | ${article.author}",
             style = MaterialTheme.typography.labelSmall,
             color = jm_label
         )

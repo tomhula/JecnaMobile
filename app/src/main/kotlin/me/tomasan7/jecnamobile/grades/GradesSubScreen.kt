@@ -76,6 +76,10 @@ import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
@@ -104,7 +108,6 @@ import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsState
 import java.math.RoundingMode
 import java.text.DecimalFormat
-import java.time.format.DateTimeFormatter
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -1233,6 +1236,11 @@ private object Constants
     val gradeAverageDecimalFormat = DecimalFormat("#.##").apply {
         roundingMode = RoundingMode.HALF_UP
     }
-    val gradeDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d.M.yyyy")
+    val gradeDateFormatter = LocalDate.Format {
+        day(padding = Padding.NONE)
+        char('.')
+        monthNumber(padding = Padding.NONE)
+        year()
+    }
     val gradeShape = RoundedCornerShape(7.dp)
 }

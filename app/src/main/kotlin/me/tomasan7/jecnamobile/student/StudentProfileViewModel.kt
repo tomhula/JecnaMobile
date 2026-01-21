@@ -14,8 +14,8 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.student.Locker
-import io.github.tomhula.jecnaapi.web.jecna.JecnaWebClient
 import io.ktor.http.Cookie
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
@@ -53,7 +53,7 @@ class StudentProfileViewModel @Inject constructor(
 
     fun enteredComposition()
     {
-        if (jecnaClient.autoLoginAuth != null)
+        if ((jecnaClient as WebJecnaClient).autoLoginAuth != null)
             loadReal()
 
         appContext.registerReceiver(
@@ -147,14 +147,14 @@ class StudentProfileViewModel @Inject constructor(
     }
 
     fun createImageRequest(path: String): ImageRequest = ImageRequest.Builder(appContext).apply {
-        data(JecnaWebClient.getUrlForPath(path))
+        data(WebJecnaClient.getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader("Cookie", sessionCookie.toHeaderString())
-        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
     }.build()
 
-    private fun getSessionCookieBlocking() = runBlocking { jecnaClient.getSessionCookie() }
+    private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
 
     private fun Cookie.toHeaderString() = "$name=$value"
 }

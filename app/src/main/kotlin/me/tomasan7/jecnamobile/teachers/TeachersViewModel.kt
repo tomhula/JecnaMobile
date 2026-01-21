@@ -17,6 +17,7 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
 import io.github.tomhula.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
@@ -50,7 +51,7 @@ class TeachersViewModel @Inject constructor(
 
     init
     {
-        if (jecnaClient.lastSuccessfulLoginTime != null)
+        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
             loadReal()
     }
 

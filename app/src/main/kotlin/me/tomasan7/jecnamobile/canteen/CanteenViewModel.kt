@@ -14,13 +14,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.github.tomhula.jecnaapi.CanteenClient
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.canteen.DayMenu
-import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
-import io.github.tomhula.jecnaapi.data.canteen.ItemDescription
-import io.github.tomhula.jecnaapi.data.canteen.MenuItem
-import io.github.tomhula.jecnaapi.parser.ParseException
 import io.ktor.util.network.UnresolvedAddressException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -29,13 +22,22 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.WebCanteenClient
+import io.github.tomhula.jecnaapi.data.canteen.DayMenu
+import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
+import io.github.tomhula.jecnaapi.data.canteen.MenuItem
+import io.github.tomhula.jecnaapi.parser.ParseException
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.settingsDataStore
-import java.time.DayOfWeek
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
+import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
 
 @HiltViewModel
@@ -44,7 +46,6 @@ class CanteenViewModel @Inject constructor(
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val canteenClient: CanteenClient,
-    private val jecnaClient: JecnaClient,
 ) : ViewModel()
 {
     var uiState by mutableStateOf(CanteenState())
@@ -56,7 +57,7 @@ class CanteenViewModel @Inject constructor(
 
     private val networkAvailableBroadcastReceiver = createBroadcastReceiver { _, _ ->
         if (!loginInProcess)
-            if (canteenClient.lastSuccessfulLoginAuth == null)
+            if ((canteenClient as WebCanteenClient).lastSuccessfulLoginAuth == null)
                 loginCanteenClient()
             else if (uiState.menu.size < getDays().size)
                 loadMenu()
@@ -75,7 +76,7 @@ class CanteenViewModel @Inject constructor(
         loginjob = viewModelScope.launch {
             changeUiState(loading = true)
 
-            val auth = authRepository.get() ?: jecnaClient.autoLoginAuth
+            val auth = authRepository.get()
 
             if (auth != null)
                 try
@@ -327,7 +328,7 @@ class CanteenViewModel @Inject constructor(
 
     private fun getDays(): List<LocalDate>
     {
-        val result = generateSequence(LocalDate.now()) { it.plusDays(1) }
+        val result = generateSequence(LocalDate.now()) { it.plus(1, DateTimeUnit.DAY) }
             .filterNot { it.isWeekend() }
             .take(DAYS_TO_LOAD_COUNT)
             .toList()
@@ -355,7 +356,7 @@ class CanteenViewModel @Inject constructor(
 
         val currentLatestDay = uiState.menuSorted.lastOrNull()?.day ?: LocalDate.now()
 
-        val newDays = generateSequence(currentLatestDay.plusDays(1)) { it.plusDays(1) }
+        val newDays = generateSequence(currentLatestDay.plus(1, DateTimeUnit.DAY)) { it.plus(1, DateTimeUnit.DAY) }
             .filterNot { it.isWeekend() }
             .take(count)
             .toList()

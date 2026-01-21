@@ -19,17 +19,26 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import java.time.Instant
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format
+import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.absence.AbsencesViewModel
+import me.tomasan7.jecnamobile.util.now
 import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 import javax.inject.Inject
+import kotlin.time.Clock
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
@@ -58,7 +67,7 @@ class TimetableViewModel @Inject constructor(
     init
     {
         loadCache()
-        if (jecnaClient.lastSuccessfulLoginTime != null)
+        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
             loadReal(true)
     }
 
@@ -130,7 +139,7 @@ class TimetableViewModel @Inject constructor(
                     timetablePage = realTimetable,
                     selectedSchoolYear = realTimetable.selectedSchoolYear,
                     selectedPeriod = realTimetable.periodOptions.find { it.selected },
-                    lastUpdateTimestamp = Instant.now(),
+                    lastUpdateTimestamp = Clock.System.now(),
                     isCache = false
                 )
             }
@@ -161,18 +170,19 @@ class TimetableViewModel @Inject constructor(
     private fun getOfflineMessage(): String?
     {
         val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = LocalDateTime.ofInstant(cacheTimestamp, ZoneId.systemDefault())
-        val localDate = localDateTime.toLocalDate()
+        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
+        val localDate = localDateTime.date
 
-        return if (localDate == LocalDate.now())
+        val today = LocalDate.now()
+
+        return if (localDate == today)
         {
-            val time = localDateTime.toLocalTime()
-            val timeStr = time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
+            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
             appContext.getString(R.string.showing_offline_data_time, timeStr)
         }
         else
         {
-            val dateStr = localDateTime.format(OFFLINE_MESSAGE_DATE_FORMATTER)
+            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
             appContext.getString(R.string.showing_offline_data_date, dateStr)
         }
     }
@@ -204,7 +214,15 @@ class TimetableViewModel @Inject constructor(
 
     companion object
     {
-        private val OFFLINE_MESSAGE_TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
-        private val OFFLINE_MESSAGE_DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M.")
+        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
+            hour(padding = Padding.ZERO)
+            char(':')
+            minute(padding = Padding.ZERO)
+        }
+        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
+            day(padding = Padding.NONE)
+            chars(". ")
+            monthNumber(padding = Padding.NONE)
+        }
     }
 }

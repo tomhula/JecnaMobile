@@ -22,6 +22,7 @@ import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.grade.Subject
 import io.github.tomhula.jecnaapi.util.SchoolYear
@@ -62,7 +63,7 @@ class GradeCheckerWorker @AssistedInject constructor(
 
         Log.i(LOG_TAG, "Checking for grade changes...")
 
-        if (jecnaClient.autoLoginAuth == null)
+        if ((jecnaClient as WebJecnaClient).autoLoginAuth == null)
             jecnaClient.autoLoginAuth = authRepository.get()
 
         val cachedGradesPage = cacheGradesRepository.getCachedGrades()?.data

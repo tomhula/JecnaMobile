@@ -5,8 +5,8 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
-import java.time.LocalDate
-import java.time.LocalTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 
 @Immutable
 data class CanteenState(
@@ -25,7 +25,7 @@ data class CanteenState(
         /**
          * The time after which you canteen no longer hands out food.
          */
-        private val FOOD_HAND_OUT_END_TIME = LocalTime.of(14, 30)
+        private val FOOD_HAND_OUT_END_TIME = LocalTime(14, 30)
     }
 }
 

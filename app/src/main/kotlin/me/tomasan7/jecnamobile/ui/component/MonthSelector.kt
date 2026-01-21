@@ -5,7 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.getMonthName
-import java.time.Month
+import kotlinx.datetime.Month
 
 @Composable
 fun MonthSelector(

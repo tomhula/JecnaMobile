@@ -49,10 +49,13 @@ import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.student.Guardian
 import io.github.tomhula.jecnaapi.data.student.Locker
 import io.github.tomhula.jecnaapi.data.student.Student
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -249,7 +252,7 @@ private fun LockerFieldGroup(locker: Locker)
         )
         TextTableField(
             label = R.string.profile_locker_description,
-            value = locker.description,
+            value = locker.location,
         )
         TextTableField(
             label = R.string.profile_locker_assigned_from,
@@ -355,4 +358,9 @@ private fun TableField(
     }
 }
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy")
+private val DATE_FORMATTER = LocalDate.Format {
+    day(padding = Padding.NONE)
+    char('.')
+    monthNumber(padding = Padding.NONE)
+    year()
+}

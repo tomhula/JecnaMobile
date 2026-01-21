@@ -58,8 +58,11 @@ import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.canteen.ExchangeDay
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -632,4 +635,9 @@ private fun ElevatedTextRectangle(
     text = { Text(text, modifier = Modifier.weight(1f)) }
 )
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.")
+private val DATE_FORMATTER = LocalDate.Format {
+    day(padding = Padding.NONE)
+    char('.')
+    monthNumber(padding = Padding.NONE)
+    char('.')
+}

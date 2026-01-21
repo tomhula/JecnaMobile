@@ -21,6 +21,12 @@ import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.attendance.Attendance
 import io.github.tomhula.jecnaapi.data.attendance.AttendanceType
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.Month
+import kotlinx.datetime.format
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
@@ -28,9 +34,6 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.getWeekDayName
-import java.time.LocalDate
-import java.time.Month
-import java.time.format.DateTimeFormatter
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -215,6 +218,13 @@ private fun getAttendanceTypeName(type: AttendanceType) = when (type)
     AttendanceType.EXIT  -> stringResource(R.string.attendances_attendance_type_exit)
 }
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.")
-
-private val TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm")
+private val TIME_FORMATTER = LocalTime.Format {
+    hour(padding = Padding.ZERO)
+    char(':')
+    minute(padding = Padding.ZERO)
+}
+private val DATE_FORMATTER = LocalDate.Format {
+    day(padding = Padding.NONE)
+    char('.')
+    monthNumber(padding = Padding.NONE)
+}

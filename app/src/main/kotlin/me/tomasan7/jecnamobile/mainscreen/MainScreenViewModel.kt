@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.web.AuthenticationException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
@@ -52,7 +53,7 @@ class MainScreenViewModel @Inject constructor(
 
     fun tryLogin()
     {
-        val hasBeenLoggedIn = jecnaClient.lastSuccessfulLoginTime != null
+        val hasBeenLoggedIn = (jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null
         val auth = jecnaClient.autoLoginAuth ?: authRepository.get()
 
         if (auth == null)

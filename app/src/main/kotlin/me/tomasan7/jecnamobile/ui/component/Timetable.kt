@@ -20,11 +20,12 @@ import androidx.compose.ui.unit.times
 import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.*
+import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.manipulate
-import java.time.DayOfWeek
+import kotlin.time.Clock
 
 @Composable
 fun Timetable(
@@ -93,8 +94,8 @@ fun Timetable(
                         LessonSpot(
                             lessonSpot = lessonSpot,
                             onLessonClick = { dialogState.show(it) },
-                            current = timetable.getCurrentLessonSpot() === lessonSpot,
-                            next = timetable.getCurrentNextLessonSpot(takeEmpty = true) === lessonSpot,
+                            current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
+                            next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
                             breakWidth = breakWidth
                         )
