@@ -37,6 +37,10 @@ import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.CacheRepository
+import me.tomasan7.jecnamobile.SchoolYearHalfParams
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
 import kotlin.time.Clock
@@ -44,48 +48,37 @@ import kotlin.time.Clock
 @HiltViewModel
 class GradesViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
-    private val jecnaClient: JecnaClient,
-    private val repository: CacheGradesRepository
-) : ViewModel()
+    appContext: Context,
+    repository: CacheRepository<GradesPage, SchoolYearHalfParams>,
+    private val jecnaClient: JecnaClient
+) : SubScreenCacheViewModel<GradesPage, SchoolYearHalfParams>(appContext, repository)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_grades)
+    override val loadErrorMessage = appContext.getString(R.string.grade_load_error)
+    
     var uiState by mutableStateOf(GradesState())
         private set
-    private var loadGradesJob: Job? = null
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadGradesJob == null || loadGradesJob!!.isCompleted)
-        {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
-    }
+    
     private val settingsDataStore = appContext.settingsDataStore
 
-    init
-    {
-        loadCache()
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal()
-    }
+    override fun setCacheDataUiState(data: CachedDataNew<GradesPage, SchoolYearHalfParams>) = changeUiState(
+        gradesPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        isCache = true
+    )
 
-    fun enteredComposition()
-    {
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
-    }
+    override fun setDataUiState(data: GradesPage) = changeUiState(
+        gradesPage = data,
+        lastUpdateTimestamp = Clock.System.now(),
+        isCache = false
+    )
 
-    fun leftComposition()
-    {
-        loadGradesJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
-
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun getParams() = SchoolYearHalfParams(uiState.selectedSchoolYear, uiState.selectedSchoolYearHalf)
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
+    
     fun setViewMode(gradesViewMode: Settings.GradesViewMode)
     {
         viewModelScope.launch {
@@ -106,93 +99,6 @@ class GradesViewModel @Inject constructor(
         changeUiState(selectedSchoolYear = schoolYear)
         loadReal()
     }
-
-    private fun loadCache()
-    {
-        if (!repository.isCacheAvailable())
-            return
-
-        viewModelScope.launch {
-            val cachedGrades = repository.getCachedGrades() ?: return@launch
-
-            changeUiState(
-                gradesPage = cachedGrades.data,
-                lastUpdateTimestamp = cachedGrades.timestamp,
-                isCache = true
-            )
-        }
-    }
-
-    private fun loadReal()
-    {
-        loadGradesJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadGradesJob = viewModelScope.launch {
-            try
-            {
-                val realGrades = if (isSelectedPeriodCurrent())
-                    repository.getRealGrades()
-                else
-                    repository.getRealGrades(uiState.selectedSchoolYear, uiState.selectedSchoolYearHalf)
-
-                changeUiState(
-                    gradesPage = realGrades,
-                    lastUpdateTimestamp = Clock.System.now(),
-                    isCache = false
-                )
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                if (uiState.lastUpdateTimestamp != null && uiState.isCache)
-                    changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()!!))
-                else
-                    changeUiState(
-                        snackBarMessageEvent =
-                        triggered(appContext.getString(R.string.no_internet_connection))
-                    )
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.grade_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    private fun getOfflineMessage(): String?
-    {
-        val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
-        val localDate = localDateTime.date
-
-        val today = LocalDate.now()
-        
-        return if (localDate == today)
-        {
-            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_time, timeStr)
-        }
-        else
-        {
-            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_date, dateStr)
-        }
-    }
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-
-    private fun isSelectedPeriodCurrent() =
-        uiState.selectedSchoolYear == SchoolYear.current() && uiState.selectedSchoolYearHalf == SchoolYearHalf.current()
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
@@ -263,19 +169,5 @@ class GradesViewModel @Inject constructor(
             loadingNotification = loadingNotification,
             dialogNotification = dialogNotification
         )
-    }
-
-    companion object
-    {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
-            hour(padding = Padding.ZERO)
-            char(':')
-            minute(padding = Padding.ZERO)
-        }
-        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
-            day(padding = Padding.NONE)
-            chars(". ")
-            monthNumber(padding = Padding.NONE)
-        }
     }
 }

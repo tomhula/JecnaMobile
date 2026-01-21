@@ -7,11 +7,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.migration.DisableInstallInCheck
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
+import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.CacheRepository
 import me.tomasan7.jecnamobile.NoParams
+import me.tomasan7.jecnamobile.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.SchoolYearMonthParams
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
+import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import javax.inject.Singleton
 
@@ -47,5 +50,20 @@ internal object CacheRepositoriesModule
         serializer<NoParams>()
     ) {
         repository.getNewsPage()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGradesCacheRepository(
+        @ApplicationContext
+        appContext: Context,
+        repository: GradesRepository
+    ) = CacheRepository(
+        appContext,
+        "news",
+        serializer<GradesPage>(),
+        serializer<SchoolYearHalfParams>()
+    ) {
+        repository.getGradesPage(it.schoolYear, it.schoolYearHalf)
     }
 }
