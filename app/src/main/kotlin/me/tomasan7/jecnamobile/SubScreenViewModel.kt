@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.net.UnknownHostException
 
-const val LOG_TAG = "SubScreenViewModel"
+private const val LOG_TAG = "SubScreenViewModel"
 
 abstract class SubScreenViewModel<T>(
     @param:ApplicationContext
