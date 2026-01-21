@@ -24,5 +24,5 @@ enum class SubScreenDestination(
     Attendances(AttendancesSubScreenDestination, R.string.sidebar_attendances, Icons.Outlined.DateRange, Icons.Filled.DateRange),
     Absences(AbsencesSubScreenDestination, R.string.sidebar_absences, Icons.Outlined.EventBusy, Icons.Filled.EventBusy),
     Teachers(TeachersSubScreenDestination, R.string.sidebar_teachers, Icons.Outlined.People, Icons.Filled.People),
-    Classrooms(ClassroomsSubScreenDestination, R.string.sidebar_classrooms, Icons.Outlined.MeetingRoom, Icons.Filled.MeetingRoom),
+    Classrooms(RoomsSubScreenDestination, R.string.sidebar_classrooms, Icons.Outlined.MeetingRoom, Icons.Filled.MeetingRoom),
 }

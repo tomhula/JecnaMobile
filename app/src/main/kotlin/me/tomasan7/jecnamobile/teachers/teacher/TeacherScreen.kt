@@ -26,8 +26,8 @@ import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination.invoke
+import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
+import me.tomasan7.jecnamobile.destinations.RoomScreenDestination.invoke
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
@@ -96,7 +96,7 @@ fun TeacherScreen(
                         Timetable(
                             timetable = it,
                             modifier = Modifier.padding(10.dp),
-                            onClassroomClick = {navigator.navigate(ClassroomScreenDestination(it))}
+                            onClassroomClick = {navigator.navigate(RoomScreenDestination(it))}
                         )
                     }
                 }

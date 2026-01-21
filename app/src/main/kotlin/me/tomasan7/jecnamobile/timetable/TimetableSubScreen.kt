@@ -29,8 +29,7 @@ import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination.invoke
+import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
@@ -109,7 +108,7 @@ fun TimetableSubScreen(
                         timetable = uiState.timetablePage.timetable,
                         hideClass = true,
                         onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
-                        onClassroomClick = {navigator.navigate(ClassroomScreenDestination(it))}
+                        onClassroomClick = {navigator.navigate(RoomScreenDestination(it))}
                     )
             }
         }
