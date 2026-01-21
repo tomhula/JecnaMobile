@@ -12,9 +12,11 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.*
+import me.tomasan7.jecnamobile.CacheRepository
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.util.CachedData
+import me.tomasan7.jecnamobile.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -23,8 +25,8 @@ import kotlin.time.Instant
 class AttendancesViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
-    private val repository: CacheAttendancesRepository
-) : SubScreenCacheViewModel<AttendancesPage>(appContext)
+    repository: CacheRepository<AttendancesPage, SchoolYearMonthParams>
+) : SubScreenCacheViewModel<AttendancesPage, SchoolYearMonthParams>(appContext, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_attendances)
     override val loadErrorMessage = appContext.getString(R.string.attendances_load_error)
@@ -44,25 +46,15 @@ class AttendancesViewModel @Inject constructor(
         loadReal()
     }
 
-    override fun setCacheDataUiState(data: CachedData<AttendancesPage>) = changeUiState(
+    override fun setCacheDataUiState(data: CachedDataNew<AttendancesPage, SchoolYearMonthParams>) = changeUiState(
         attendancesPage = data.data,
         lastUpdateTimestamp = data.timestamp,
         isCache = true
     )
 
-    override fun getCache(): CachedData<AttendancesPage>?
-    {
-        val cache = repository.getCachedAttendances() ?: return null
-        if (cache.data.selectedSchoolYear != uiState.selectedSchoolYear || cache.data.selectedMonth != uiState.selectedMonth)
-            return null
-
-        return cache
-    }
-    override fun isCacheAvailable() = repository.isCacheAvailable()
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
     override fun isCurrentlyShowingCache() = uiState.isCache
-
-    override suspend fun fetchRealData() = repository.getRealAttendances(uiState.selectedSchoolYear, uiState.selectedMonth)
+    override fun getParams() = SchoolYearMonthParams(uiState.selectedSchoolYear, uiState.selectedMonth)
 
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
 

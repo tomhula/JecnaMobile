@@ -9,7 +9,7 @@ import io.github.tomhula.jecnaapi.JecnaClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 
-@Module(includes = [AppModuleBindings::class])
+@Module(includes = [AppModuleBindings::class, CacheRepositoriesModule::class])
 @InstallIn(SingletonComponent::class)
 internal object AppModule
 {

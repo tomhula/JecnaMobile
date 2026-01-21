@@ -11,13 +11,14 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import me.tomasan7.jecnamobile.util.CachedData
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.now
 import kotlin.time.Instant
 
-abstract class SubScreenCacheViewModel<T>(
+abstract class SubScreenCacheViewModel<T, P>(
     @ApplicationContext
     appContext: Context,
+    private val cacheRepository: CacheRepository<T, P>
 ) : SubScreenViewModel<T>(appContext)
 {
     override val noInternetConnectionMessage: String
@@ -28,11 +29,12 @@ abstract class SubScreenCacheViewModel<T>(
     
     protected var enteredCompositionCounter = 0
 
-    abstract fun setCacheDataUiState(data: CachedData<T>)
-    abstract fun getCache(): CachedData<T>?
-    abstract fun isCacheAvailable(): Boolean
+    abstract fun setCacheDataUiState(data: CachedDataNew<T, P>)
     abstract fun getLastUpdateTimestamp(): Instant?
     abstract fun isCurrentlyShowingCache(): Boolean
+    abstract fun getParams(): P
+
+    override suspend fun fetchRealData() = cacheRepository.getRealAndCache(getParams())
     
     override fun enteredComposition()
     {
@@ -45,11 +47,11 @@ abstract class SubScreenCacheViewModel<T>(
 
     fun loadCache()
     {
-        if (!isCacheAvailable())
+        if (!cacheRepository.isCacheAvailable())
             return
 
         viewModelScope.launch {
-            val cachedData = getCache() ?: return@launch
+            val cachedData = cacheRepository.getCache(getParams()) ?: return@launch
             setCacheDataUiState(cachedData)
         }
     }

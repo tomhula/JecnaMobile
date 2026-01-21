@@ -1,0 +1,84 @@
+package me.tomasan7.jecnamobile
+
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.MapSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToStream
+import me.tomasan7.jecnamobile.util.CachedDataNew
+import java.io.File
+import kotlin.collections.toMutableMap
+import kotlin.time.Clock
+
+class CacheRepository<T, P>(
+    @param:ApplicationContext
+    private val appContext: Context,
+    val key: String,
+    private val dataSerializer: KSerializer<T>,
+    private val paramsSerializer: KSerializer<P>,
+    private val fetcher: suspend (P) -> T
+)
+{
+    private val entireCacheSerializer = MapSerializer(paramsSerializer, CachedDataNew.serializer(dataSerializer, paramsSerializer))
+    
+    private val cacheFile = File(appContext.cacheDir, "$key.json")
+    
+    fun isCacheAvailable() = cacheFile.exists()
+
+    @OptIn(ExperimentalSerializationApi::class)
+    fun getCache(params: P): CachedDataNew<T, P>?
+    {
+        val entireCache = loadEntireCache()
+        return entireCache?.getValue(params)
+    }
+
+    suspend fun getRealAndCache(params: P): T
+    {
+        val data = fetcher(params)
+        val entireCache = loadEntireCache()?.toMutableMap() ?: mutableMapOf()
+        entireCache[params] = CachedDataNew(data, params, timestamp = Clock.System.now())
+        writeEntireCache(entireCache)
+        return data
+    }
+    
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun loadEntireCache(): Map<P, CachedDataNew<T, P>>?
+    {
+        if (!isCacheAvailable())
+            return null
+        
+        val inputStream = cacheFile.inputStream()
+        
+        try
+        { 
+            return Json.decodeFromStream(entireCacheSerializer, inputStream)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+            return null
+        }
+        finally
+        {
+            inputStream.close()
+        }
+    }
+    
+    @OptIn(ExperimentalSerializationApi::class)
+    private fun writeEntireCache(entireCache: Map<P, CachedDataNew<T, P>>)
+    {
+        val outputStream = cacheFile.outputStream()
+        
+        try
+        {
+            Json.encodeToStream(entireCacheSerializer, entireCache, outputStream)
+        }
+        catch (e: Exception)
+        {
+            e.printStackTrace()
+        }
+    }
+}
