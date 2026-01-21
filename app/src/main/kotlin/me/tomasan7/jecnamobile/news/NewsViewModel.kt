@@ -2,7 +2,10 @@ package me.tomasan7.jecnamobile.news
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
-import android.content.*
+import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Environment
 import android.webkit.MimeTypeMap
@@ -11,7 +14,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.request.ImageRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,56 +21,40 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.http.*
-import io.ktor.util.network.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import io.github.tomhula.jecnaapi.data.article.NewsPage
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.char
-import me.tomasan7.jecnamobile.JecnaMobileApplication
+import io.ktor.http.*
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import me.tomasan7.jecnamobile.CacheRepository
+import me.tomasan7.jecnamobile.NoParams
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
-import kotlin.time.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.toLocalDateTime
-import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 
 @HiltViewModel
 class NewsViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
-    private val repository: CacheNewsRepository,
+    appContext: Context,
+    repository: CacheRepository<NewsPage, NoParams>,
     private val jecnaClient: JecnaClient
-) : ViewModel()
+) : SubScreenCacheViewModel<NewsPage, NoParams>(appContext, repository)
 {
+    override val parseErrorMessage: String
+        get() = appContext.getString(R.string.error_unsupported_articles)
+    override val loadErrorMessage: String
+        get() = appContext.getString(R.string.article_load_error)
+    
     var uiState by mutableStateOf(NewsState())
         private set
-
-    private var loadNewsJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadNewsJob == null || loadNewsJob!!.isCompleted)
-        {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
-    }
 
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
@@ -77,20 +63,27 @@ class NewsViewModel @Inject constructor(
         openDownloadedFile(downloadId)
     }
 
-    init
-    {
-        loadCache()
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal()
-    }
+    override fun setCacheDataUiState(data: CachedDataNew<NewsPage, NoParams>) = changeUiState(
+        newsPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        isCache = true
+    )
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun getParams() = NoParams
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
+    override fun setDataUiState(data: NewsPage) = changeUiState(
+        newsPage = data,
+        lastUpdateTimestamp = Clock.System.now(),
+        isCache = false
+    )
 
-    fun enteredComposition()
+    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override fun enteredComposition()
     {
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
+        super.enteredComposition()
         appContext.registerReceiver(
             downloadFinishedBroadcastReceiver,
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
@@ -98,9 +91,9 @@ class NewsViewModel @Inject constructor(
         )
     }
 
-    fun leftComposition()
+    override fun leftComposition()
     {
-        loadNewsJob?.cancel()
+        super.leftComposition()
         appContext.unregisterReceiver(loginBroadcastReceiver)
     }
 
@@ -176,88 +169,7 @@ class NewsViewModel @Inject constructor(
         setHeader("Cookie", sessionCookie.toHeaderString())
         (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
     }.build()
-
-    private fun loadCache()
-    {
-        if (!repository.isCacheAvailable())
-            return
-
-        viewModelScope.launch {
-            val cachedGrades = repository.getCachedNews() ?: return@launch
-
-            changeUiState(
-                newsPage = cachedGrades.data,
-                lastUpdateTimestamp = cachedGrades.timestamp,
-                isCache = true
-            )
-        }
-    }
-
-    private fun loadReal()
-    {
-        loadNewsJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadNewsJob = viewModelScope.launch {
-            try
-            {
-                val realNews = repository.getRealNews()
-
-                changeUiState(
-                    newsPage = realNews,
-                    lastUpdateTimestamp = Clock.System.now(),
-                    isCache = false
-                )
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                if (uiState.lastUpdateTimestamp != null && uiState.isCache)
-                    changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()!!))
-                else
-                    changeUiState(snackBarMessageEvent =
-                    triggered(appContext.getString(R.string.no_internet_connection)))
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.article_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    private fun getOfflineMessage(): String?
-    {
-        val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
-        val localDate = localDateTime.date
-        
-        val today = LocalDate.now()
-
-        return if (localDate == today)
-        {
-            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_time, timeStr)
-        }
-        else
-        {
-            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_date, dateStr)
-        }
-    }
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-
-    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
-
+    
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         newsPage: NewsPage? = uiState.newsPage,
@@ -273,19 +185,5 @@ class NewsViewModel @Inject constructor(
             isCache = isCache,
             snackBarMessageEvent = snackBarMessageEvent
         )
-    }
-
-    companion object
-    {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
-            hour(padding = Padding.ZERO)
-            char(':')
-            minute(padding = Padding.ZERO)
-        }
-        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
-            day(padding = Padding.NONE)
-            chars(". ")
-            monthNumber(padding = Padding.NONE)
-        }
     }
 }

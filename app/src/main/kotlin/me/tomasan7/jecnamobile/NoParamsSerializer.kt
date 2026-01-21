@@ -1,0 +1,16 @@
+package me.tomasan7.jecnamobile
+
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.descriptors.PrimitiveKind
+import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+
+internal object NoParamsSerializer : KSerializer<NoParams>
+{
+    override val descriptor = PrimitiveSerialDescriptor("NoParams", PrimitiveKind.STRING)
+
+    override fun serialize(encoder: Encoder, value: NoParams) = encoder.encodeString("NoParams")
+
+    override fun deserialize(decoder: Decoder) = NoParams
+}

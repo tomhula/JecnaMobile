@@ -5,11 +5,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.migration.DisableInstallInCheck
+import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.CacheRepository
+import me.tomasan7.jecnamobile.NoParams
 import me.tomasan7.jecnamobile.SchoolYearMonthParams
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
+import me.tomasan7.jecnamobile.news.NewsRepository
 import javax.inject.Singleton
 
 @DisableInstallInCheck
@@ -29,5 +32,20 @@ internal object CacheRepositoriesModule
         serializer<SchoolYearMonthParams>()
     ) {
         repository.getAttendancesPage(it.schoolYear, it.month)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNewsCacheRepository(
+        @ApplicationContext
+        appContext: Context,
+        repository: NewsRepository
+    ) = CacheRepository(
+        appContext,
+        "news",
+        serializer<NewsPage>(),
+        serializer<NoParams>()
+    ) {
+        repository.getNewsPage()
     }
 }
