@@ -1,6 +1,7 @@
 package me.tomasan7.jecnamobile.caching
 
 import android.content.Context
+import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
@@ -12,6 +13,8 @@ import me.tomasan7.jecnamobile.util.CachedDataNew
 import java.io.File
 import kotlin.collections.toMutableMap
 import kotlin.time.Clock
+
+private const val LOG_TAG = "CacheRepository"
 
 class CacheRepository<T, P>(
     @param:ApplicationContext
@@ -31,12 +34,14 @@ class CacheRepository<T, P>(
     @OptIn(ExperimentalSerializationApi::class)
     fun getCache(params: P): CachedDataNew<T, P>?
     {
+        Log.d(LOG_TAG, "$key: Reading cache")
         val entireCache = loadEntireCache()
         return entireCache?.getValue(params)
     }
 
     suspend fun getRealAndCache(params: P): T
     {
+        Log.d(LOG_TAG, "$key: Fetching real data")
         val data = fetcher(params)
         val entireCache = loadEntireCache()?.toMutableMap() ?: mutableMapOf()
         entireCache[params] = CachedDataNew(data, params, timestamp = Clock.System.now())
