@@ -32,7 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    @ApplicationContext
+    @param:ApplicationContext
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
@@ -42,8 +42,7 @@ class MainScreenViewModel @Inject constructor(
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
         private set
 
-    private val connectivityManager =
-        getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
+    private val connectivityManager = getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
 
     init
