@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.classrooms
+package me.tomasan7.jecnamobile.rooms
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -33,9 +33,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.ClassroomScreenDestination
+import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
@@ -46,10 +46,10 @@ import me.tomasan7.jecnamobile.util.removeAccent
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
 @Composable
-fun ClassroomsSubScreen(
+fun RoomsSubScreen(
     navDrawerController: NavDrawerController,
     navigator: DestinationsNavigator,
-    viewModel: ClassroomsViewModel = hiltViewModel()
+    viewModel: RoomsViewModel = hiltViewModel()
 )
 {
     DisposableEffect(Unit) {
@@ -94,10 +94,10 @@ fun ClassroomsSubScreen(
 
                 VerticalSpacer(16.dp)
 
-                uiState.classroomReferencesSortedFiltered?.forEach {
+                uiState.RoomReferencesSortedFiltered?.forEach {
                     ClassroomCard(
-                        classroomReference = it,
-                        onClick = { navigator.navigate(ClassroomScreenDestination(it)) },
+                        RoomReference = it,
+                        onClick = { navigator.navigate(RoomScreenDestination(it)) },
                         searchQuery = uiState.filterFieldValue,
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -146,7 +146,7 @@ private fun FilterFieldRow(
 
 @Composable
 fun ClassroomCard(
-    classroomReference: ClassroomReference,
+    RoomReference: RoomReference,
     modifier: Modifier = Modifier,
     searchQuery: String = "",
     onClick: () -> Unit = {}
@@ -164,7 +164,7 @@ fun ClassroomCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(buildHighlightedAnnotatedString(text = classroomReference.name, searchQuery = searchQuery))
+            Text(buildHighlightedAnnotatedString(text = RoomReference.name, searchQuery = searchQuery))
         }
     }
 }

@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.classrooms.classroom
+package me.tomasan7.jecnamobile.rooms.room
 
 import android.content.Context
 import android.content.IntentFilter
@@ -17,27 +17,28 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
+import io.github.tomhula.jecnaapi.WebJecnaClient
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.classrooms.ClassroomsRepository
+import me.tomasan7.jecnamobile.rooms.RoomsRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
 
 @HiltViewModel
-class ClassroomViewModel @Inject constructor(
+class RoomViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
     jecnaClient: JecnaClient,
-    private val repository: ClassroomsRepository
+    private val repository: RoomsRepository
 ) : ViewModel()
 {
-    var uiState by mutableStateOf(ClassroomState())
+    var uiState by mutableStateOf(RoomState())
         private set
 
     private var loadClassroomJob: Job? = null
-    private var classroomReference: ClassroomReference? = null
+    private var RoomReference: RoomReference? = null
 
     private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
@@ -52,13 +53,13 @@ class ClassroomViewModel @Inject constructor(
 
     init
     {
-        if (jecnaClient.lastSuccessfulLoginTime != null)
+        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
             loadReal()
     }
 
-    fun enteredComposition(classroomReference: ClassroomReference)
+    fun enteredComposition(RoomReference: RoomReference)
     {
-        this.classroomReference = classroomReference
+        this.RoomReference = RoomReference
         loadReal()
 
         appContext.registerReceiver(
@@ -76,7 +77,7 @@ class ClassroomViewModel @Inject constructor(
 
     private fun loadReal()
     {
-        if (classroomReference == null) return
+        if (RoomReference == null) return
 
         loadClassroomJob?.cancel()
 
@@ -85,7 +86,7 @@ class ClassroomViewModel @Inject constructor(
         loadClassroomJob = viewModelScope.launch {
             try
             {
-                changeUiState(room = repository.getClassroom(classroomReference!!))
+                changeUiState(room = repository.getRoom(RoomReference!!))
             }
             catch (e: UnresolvedAddressException)
             {
@@ -121,7 +122,7 @@ class ClassroomViewModel @Inject constructor(
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        room: io.github.tomhula.jecnaapi.data.classroom.Room? = uiState.room,
+        room: io.github.tomhula.jecnaapi.data.room.Room? = uiState.room,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )
     {

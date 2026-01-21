@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.classrooms
+package me.tomasan7.jecnamobile.rooms
 
 import android.content.Context
 import android.content.IntentFilter
@@ -17,7 +17,8 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomPage
+import io.github.tomhula.jecnaapi.WebJecnaClient
+import io.github.tomhula.jecnaapi.data.room.RoomsPage
 import io.github.tomhula.jecnaapi.parser.ParseException
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
@@ -25,14 +26,14 @@ import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
 
 @HiltViewModel
-class ClassroomsViewModel @Inject constructor(
+class RoomsViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
     jecnaClient: JecnaClient,
-    private val repository: ClassroomsRepository
+    private val repository: RoomsRepository
 ) : ViewModel()
 {
-    var uiState by mutableStateOf(ClassroomsState())
+    var uiState by mutableStateOf(RoomsState())
         private set
 
     private var loadClassroomsJob: Job? = null
@@ -50,7 +51,7 @@ class ClassroomsViewModel @Inject constructor(
 
     init
     {
-        if (jecnaClient.lastSuccessfulLoginTime != null)
+        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
             loadReal()
     }
 
@@ -80,7 +81,7 @@ class ClassroomsViewModel @Inject constructor(
         loadClassroomsJob = viewModelScope.launch {
             try
             {
-                changeUiState(classroomsPage = repository.getClassroomsPage())
+                changeUiState(classroomsPage = repository.getRoomsPage())
             }
             catch (e: UnresolvedAddressException)
             {
@@ -116,7 +117,7 @@ class ClassroomsViewModel @Inject constructor(
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        classroomsPage: ClassroomPage? = uiState.classroomsPage,
+        classroomsPage: RoomsPage? = uiState.classroomsPage,
         filterFieldValue: String = uiState.filterFieldValue,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )

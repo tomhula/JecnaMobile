@@ -7,8 +7,8 @@ import me.tomasan7.jecnamobile.absence.AbsencesRepository
 import me.tomasan7.jecnamobile.absence.AbsencesRepositoryImpl
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepositoryImpl
-import me.tomasan7.jecnamobile.classrooms.ClassroomsRepository
-import me.tomasan7.jecnamobile.classrooms.ClassroomsRepositoryImpl
+import me.tomasan7.jecnamobile.rooms.RoomsRepository
+import me.tomasan7.jecnamobile.rooms.RoomsRepositoryImpl
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeCheckerImpl
 import me.tomasan7.jecnamobile.grades.GradesRepository
@@ -66,5 +66,5 @@ interface AppModuleBindings {
 
     @Binds
     @Singleton
-    fun bindClassroomsRepository(repository: ClassroomsRepositoryImpl): ClassroomsRepository
+    fun bindClassroomsRepository(repository: RoomsRepositoryImpl): RoomsRepository
 }

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.*
 import kotlinx.datetime.DayOfWeek
@@ -33,7 +33,7 @@ fun Timetable(
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
-    onClassroomClick: (ClassroomReference) -> Unit = { }
+    onClassroomClick: (RoomReference) -> Unit = { }
 )
 {
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
@@ -242,7 +242,7 @@ private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,
-    onClassroomClick: (ClassroomReference) -> Unit
+    onClassroomClick: (RoomReference) -> Unit
 )
 {
     DialogContainer(
@@ -277,7 +277,7 @@ private fun LessonDialogContent(
                 )
             if (lesson.classroom != null)
                 DialogRow(stringResource(R.string.timetable_dialog_classroom), lesson.classroom!!,
-                    { onClassroomClick(ClassroomReference(lesson.classroom!!, lesson.classroom!!)) })
+                    { onClassroomClick(RoomReference(lesson.classroom!!, lesson.classroom!!)) })
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }

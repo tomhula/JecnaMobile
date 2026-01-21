@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.classrooms.classroom
+package me.tomasan7.jecnamobile.rooms.room
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomReference
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.Timetable
@@ -39,14 +39,14 @@ import me.tomasan7.jecnamobile.ui.component.InfoRow
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
 @Composable
-fun ClassroomScreen(
-    classroomReference: ClassroomReference,
-    viewModel: ClassroomViewModel = hiltViewModel(),
+fun RoomScreen(
+    RoomReference: RoomReference,
+    viewModel: RoomViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 )
 {
     DisposableEffect(Unit) {
-        viewModel.enteredComposition(classroomReference)
+        viewModel.enteredComposition(RoomReference)
         onDispose {
             viewModel.leftComposition()
         }
@@ -63,7 +63,7 @@ fun ClassroomScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(classroomReference.name, navigator::popBackStack) },
+        topBar = { TopAppBar(RoomReference.name, navigator::popBackStack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(
@@ -82,31 +82,31 @@ fun ClassroomScreen(
             ) {
                 if (uiState.room != null)
                 {
-                    val classroom = uiState.room
+                    val room = uiState.room
 
-                    classroom.floor?.let {
-                        InfoRow(R.string.classroom_floor, classroom.floor!!)
+                    room.floor?.let {
+                        InfoRow(R.string.classroom_floor, room.floor!!)
                     }
-                    classroom.manager?.let {
-                        InfoRow(R.string.classroom_manager, classroom.manager!!.fullName, Modifier.clickable(onClick = {
+                    room.manager?.let {
+                        InfoRow(R.string.classroom_manager, room.manager!!.fullName, Modifier.clickable(onClick = {
                             navigator.navigate(
-                                TeacherScreenDestination(classroom.manager!!)
+                                TeacherScreenDestination(room.manager!!)
                             )
                         }))
                     }
 
-                    classroom.homeroomOf?.let {
+                    room.homeroomOf?.let {
                         InfoRow(R.string.classroom_main_class, it)
                     }
 
-                    classroom.timetable?.let()
+                    room.timetable?.let()
                     {
                         Text(
                             text = stringResource(R.string.classroom_title_timetable),
                             style = MaterialTheme.typography.titleLarge
                         )
                         Timetable(
-                            timetable = classroom.timetable!!,
+                            timetable = room.timetable!!,
                             onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) })
                     }
                 }

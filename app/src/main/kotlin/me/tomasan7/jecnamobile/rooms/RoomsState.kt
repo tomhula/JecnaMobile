@@ -1,25 +1,25 @@
-package me.tomasan7.jecnamobile.classrooms
+package me.tomasan7.jecnamobile.rooms
 
 import android.icu.text.Collator
 import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
-import io.github.tomhula.jecnaapi.data.classroom.ClassroomPage
+import io.github.tomhula.jecnaapi.data.room.RoomsPage
 import me.tomasan7.jecnamobile.util.removeAccent
 import java.util.Locale
 
 @Immutable
-data class ClassroomsState(
+data class RoomsState(
     val loading: Boolean = false,
-    val classroomsPage: ClassroomPage? = null,
+    val classroomsPage: RoomsPage? = null,
     val filterFieldValue: String = "",
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
 {
-    val classroomReferencesSorted = classroomsPage?.classroomRefs
+    val RoomReferencesSorted = classroomsPage?.roomReferences
         ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.name })
 
-    val classroomReferencesSortedFiltered = classroomReferencesSorted
+    val RoomReferencesSortedFiltered = RoomReferencesSorted
         ?.filter { it.name.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.roomCode.contains(filterFieldValue, ignoreCase = true) }
 }
 
