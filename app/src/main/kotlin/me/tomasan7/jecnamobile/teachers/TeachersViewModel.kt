@@ -62,7 +62,7 @@ class TeachersViewModel @Inject constructor(
     }
 
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_teachers)
-    override val loadErrorMessage = appContext.getString(R.string.error_load)
+    override val loadErrorMessage = appContext.getString(R.string.teachers_load_error)
 
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)

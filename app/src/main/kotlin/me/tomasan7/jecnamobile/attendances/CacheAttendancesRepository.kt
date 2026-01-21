@@ -45,15 +45,12 @@ class CacheAttendancesRepository @Inject constructor(
         }
     }
 
-    suspend fun getRealAttendances(): AttendancesPage
+    suspend fun getRealAttendances(schoolYear: SchoolYear, month: Month): AttendancesPage
     {
-        val gradesPage = attendancesRepository.getAttendancesPage()
+        val gradesPage = attendancesRepository.getAttendancesPage(schoolYear, month)
         cacheFile.writeText(Json.encodeToString(CachedData(gradesPage)))
         return gradesPage
     }
-
-    /** Will not cache anything. */
-    suspend fun getRealAttendances(schoolYear: SchoolYear, month: Month) = attendancesRepository.getAttendancesPage(schoolYear, month)
 
     companion object
     {

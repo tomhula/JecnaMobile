@@ -1,86 +1,36 @@
 package me.tomasan7.jecnamobile.attendances
 
 import android.content.Context
-import android.content.IntentFilter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.Month
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.char
-import kotlinx.datetime.toLocalDateTime
-import me.tomasan7.jecnamobile.JecnaMobileApplication
+import kotlinx.datetime.*
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import me.tomasan7.jecnamobile.util.now
-import kotlin.time.Instant
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.util.CachedData
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @HiltViewModel
 class AttendancesViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
-    jecnaClient: JecnaClient,
+    appContext: Context,
     private val repository: CacheAttendancesRepository
-) : ViewModel()
+) : SubScreenCacheViewModel<AttendancesPage>(appContext)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_attendances)
+    override val loadErrorMessage = appContext.getString(R.string.attendances_load_error)
+    
     var uiState by mutableStateOf(AttendancesState())
         private set
-
-    private var loadAttendancesJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadAttendancesJob == null || loadAttendancesJob!!.isCompleted)
-        {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
-    }
-
-    init
-    {
-        loadCache()
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal()
-    }
-
-    fun enteredComposition()
-    {
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
-    }
-
-    fun leftComposition()
-    {
-        loadAttendancesJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
 
     fun selectSchoolYear(schoolYear: SchoolYear)
     {
@@ -94,96 +44,41 @@ class AttendancesViewModel @Inject constructor(
         loadReal()
     }
 
-    private fun loadCache()
+    override fun setCacheDataUiState(data: CachedData<AttendancesPage>) = changeUiState(
+        attendancesPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        isCache = true
+    )
+
+    override fun getCache(): CachedData<AttendancesPage>?
     {
-        if (!repository.isCacheAvailable())
-            return
+        val cache = repository.getCachedAttendances() ?: return null
+        if (cache.data.selectedSchoolYear != uiState.selectedSchoolYear || cache.data.selectedMonth != uiState.selectedMonth)
+            return null
 
-        viewModelScope.launch {
-            val cachedGrades = repository.getCachedAttendances() ?: return@launch
-
-            changeUiState(
-                attendancePage = cachedGrades.data,
-                lastUpdateTimestamp = cachedGrades.timestamp,
-                isCache = true
-            )
-        }
+        return cache
     }
+    override fun isCacheAvailable() = repository.isCacheAvailable()
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
 
-    private fun loadReal()
-    {
-        loadAttendancesJob?.cancel()
+    override suspend fun fetchRealData() = repository.getRealAttendances(uiState.selectedSchoolYear, uiState.selectedMonth)
 
-        changeUiState(loading = true)
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
 
-        loadAttendancesJob = viewModelScope.launch {
-            try
-            {
-                val realGrades = if (isSelectedPeriodCurrent())
-                    repository.getRealAttendances()
-                else
-                    repository.getRealAttendances(uiState.selectedSchoolYear, uiState.selectedMonth)
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading)
 
-                changeUiState(
-                    attendancePage = realGrades,
-                    lastUpdateTimestamp = Clock.System.now(),
-                    isCache = false
-                )
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                if (uiState.lastUpdateTimestamp != null && uiState.isCache)
-                    changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()!!))
-                else
-                    changeUiState(snackBarMessageEvent =
-                    triggered(appContext.getString(R.string.no_internet_connection)))
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.attendances_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    private fun getOfflineMessage(): String?
-    {
-        val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
-        val localDate = localDateTime.date
-        
-        val today = LocalDate.now()
-
-        return if (localDate == today)
-        {
-            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_time, timeStr)
-        }
-        else
-        {
-            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_date, dateStr)
-        }
-    }
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-
-    private fun isSelectedPeriodCurrent() =
-        uiState.selectedSchoolYear == SchoolYear.current() && uiState.selectedMonth == LocalDate.now().month
+    override fun setDataUiState(data: AttendancesPage) = changeUiState(
+        attendancesPage = data,
+        lastUpdateTimestamp = Clock.System.now(),
+        isCache = false
+    )
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        attendancePage: AttendancesPage? = uiState.attendancesPage,
+        attendancesPage: AttendancesPage? = uiState.attendancesPage,
         lastUpdateTimestamp: Instant? = uiState.lastUpdateTimestamp,
         isCache: Boolean = uiState.isCache,
         selectedSchoolYear: SchoolYear = uiState.selectedSchoolYear,
@@ -193,26 +88,12 @@ class AttendancesViewModel @Inject constructor(
     {
         uiState = uiState.copy(
             loading = loading,
-            attendancesPage = attendancePage,
+            attendancesPage = attendancesPage,
             lastUpdateTimestamp = lastUpdateTimestamp,
             isCache = isCache,
             selectedSchoolYear = selectedSchoolYear,
             selectedMonth = selectedMonth,
             snackBarMessageEvent = snackBarMessageEvent
         )
-    }
-
-    companion object
-    {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
-            hour(padding = Padding.ZERO)
-            char(':')
-            minute(padding = Padding.ZERO)
-        }
-        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
-            day(padding = Padding.NONE)
-            chars(". ")
-            monthNumber(padding = Padding.NONE)
-        }
     }
 }

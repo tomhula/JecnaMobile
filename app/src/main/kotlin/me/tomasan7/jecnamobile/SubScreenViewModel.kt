@@ -20,10 +20,11 @@ abstract class SubScreenViewModel<T>(
 {
     abstract val parseErrorMessage: String
     abstract val loadErrorMessage: String
+    open val noInternetConnectionMessage: String = appContext.getString(R.string.no_internet_connection)
     
     var loadRealJob: Job? = null
     
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
+    protected val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
 
         if (loadRealJob == null || loadRealJob!!.isCompleted)
@@ -35,32 +36,39 @@ abstract class SubScreenViewModel<T>(
     }
 
     abstract suspend fun fetchRealData(): T
-
     abstract fun showSnackBarMessage(message: String)
-
     abstract fun setLoadingUiState(loading: Boolean)
-
     abstract fun setDataUiState(data: T)
-
-    fun enteredComposition()
+    
+    protected fun registerLoginBroadcastReceiver()
     {
         appContext.registerReceiver(
             loginBroadcastReceiver,
             IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
             Context.RECEIVER_NOT_EXPORTED
         )
+    }
+    
+    protected fun unregisterLoginBroadcastReceiver()
+    {
+        appContext.unregisterReceiver(loginBroadcastReceiver)
+    }
+
+    open fun enteredComposition()
+    {
+        registerLoginBroadcastReceiver()
         loadReal()
     }
 
-    fun leftComposition()
+    open fun leftComposition()
     {
         loadRealJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
+        unregisterLoginBroadcastReceiver()
     }
     
     fun reload() = if (loadRealJob?.isCompleted ?: true) loadReal() else Unit
     
-    fun loadReal()
+    open fun loadReal()
     {
         loadRealJob?.cancel()
 
@@ -73,11 +81,11 @@ abstract class SubScreenViewModel<T>(
             }
             catch (_: UnresolvedAddressException)
             {
-                showSnackBarMessage(appContext.getString(R.string.no_internet_connection))
+                showSnackBarMessage(noInternetConnectionMessage)
             }
             catch (_: UnknownHostException)
             {
-                showSnackBarMessage(appContext.getString(R.string.no_internet_connection))
+                showSnackBarMessage(noInternetConnectionMessage)
             }
             catch (e: ParseException)
             {
