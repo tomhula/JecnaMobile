@@ -16,5 +16,9 @@ internal object NoParamsSerializer : KSerializer<NoParams>
 
     override fun serialize(encoder: Encoder, value: NoParams) = encoder.encodeString("NoParams")
 
-    override fun deserialize(decoder: Decoder) = NoParams
+    override fun deserialize(decoder: Decoder): NoParams
+    {
+        decoder.decodeString()
+        return NoParams
+    }
 }
