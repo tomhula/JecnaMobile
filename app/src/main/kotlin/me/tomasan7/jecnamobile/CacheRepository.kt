@@ -17,8 +17,8 @@ class CacheRepository<T, P>(
     @param:ApplicationContext
     private val appContext: Context,
     val key: String,
-    private val dataSerializer: KSerializer<T>,
-    private val paramsSerializer: KSerializer<P>,
+    dataSerializer: KSerializer<T>,
+    paramsSerializer: KSerializer<P>,
     private val fetcher: suspend (P) -> T
 )
 {
