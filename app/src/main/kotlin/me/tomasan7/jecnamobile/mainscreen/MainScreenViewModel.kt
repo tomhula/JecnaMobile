@@ -3,6 +3,7 @@ package me.tomasan7.jecnamobile.mainscreen
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.util.Log
@@ -47,6 +48,7 @@ class MainScreenViewModel @Inject constructor(
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
         private set
 
+    private var lastKnownNetwork: Network? = null
     private val connectivityManager = getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
 
@@ -171,6 +173,18 @@ class MainScreenViewModel @Inject constructor(
 
     inner class NetworkAvailabilityCallback : ConnectivityManager.NetworkCallback()
     {
-        override fun onAvailable(network: android.net.Network) = onNetworkAvailable()
+        override fun onAvailable(network: Network)
+        {
+            if (network != lastKnownNetwork)
+            {
+                lastKnownNetwork = network
+                onNetworkAvailable()
+            }
+        }
+
+        override fun onLost(network: Network)
+        {
+            lastKnownNetwork = null
+        }
     }
 }
