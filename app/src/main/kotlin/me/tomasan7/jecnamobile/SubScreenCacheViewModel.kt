@@ -39,9 +39,15 @@ abstract class SubScreenCacheViewModel<T, P>(
     
     override fun enteredComposition()
     {
-        super.enteredComposition()
+        registerLoginBroadcastReceiver()
         if (enteredCompositionCounter == 0)
+        {
+            loadReal()
             loadCache()
+        }
+        else if (isCurrentlyShowingCache())
+            loadReal()
+        
         enteredCompositionCounter++
     }
 
