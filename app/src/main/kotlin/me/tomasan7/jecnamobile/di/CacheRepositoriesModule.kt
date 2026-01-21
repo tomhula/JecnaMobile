@@ -60,7 +60,7 @@ internal object CacheRepositoriesModule
         repository: GradesRepository
     ) = CacheRepository(
         appContext,
-        "news",
+        "grades",
         serializer<GradesPage>(),
         serializer<SchoolYearHalfParams>()
     ) {
