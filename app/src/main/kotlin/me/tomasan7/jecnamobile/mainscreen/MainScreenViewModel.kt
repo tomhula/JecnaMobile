@@ -5,11 +5,14 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +33,8 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import javax.inject.Inject
 
+private const val LOG_TAG = "MainScreenViewmodel"
+
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     @param:ApplicationContext
@@ -37,7 +42,7 @@ class MainScreenViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
     private val canteenClient: CanteenClient
-) : ViewModel()
+) : ViewModel(), DefaultLifecycleObserver
 {
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
         private set
@@ -45,9 +50,18 @@ class MainScreenViewModel @Inject constructor(
     private val connectivityManager = getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
 
-    init
+    override fun onStart(owner: LifecycleOwner)
     {
+        super.onStart(owner)
+        Log.d(LOG_TAG, "Registering network availability listener")
         registerNetworkAvailabilityListener()
+    }
+
+    override fun onStop(owner: LifecycleOwner)
+    {
+        super.onStop(owner)
+        Log.d(LOG_TAG, "Unregistering network availability listener")
+        unregisterNetworkAvailabilityListener()
     }
 
     fun tryLogin()
@@ -154,8 +168,6 @@ class MainScreenViewModel @Inject constructor(
     {
         connectivityManager.unregisterNetworkCallback(networkAvailabilityCallback)
     }
-
-    override fun onCleared() = unregisterNetworkAvailabilityListener()
 
     inner class NetworkAvailabilityCallback : ConnectivityManager.NetworkCallback()
     {
