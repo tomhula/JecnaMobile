@@ -5,16 +5,19 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.migration.DisableInstallInCheck
+import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
+import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.CacheRepository
 import me.tomasan7.jecnamobile.NoParams
 import me.tomasan7.jecnamobile.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.SchoolYearMonthParams
 import me.tomasan7.jecnamobile.SchoolYearPeriodParams
+import me.tomasan7.jecnamobile.absence.AbsencesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
@@ -83,5 +86,20 @@ internal object CacheRepositoriesModule
         serializer<SchoolYearPeriodParams>()
     ) {
         repository.getTimetablePage(it.schoolYear, it.periodId)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAbsencesCacheRepository(
+        @ApplicationContext
+        appContext: Context,
+        repository: AbsencesRepository
+    ) = CacheRepository(
+        appContext,
+        "absences",
+        serializer<AbsencesPage>(),
+        serializer<SchoolYear>()
+    ) {
+        repository.getAbsencesPage(it)
     }
 }

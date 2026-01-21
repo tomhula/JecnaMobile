@@ -27,8 +27,11 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.CacheRepository
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.now
 import javax.inject.Inject
@@ -39,24 +42,44 @@ import kotlin.time.Instant
 @HiltViewModel
 class AbsencesViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
-    jecnaClient: JecnaClient,
-    private val repository: CacheAbsencesRepository
-) : ViewModel() {
+    appContext: Context,
+    repository: CacheRepository<AbsencesPage, SchoolYear>
+) : SubScreenCacheViewModel<AbsencesPage, SchoolYear>(appContext, repository) 
+{
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_absences)
+    override val loadErrorMessage = appContext.getString(R.string.absences_load_error)
+    
     var uiState by mutableStateOf(AbsencesState())
         private set
-
-    private var loadAbsencesJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first =
-            intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-        if (loadAbsencesJob == null || loadAbsencesJob!!.isCompleted) {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal()
-        }
+    
+    fun selectSchoolYear(schoolYear: SchoolYear)
+    {
+        changeUiState(selectedSchoolYear = schoolYear)
+        loadReal()
     }
+
+
+    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override fun setCacheDataUiState(data: CachedDataNew<AbsencesPage, SchoolYear>) = changeUiState(
+        absencesPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        isCache = true
+    )
+
+    override fun setDataUiState(data: AbsencesPage) = changeUiState(
+        absencesPage = data,
+        lastUpdateTimestamp = Clock.System.now(),
+        isCache = false
+    )
+
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun getParams() = uiState.selectedSchoolYear
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
+
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         absencesPage: AbsencesPage? = uiState.absencesPage,
@@ -74,133 +97,5 @@ class AbsencesViewModel @Inject constructor(
             selectedSchoolYear = selectedSchoolYear,
             snackBarMessageEvent = snackBarMessageEvent
         )
-    }
-
-
-    private fun loadReal()
-    {
-        loadAbsencesJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadAbsencesJob = viewModelScope.launch {
-            try
-            {
-                val realAbsences = if (isSelectedPeriodCurrent())
-                    repository.getRealAbsences()
-                else
-                    repository.getRealAbsences(uiState.selectedSchoolYear)
-                
-                changeUiState(
-                    absencesPage = realAbsences,
-                    lastUpdateTimestamp = Clock.System.now(),
-                    isCache = false
-                )
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                if (uiState.lastUpdateTimestamp != null && uiState.isCache)
-                    changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()!!))
-                else
-                    changeUiState(snackBarMessageEvent =
-                    triggered(appContext.getString(R.string.no_internet_connection)))
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.absences_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    init
-    {
-        loadCache()
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal()
-    }
-
-    private fun loadCache()
-    {
-        if (!repository.isCacheAvailable())
-            return
-
-        viewModelScope.launch {
-            val cachedAbsences = repository.getCachedAbsences() ?: return@launch
-
-            changeUiState(
-                absencesPage = cachedAbsences.data,
-                lastUpdateTimestamp = cachedAbsences.timestamp,
-                isCache = true
-            )
-        }
-    }
-
-    fun enteredComposition()
-    {
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
-    }
-
-    fun leftComposition()
-    {
-        loadAbsencesJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
-
-    fun selectSchoolYear(schoolYear: SchoolYear)
-    {
-        changeUiState(selectedSchoolYear = schoolYear)
-        loadReal()
-    }
-
-    private fun getOfflineMessage(): String?
-    {
-        val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
-        val localDate = localDateTime.date
-
-        val today = LocalDate.now()
-        
-        return if (localDate == today)
-        {
-            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_time, timeStr)
-        }
-        else
-        {
-            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_date, dateStr)
-        }
-    }
-
-    fun reload() = if (!uiState.loading) loadReal() else Unit
-    private fun isSelectedPeriodCurrent() =
-        uiState.selectedSchoolYear == SchoolYear.current()
-
-    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
-    companion object
-    {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format { 
-            hour(padding = Padding.ZERO)
-            char(':')
-            minute(padding = Padding.ZERO)
-        } 
-        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format { 
-            day(padding = Padding.NONE)
-            chars(". ")
-            monthNumber(padding = Padding.NONE)
-        }
     }
 }
