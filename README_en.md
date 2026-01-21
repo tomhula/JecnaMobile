@@ -48,7 +48,6 @@ The minimum supported Android version is `Android 8.0 (Oreo)`.
 
 ## Known Issues
 
-- When the network state changes while the app is minimized, a toast saying “An error occurred during login” is shown
 - Several parts of the app do not work if the user does not check “Remember user”
 - Clicking on a notification only opens the app but does not navigate to a specific screen
 
