@@ -42,7 +42,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CanteenViewModel @Inject constructor(
-    @ApplicationContext
+    @param:ApplicationContext
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val canteenClient: CanteenClient,
