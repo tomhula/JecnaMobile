@@ -65,7 +65,8 @@ fun Timetable(
         Column(
             modifier = Modifier.horizontalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(breakWidth)
-        ) {
+        )
+        {
             Row {
                 timetable.lessonPeriods.forEachIndexed { i, lessonPeriod ->
                     if (i == 0)
@@ -134,7 +135,8 @@ private fun TimetableLessonPeriod(
         shadowElevation = ElevationLevel.level1,
         color = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).manipulate(1.5f),
         shape = RoundedCornerShape(5.dp),
-    ) {
+    )
+    {
         Box(Modifier.padding(4.dp)) {
             Text(
                 modifier = Modifier.align(Alignment.TopCenter),
@@ -206,7 +208,8 @@ private fun Lesson(
         shape = shape,
         color = if (current) MaterialTheme.colorScheme.inverseSurface else MaterialTheme.colorScheme.surface,
         onClick = onClick
-    ) {
+    )
+    {
         Box(Modifier.padding(4.dp)) {
             if (lesson.subjectName.short != null)
                 Text(lesson.subjectName.short!!, Modifier.align(Alignment.Center), fontWeight = FontWeight.Bold)
@@ -248,6 +251,7 @@ private fun LessonDialogContent(
     onRoomClick: (RoomReference) -> Unit
 )
 {
+    val roomLabel = stringResource(R.string.timetable_dialog_room)
     DialogContainer(
         title = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -262,7 +266,8 @@ private fun LessonDialogContent(
                 Text(stringResource(R.string.close))
             }
         }
-    ) {
+    )
+    {
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
@@ -279,8 +284,16 @@ private fun LessonDialogContent(
                     onClick = { onTeacherClick(TeacherReference(teacher.full, teacher.short!!)) }
                 )
             if (lesson.classroom != null)
-                DialogRow(stringResource(R.string.timetable_dialog_room), lesson.classroom!!,
-                    { onRoomClick(RoomReference(stringResource(R.string.timetable_dialog_room) +" "+ lesson.classroom!!, lesson.classroom!!)) })
+                DialogRow(
+                    stringResource(R.string.timetable_dialog_room), lesson.classroom!!,
+                    {
+                        onRoomClick(
+                            RoomReference(
+                                roomLabel + " " + lesson.classroom!!,
+                                lesson.classroom!!
+                            )
+                        )
+                    })
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }

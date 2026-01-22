@@ -52,7 +52,8 @@ fun RoomsSubScreen(
     EventEffect(
         event = uiState.snackBarMessageEvent,
         onConsumed = viewModel::onSnackBarMessageEventConsumed
-    ) {
+    )
+    {
         snackbarHostState.showSnackbar(it)
     }
 
@@ -66,14 +67,16 @@ fun RoomsSubScreen(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
-        ) {
+        )
+        {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(16.dp)
                     .verticalScroll(rememberScrollState())
-            ) {
+            )
+            {
                 FilterFieldRow(
                     value = uiState.filterFieldValue,
                     onValueChange = viewModel::onFilterFieldValueChange
@@ -118,7 +121,8 @@ private fun FilterFieldRow(
     Row(
         horizontalArrangement = Arrangement.Center,
         modifier = Modifier.fillMaxWidth()
-    ) {
+    )
+    {
         OutlinedTextField(
             modifier = Modifier,
             placeholder = { Text(stringResource(R.string.rooms_search_placeholder)) },
@@ -144,7 +148,8 @@ fun ClassroomCard(
         modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(4.dp)
-    ) {
+    )
+    {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
