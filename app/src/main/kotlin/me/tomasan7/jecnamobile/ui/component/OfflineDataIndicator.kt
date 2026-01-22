@@ -121,6 +121,7 @@ val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
 }
 val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
     day(padding = Padding.NONE)
-    chars(". ")
+    char('.')
     monthNumber(padding = Padding.NONE)
+    char('.')
 }

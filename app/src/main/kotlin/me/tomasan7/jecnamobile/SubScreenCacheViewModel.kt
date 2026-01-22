@@ -100,8 +100,9 @@ abstract class SubScreenCacheViewModel<T, P>(
         }
         val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
             day(padding = Padding.NONE)
-            chars(". ")
+            char('.')
             monthNumber(padding = Padding.NONE)
+            char('.')
         }
     }
 }
