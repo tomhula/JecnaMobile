@@ -1,8 +1,5 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
-import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.*
-import me.tomasan7.jecnamobile.ui.component.InfoRow
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,9 +26,8 @@ import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
-import me.tomasan7.jecnamobile.destinations.RoomScreenDestination.invoke
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
+import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -100,7 +96,7 @@ fun TeacherScreen(
                         Timetable(
                             timetable = it,
                             modifier = Modifier.padding(10.dp),
-                            onClassroomClick = {navigator.navigate(RoomScreenDestination(it))}
+                            onRoomClick = {navigator.navigate(RoomScreenDestination(it))}
                         )
                     }
                 }

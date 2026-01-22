@@ -6,17 +6,17 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.room.RoomsPage
 import me.tomasan7.jecnamobile.util.removeAccent
-import java.util.Locale
+import java.util.*
 
 @Immutable
 data class RoomsState(
     val loading: Boolean = false,
-    val classroomsPage: RoomsPage? = null,
+    val roomsPage: RoomsPage? = null,
     val filterFieldValue: String = "",
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
 {
-    val RoomReferencesSorted = classroomsPage?.roomReferences
+    val RoomReferencesSorted = roomsPage?.roomReferences
         ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.name })
 
     val RoomReferencesSortedFiltered = RoomReferencesSorted

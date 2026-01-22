@@ -36,7 +36,7 @@ fun Timetable(
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
-    onClassroomClick: (RoomReference) -> Unit = { }
+    onRoomClick: (RoomReference) -> Unit = { }
 )
 {
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
@@ -115,7 +115,7 @@ fun Timetable(
                     lesson = lesson,
                     onCloseClick = { dialogState.hide() },
                     onTeacherClick = { onTeacherClick(it) },
-                    onClassroomClick = { onClassroomClick(it) }
+                    onRoomClick = { onRoomClick(it) }
                 )
             }
         )
@@ -245,7 +245,7 @@ private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,
-    onClassroomClick: (RoomReference) -> Unit
+    onRoomClick: (RoomReference) -> Unit
 )
 {
     DialogContainer(
@@ -280,7 +280,7 @@ private fun LessonDialogContent(
                 )
             if (lesson.classroom != null)
                 DialogRow(stringResource(R.string.timetable_dialog_classroom), lesson.classroom!!,
-                    { onClassroomClick(RoomReference(lesson.classroom!!, lesson.classroom!!)) })
+                    { onRoomClick(RoomReference(stringResource(R.string.timetable_dialog_classroom) +" "+ lesson.classroom!!, lesson.classroom!!)) })
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }

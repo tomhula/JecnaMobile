@@ -15,7 +15,7 @@ import me.tomasan7.jecnamobile.ui.theme.jm_label
 fun DialogRow(
     label: String,
     value: String,
-    onClick: () -> Unit = {}
+    onClick: @Composable () -> Unit = {}
 )
 {
     Surface(

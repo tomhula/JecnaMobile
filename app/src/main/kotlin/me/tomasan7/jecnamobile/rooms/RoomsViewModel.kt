@@ -12,14 +12,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.room.RoomsPage
 import io.github.tomhula.jecnaapi.parser.ParseException
+import io.ktor.util.network.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
@@ -117,14 +117,14 @@ class RoomsViewModel @Inject constructor(
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
-        classroomsPage: RoomsPage? = uiState.classroomsPage,
+        classroomsPage: RoomsPage? = uiState.roomsPage,
         filterFieldValue: String = uiState.filterFieldValue,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )
     {
         uiState = uiState.copy(
             loading = loading,
-            classroomsPage = classroomsPage,
+            roomsPage = classroomsPage,
             filterFieldValue = filterFieldValue,
             snackBarMessageEvent = snackBarMessageEvent
         )
