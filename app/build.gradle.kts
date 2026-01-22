@@ -1,16 +1,21 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.android.kotlin)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.kapt)
+    // https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-migrate-kotlin-kapt-plugin
+    alias(libs.plugins.legacy.kapt)
     alias(libs.plugins.hilt)
+}
+
+kotlin {
+    compilerOptions {
+        optIn.add("kotlin.time.ExperimentalTime")
+    }
 }
 
 android {
     compileSdk = 36
-
     namespace = "me.tomasan7.jecnamobile"
 
     defaultConfig {
@@ -38,18 +43,6 @@ android {
         }
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
-    }
-
-    kotlin {
-        jvmToolchain(21)
-        compilerOptions { 
-            optIn.add("kotlin.time.ExperimentalTime")
-        }
-    }
-
     buildFeatures {
         compose = true
     }
@@ -58,12 +51,6 @@ android {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
-    }
-
-    applicationVariants.all {
-        addJavaSourceFoldersToModel(
-            File(layout.buildDirectory.get().asFile, "generated/ksp/$name/kotlin")
-        )
     }
 }
 
