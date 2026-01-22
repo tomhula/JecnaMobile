@@ -12,7 +12,7 @@ composeDestinations = "2.3.0"
 composeStateEvents = "2.2.0"
 composeHtml = "1.0.2"
 composeCoil = "2.6.0"
-accompanist = "0.32.0"
+accompanist = "0.37.3"
 
 activity = "1.12.1"
 
