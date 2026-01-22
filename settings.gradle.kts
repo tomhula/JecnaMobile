@@ -1,3 +1,6 @@
+rootProject.name = "JecnaMobile"
+include(":app")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -20,6 +23,3 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-
-rootProject.name = "JecnaMobile"
-include(":app")
