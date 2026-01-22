@@ -1,6 +1,6 @@
 [versions]
 plugin-android = "9.0.0"
-plugin-kotlin = "2.2.21"
+plugin-kotlin = "2.3.0"
 # TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
 plugin-ksp = "2.3.5-SNAPSHOT"
 
