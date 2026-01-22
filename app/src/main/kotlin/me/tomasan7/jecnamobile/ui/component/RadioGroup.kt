@@ -1,10 +1,6 @@
 package me.tomasan7.jecnamobile.ui.component
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,10 +17,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun <T> RadioGroup(
     options: List<T>,
-    optionStringMap: (T) -> String = { it.toString() },
     selectedOption: T,
     onSelectionChange: (T) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    optionStringMap: (T) -> String = { it.toString() }
 )
 {
     /* Copied from https://developer.android.com/reference/kotlin/androidx/compose/material3/package-summary#RadioButton(kotlin.Boolean,kotlin.Function0,androidx.compose.ui.Modifier,kotlin.Boolean,androidx.compose.material3.RadioButtonColors,androidx.compose.foundation.interaction.MutableInteractionSource) */

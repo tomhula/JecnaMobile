@@ -20,15 +20,21 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-################################### Kotlinx Serialization ###################################
-# https://github.com/Kotlin/kotlinx.serialization#android
+#################### Kotlinx Serialization ####################
+##  https://github.com/Kotlin/kotlinx.serialization#android  ##
+###############################################################
 
-
-# Keep `Companion` object fields of serializable classes.
+# Keep `Companion` object field of serializable classes.
 # This avoids serializer lookup through `getDeclaredClasses` as done for named companion objects.
--if @kotlinx.serialization.Serializable class **
--keepclassmembers class <1> {
-    static <1>$Companion Companion;
+ -keepclassmembers @kotlinx.serialization.Serializable class ** {
+    static ** Companion;
+ }
+
+# Keep names for named companion object from obfuscation
+# Names of a class and of a field are important in lookup of named companion in runtime
+-if @kotlinx.serialization.internal.NamedCompanion class *
+-keepclassmembers class * {
+    static <1> *;
 }
 
 # Keep `serializer()` on companion objects (both default and named) of serializable classes.
@@ -51,18 +57,19 @@
 # @Serializable and @Polymorphic are used at runtime for polymorphic serialization.
 -keepattributes RuntimeVisibleAnnotations,AnnotationDefault
 
-# Serializer for classes with named companion objects are retrieved using `getDeclaredClasses`.
-# If you have any, uncomment and replace classes with those containing named companion objects.
-#-keepattributes InnerClasses # Needed for `getDeclaredClasses`.
-#-if @kotlinx.serialization.Serializable class
-#com.example.myapplication.HasNamedCompanion, # <-- List serializable classes with named companions.
-#com.example.myapplication.HasNamedCompanion2
-#{
-#    static **$* *;
-#}
-#-keepnames class <1>$$serializer { # -keepnames suffices; class is kept when serializer() is kept.
-#    static <1>$$serializer INSTANCE;
-#}
+# Don't print notes about potential mistakes or omissions in the configuration for kotlinx-serialization classes
+# See also https://github.com/Kotlin/kotlinx.serialization/issues/1900
+-dontnote kotlinx.serialization.**
+# Serialization core uses `java.lang.ClassValue` for caching inside these specified classes.
+# If there is no `java.lang.ClassValue` (for example, in Android), then R8/ProGuard will print a warning.
+# However, since in this case they will not be used, we can disable these warnings
+-dontwarn kotlinx.serialization.internal.ClassValueReferences
+
+# disable optimisation for descriptor field because in some versions of ProGuard, optimization generates incorrect bytecode that causes a verification error
+# see https://github.com/Kotlin/kotlinx.serialization/issues/2719
+-keepclassmembers public class **$$serializer {
+    private ** descriptor;
+}
 
 # This is generated automatically by the Android Gradle plugin.
 -dontwarn org.bouncycastle.jsse.BCSSLParameters
@@ -76,8 +83,8 @@
 -dontwarn org.openjsse.net.ssl.OpenJSSE
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 
--keep class io.ktor.** { *; }
--keep interface io.ktor.** { *; }
+#-keep class io.ktor.** { *; }
+#-keep interface io.ktor.** { *; }
 
 -dontwarn java.lang.management.ManagementFactory
 -dontwarn java.lang.management.RuntimeMXBean

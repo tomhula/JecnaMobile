@@ -1,13 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +11,6 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -34,11 +26,7 @@ import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
-import me.tomasan7.jecnamobile.ui.component.OutlinedDropDownSelector
-import me.tomasan7.jecnamobile.ui.component.SchoolYearSelector
-import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
-import me.tomasan7.jecnamobile.ui.component.Timetable
+import me.tomasan7.jecnamobile.ui.component.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>(start = true)

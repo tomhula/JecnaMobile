@@ -19,14 +19,6 @@ data class CanteenState(
 )
 {
     val menuSorted = menu/*.filter { it.items.isNotEmpty() }*/.sortedBy { it.day }
-
-    companion object
-    {
-        /**
-         * The time after which you canteen no longer hands out food.
-         */
-        private val FOOD_HAND_OUT_END_TIME = LocalTime(14, 30)
-    }
 }
 
 data class ExchangeDay(

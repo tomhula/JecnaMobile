@@ -3,13 +3,17 @@ package me.tomasan7.jecnamobile.mainscreen
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,18 +21,20 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.web.AuthenticationException
+import io.ktor.util.network.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import javax.inject.Inject
+
+private const val LOG_TAG = "MainScreenViewmodel"
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
@@ -37,18 +43,27 @@ class MainScreenViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
     private val canteenClient: CanteenClient
-) : ViewModel()
+) : ViewModel(), DefaultLifecycleObserver
 {
     var navigateToLoginEvent: StateEvent by mutableStateOf(consumed)
         private set
 
-    private val connectivityManager =
-        getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
+    private var lastKnownNetwork: Network? = null
+    private val connectivityManager = getSystemService(appContext, ConnectivityManager::class.java) as ConnectivityManager
     private val networkAvailabilityCallback = NetworkAvailabilityCallback()
 
-    init
+    override fun onStart(owner: LifecycleOwner)
     {
+        super.onStart(owner)
+        Log.d(LOG_TAG, "Registering network availability listener")
         registerNetworkAvailabilityListener()
+    }
+
+    override fun onStop(owner: LifecycleOwner)
+    {
+        super.onStop(owner)
+        Log.d(LOG_TAG, "Unregistering network availability listener")
+        unregisterNetworkAvailabilityListener()
     }
 
     fun tryLogin()
@@ -156,10 +171,20 @@ class MainScreenViewModel @Inject constructor(
         connectivityManager.unregisterNetworkCallback(networkAvailabilityCallback)
     }
 
-    override fun onCleared() = unregisterNetworkAvailabilityListener()
-
     inner class NetworkAvailabilityCallback : ConnectivityManager.NetworkCallback()
     {
-        override fun onAvailable(network: android.net.Network) = onNetworkAvailable()
+        override fun onAvailable(network: Network)
+        {
+            if (network != lastKnownNetwork)
+            {
+                lastKnownNetwork = network
+                onNetworkAvailable()
+            }
+        }
+
+        override fun onLost(network: Network)
+        {
+            lastKnownNetwork = null
+        }
     }
 }

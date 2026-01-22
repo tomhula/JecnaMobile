@@ -5,8 +5,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import me.tomasan7.jecnamobile.R
 import kotlinx.datetime.LocalDate
+import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.now
 
 @Composable

@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
 import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import javax.inject.Inject
 
@@ -13,6 +12,6 @@ class TimetableRepositoryImpl @Inject constructor(
 
     override suspend fun getTimetablePage(
         schoolYear: SchoolYear,
-        timetablePeriod: TimetablePage.PeriodOption
-    ) = jecnaClient.getTimetablePage(schoolYear, timetablePeriod)
+        periodId: Int
+    ) = jecnaClient.getTimetablePage(schoolYear, periodId)
 }

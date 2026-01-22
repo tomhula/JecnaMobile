@@ -10,8 +10,8 @@ import io.github.tomhula.jecnaapi.data.notification.Notification
 import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
+import java.util.*
 import kotlin.time.Instant
-import java.util.Locale
 
 @Immutable
 data class GradesState(
@@ -33,5 +33,5 @@ data class GradesState(
      * [gradesPage]'s `subjectNames` sorted according to Czech alphabet. Is `null` when [gradesPage] is `null`.
      */
     val subjectsSorted =
-        gradesPage?.subjects?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.name.full })
+        gradesPage?.subjects?.sortedWith(compareBy(Collator.getInstance(Locale.forLanguageTag("cs"))) { it.name.full })
 }

@@ -2,8 +2,8 @@ package me.tomasan7.jecnamobile.student
 
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
-import io.github.tomhula.jecnaapi.data.student.Student
 import io.github.tomhula.jecnaapi.data.student.Locker
+import io.github.tomhula.jecnaapi.data.student.Student
 
 
 data class StudentProfileState(

@@ -2,11 +2,9 @@ package me.tomasan7.jecnamobile.timetable
 
 import android.content.Context
 import android.content.IntentFilter
-import android.os.Build
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,31 +12,24 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
+import io.ktor.util.network.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.datetime.*
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import kotlin.time.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
-import kotlinx.datetime.toLocalDateTime
-import me.tomasan7.jecnamobile.absence.AbsencesViewModel
 import me.tomasan7.jecnamobile.util.now
-import java.time.ZoneId
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(

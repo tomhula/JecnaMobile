@@ -14,7 +14,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
+import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.WebCanteenClient
+import io.github.tomhula.jecnaapi.data.canteen.DayMenu
+import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
+import io.github.tomhula.jecnaapi.data.canteen.MenuItem
+import io.github.tomhula.jecnaapi.parser.ParseException
+import io.ktor.util.network.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch
@@ -22,22 +28,16 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import io.github.tomhula.jecnaapi.CanteenClient
-import io.github.tomhula.jecnaapi.WebCanteenClient
-import io.github.tomhula.jecnaapi.data.canteen.DayMenu
-import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
-import io.github.tomhula.jecnaapi.data.canteen.MenuItem
-import io.github.tomhula.jecnaapi.parser.ParseException
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import me.tomasan7.jecnamobile.util.settingsDataStore
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.plus
 import me.tomasan7.jecnamobile.util.now
+import me.tomasan7.jecnamobile.util.settingsDataStore
 import javax.inject.Inject
 
 @HiltViewModel
@@ -51,7 +51,7 @@ class CanteenViewModel @Inject constructor(
     var uiState by mutableStateOf(CanteenState())
         private set
     private var loadMenuJob: Job? = null
-    private var loginjob: Job? = null
+    private var loginJob: Job? = null
     private var loginInProcess = false
     private val awaitedDays = mutableSetOf<LocalDate>()
 
@@ -73,7 +73,7 @@ class CanteenViewModel @Inject constructor(
     private fun loginCanteenClient()
     {
         loginInProcess = true
-        loginjob = viewModelScope.launch {
+        loginJob = viewModelScope.launch {
             changeUiState(loading = true)
 
             val auth = authRepository.get()
@@ -251,7 +251,7 @@ class CanteenViewModel @Inject constructor(
         loadMenuJob?.cancel()
 
         viewModelScope.launch {
-            loginjob?.join()
+            loginJob?.join()
             val days = getDays()
             awaitedDays.addAll(days)
             loadMenuJob = canteenClient.getMenuAsync(days)
@@ -300,7 +300,7 @@ class CanteenViewModel @Inject constructor(
         changeUiState(loading = true)
 
         viewModelScope.launch {
-            loginjob?.join()
+            loginJob?.join()
 
             try
             {

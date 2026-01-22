@@ -12,13 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.Constraints
-import androidx.work.CoroutineWorker
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
+import androidx.work.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.github.tomhula.jecnaapi.JecnaClient
@@ -30,9 +24,10 @@ import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.MainActivity
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChange
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
-import me.tomasan7.jecnamobile.grades.CacheGradesRepository
 import me.tomasan7.jecnamobile.login.AuthRepository
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -46,13 +41,12 @@ class GradeCheckerWorker @AssistedInject constructor(
     private val params: WorkerParameters,
     private val jecnaClient: JecnaClient,
     private val authRepository: AuthRepository,
-    private val cacheGradesRepository: CacheGradesRepository,
+    private val cacheGradesRepository: CacheRepository<GradesPage, SchoolYearHalfParams>,
     private val gradeChangeChecker: GradesChangeChecker
 ) : CoroutineWorker(appContext, params)
 {
     private val notificationManagerCompat = NotificationManagerCompat.from(appContext)
-
-
+    
     override suspend fun doWork(): Result
     {
         if (!notificationsAllowed(appContext))
@@ -66,10 +60,11 @@ class GradeCheckerWorker @AssistedInject constructor(
         if ((jecnaClient as WebJecnaClient).autoLoginAuth == null)
             jecnaClient.autoLoginAuth = authRepository.get()
 
-        val cachedGradesPage = cacheGradesRepository.getCachedGrades()?.data
+        val params = SchoolYearHalfParams(SchoolYear.current(), SchoolYearHalf.current())
+        val cachedGradesPage = cacheGradesRepository.getCache(params)?.data
         val realGradesPage = try
         {
-            cacheGradesRepository.getRealGrades()
+            cacheGradesRepository.getRealAndCache(params)
         }
         catch (e: Exception)
         {

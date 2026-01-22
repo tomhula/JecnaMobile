@@ -3,40 +3,21 @@ package me.tomasan7.jecnamobile.mainscreen
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.OpenInBrowser
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.DrawerValue
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalDrawerSheet
-import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.NavigationDrawerItemDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -60,6 +41,7 @@ import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
 import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
+import androidx.core.net.toUri
 
 @Destination<RootGraph>
 @Composable
@@ -101,6 +83,15 @@ fun MainScreen(
     ) {
         navigator.navigate(LoginScreenDestination) {
             popUpTo(LoginScreenDestination)
+        }
+    }
+    
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    DisposableEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.addObserver(viewModel)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(viewModel)
         }
     }
 
@@ -258,7 +249,7 @@ fun LinkItem(item: SidebarLink)
         selected = false,
         onClick = {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.data = Uri.parse(item.link)
+            intent.data = item.link.toUri()
             context.startActivity(intent)
         },
         badge = { Icon(Icons.Outlined.OpenInBrowser, label) },

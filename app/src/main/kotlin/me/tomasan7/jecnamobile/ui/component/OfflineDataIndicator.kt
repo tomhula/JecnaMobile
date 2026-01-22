@@ -10,13 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PriorityHigh
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.PlainTooltip
-import androidx.compose.material3.Text
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -28,16 +22,12 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnamobile.R
-import kotlin.time.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format
+import kotlinx.datetime.*
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import kotlinx.datetime.toLocalDateTime
+import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.util.now
+import kotlin.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +62,7 @@ fun OfflineDataIndicator(
 
     TooltipBox(
         state = tooltipState,
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
         tooltip = {
             PlainTooltip {
                 Text(text)
@@ -121,6 +111,7 @@ val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
 }
 val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
     day(padding = Padding.NONE)
-    chars(". ")
+    char('.')
     monthNumber(padding = Padding.NONE)
+    char('.')
 }

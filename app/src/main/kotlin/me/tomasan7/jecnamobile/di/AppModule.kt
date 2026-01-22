@@ -6,10 +6,12 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
+import me.tomasan7.jecnamobile.LoginStateProvider
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 
-@Module(includes = [AppModuleBindings::class])
+@Module(includes = [AppModuleBindings::class, CacheRepositoriesModule::class])
 @InstallIn(SingletonComponent::class)
 internal object AppModule
 {
@@ -21,4 +23,11 @@ internal object AppModule
     @Provides
     @Singleton
     fun provideCanteenClient() = CanteenClient(autoLogin = true, userAgent = "JM")
+    
+    @Provides
+    @Singleton
+    fun provideLoginStateProvider(jecnaClient: JecnaClient) = object : LoginStateProvider {
+        override val afterFirstLogin: Boolean
+                get() = (jecnaClient as WebJecnaClient).autoLoginAuth != null
+    }
 }

@@ -19,7 +19,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
-import io.github.tomhula.jecnaapi.data.timetable.*
+import io.github.tomhula.jecnaapi.data.timetable.Lesson
+import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
+import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
+import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel

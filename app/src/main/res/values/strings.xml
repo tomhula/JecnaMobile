@@ -246,6 +246,7 @@
     <string name="error_no_internet_connection">Aplikace potřebuje připojení k internetu</string>
     <string name="error_unsupported_timetable">Žádaný rozvrh je v nepodporovaném formátu.</string>
     <string name="error_unsupported_articles">Novinky jsou v nepodporovaném formátu.</string>
+    <string name="error_unsupported_absences">Absence je v nepodporovaném formátu.</string>
     <string name="error_unsupported_grades">Žádané známky jsou v nepodporovaném formátu.</string>
     <string name="error_unsupported_attendances">Žádané příchody a odchody jsou v nepodporovaném formátu.</string>
     <string name="error_unsupported_menu">Žádané menu je v nepodporovaném formátu.</string>
@@ -253,6 +254,7 @@
     <string name="error_unsupported_teacher">Stránka učitele je v nepodporovaném formátu.</string>
     <string name="error_unsupported_classrooms">Stránka s učebnami je v nepodporovaném formátu.</string>
     <string name="error_unsupported_classroom">Stránka učebny je v nepodporovaném formátu.</string>
+    <string name="error_unsupported_student_profile">Profilová stránka studenta v nepodporovaném formátu.</string>
     <string name="error_unsupported_credit">Kredit je v nepodporovaném formátu.</string>
     <string name="error_order">Při objednávání došlo k chybě. Zkuste to znovu později.</string>
     <string name="error_load">Při načítání došlo k chybě.</string>

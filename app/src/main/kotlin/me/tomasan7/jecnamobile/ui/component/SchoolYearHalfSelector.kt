@@ -15,7 +15,7 @@ fun SchoolYearHalfSelector(
 {
     OutlinedDropDownSelector(
         label = stringResource(R.string.school_year_half),
-        options = SchoolYearHalf.values().toList(),
+        options = SchoolYearHalf.entries,
         optionStringMap = { when (it!!)
         {
             SchoolYearHalf.FIRST -> stringResource(R.string.school_year_half_1)

@@ -2,15 +2,7 @@ package me.tomasan7.jecnamobile.canteen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
@@ -19,21 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.PrimaryTabRow
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -45,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -53,11 +30,11 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
@@ -66,19 +43,12 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.ElevationLevel
-import me.tomasan7.jecnamobile.ui.component.Card
-import me.tomasan7.jecnamobile.ui.component.DialogContainer
-import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
-import me.tomasan7.jecnamobile.ui.component.ObjectDialog
-import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
-import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
-import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
+import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered_disabled
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.settingsDataStore
-import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -619,21 +589,6 @@ private fun ElevatedTextRectangle(
         }
     }
 }
-
-@Composable
-private fun ElevatedTextRectangle(
-    modifier: Modifier = Modifier,
-    elevation: Dp = ElevationLevel.level5,
-    color: Color = MaterialTheme.colorScheme.surface,
-    trailingIcon: ImageVector? = null,
-    text: String
-) = ElevatedTextRectangle(
-    modifier = modifier,
-    elevation = elevation,
-    color = color,
-    trailingIcon = trailingIcon?.let { { Icon(it, null) } },
-    text = { Text(text, modifier = Modifier.weight(1f)) }
-)
 
 private val DATE_FORMATTER = LocalDate.Format {
     day(padding = Padding.NONE)

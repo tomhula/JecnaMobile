@@ -3,9 +3,9 @@ plugin-android = "8.13.2"
 plugin-kotlin = "2.2.21"
 plugin-ksp = "2.3.3"
 
-jecnaAPI = "9.0.0"
+jecnaAPI = "9.1.0"
 
-compose-android-bom = "2025.12.00"
+compose-android-bom = "2026.01.00"
 
 composeDestinations = "2.3.0"
 composeStateEvents = "2.2.0"

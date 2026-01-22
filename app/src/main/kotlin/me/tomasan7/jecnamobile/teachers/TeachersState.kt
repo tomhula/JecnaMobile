@@ -6,7 +6,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
 import me.tomasan7.jecnamobile.util.removeAccent
-import java.util.Locale
+import java.util.*
 
 @Immutable
 data class TeachersState(
@@ -17,7 +17,7 @@ data class TeachersState(
 )
 {
     val teacherReferencesSorted = teachersPage?.teachersReferences
-        ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.fullName.surname() })
+        ?.sortedWith(compareBy(Collator.getInstance(Locale.forLanguageTag("cs"))) { it.fullName.surname() })
 
     val teacherReferencesSortedFiltered = teacherReferencesSorted
         ?.filter { it.fullName.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.tag.contains(filterFieldValue, ignoreCase = true) }
