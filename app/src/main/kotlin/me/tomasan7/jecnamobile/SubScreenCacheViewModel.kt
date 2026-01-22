@@ -13,6 +13,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.now
 import kotlin.time.Instant
 
@@ -30,6 +31,14 @@ abstract class SubScreenCacheViewModel<T, P>(
             appContext.getString(R.string.no_internet_connection)
     
     protected var enteredCompositionCounter = 0
+    
+    override val loginBroadcastReceiver = createBroadcastReceiver { _, _ ->
+        if (loadRealJob != null && loadRealJob!!.isActive)
+            return@createBroadcastReceiver
+        
+        if (isCurrentlyShowingCache())
+            loadReal()
+    }
 
     abstract fun setCacheDataUiState(data: CachedDataNew<T, P>)
     abstract fun getLastUpdateTimestamp(): Instant?

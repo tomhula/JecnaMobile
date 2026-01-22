@@ -27,15 +27,14 @@ abstract class SubScreenViewModel<T>(
     
     var loadRealJob: Job? = null
     
-    protected val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
+    protected open val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadRealJob == null || loadRealJob!!.isCompleted)
-        {
-            if (!first)
-                showSnackBarMessage(appContext.getString(R.string.back_online))
+        
+        if (loadRealJob != null && loadRealJob!!.isActive)
+            return@createBroadcastReceiver
+        
+        if (first)
             loadReal()
-        }
     }
 
     abstract suspend fun fetchRealData(): T
