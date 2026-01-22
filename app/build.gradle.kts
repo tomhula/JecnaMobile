@@ -59,9 +59,9 @@ ksp {
 }
 
 /* Allow references to generated code */
-kapt {
+/*kapt {
     correctErrorTypes = true
-}
+}*/
 
 dependencies {
     implementation(libs.jecnaAPI)
