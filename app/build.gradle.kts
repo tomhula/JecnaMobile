@@ -67,7 +67,7 @@ dependencies {
     implementation(libs.jecnaAPI)
 
     // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
-    kapt("androidx.room:room-compiler-processing:2.7.0")
+    kapt("androidx.room:room-compiler-processing:2.8.4")
 
     implementation(platform(libs.compose.android.bom))
     debugImplementation(libs.compose.ui.tooling)
