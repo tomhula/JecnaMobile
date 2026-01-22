@@ -237,7 +237,7 @@ private fun UsernameField(
             onNext = { focusManager.moveFocus(FocusDirection.Down) }
         ),
         keyboardOptions = KeyboardOptions(
-            autoCorrect = false,
+            autoCorrectEnabled = false,
             capitalization = KeyboardCapitalization.None,
             keyboardType = KeyboardType.Text,
             imeAction = ImeAction.Next

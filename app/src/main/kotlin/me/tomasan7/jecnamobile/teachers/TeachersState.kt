@@ -17,7 +17,7 @@ data class TeachersState(
 )
 {
     val teacherReferencesSorted = teachersPage?.teachersReferences
-        ?.sortedWith(compareBy(Collator.getInstance(Locale("cs"))) { it.fullName.surname() })
+        ?.sortedWith(compareBy(Collator.getInstance(Locale.forLanguageTag("cs"))) { it.fullName.surname() })
 
     val teacherReferencesSortedFiltered = teacherReferencesSorted
         ?.filter { it.fullName.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.tag.contains(filterFieldValue, ignoreCase = true) }
