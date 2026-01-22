@@ -62,7 +62,7 @@ fun OfflineDataIndicator(
 
     TooltipBox(
         state = tooltipState,
-        positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Below),
         tooltip = {
             PlainTooltip {
                 Text(text)
