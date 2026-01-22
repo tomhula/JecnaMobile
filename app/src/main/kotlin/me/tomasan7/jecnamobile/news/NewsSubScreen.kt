@@ -3,18 +3,7 @@ package me.tomasan7.jecnamobile.news
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,21 +12,9 @@ import androidx.compose.material.icons.automirrored.filled.NavigateBefore
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -58,22 +35,15 @@ import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.article.Article
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.format
-import kotlinx.datetime.format.MonthNames
-import kotlinx.datetime.format.Padding
 import kotlinx.datetime.toJavaLocalDate
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.Card
-import me.tomasan7.jecnamobile.ui.component.ObjectDialog
-import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
-import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
-import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
+import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import java.time.format.DateTimeFormatter
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -126,14 +96,13 @@ fun NewsSubScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                if (uiState.newsPage != null)
-                    uiState.newsPage.articles.forEach { article ->
-                        Article(
-                            article = article,
-                            onImagesClick = { dialogState.show(it) },
-                            onArticleFileClick = { viewModel.downloadAndOpenArticleFile(it) }
-                        )
-                    }
+                uiState.newsPage?.articles?.forEach { article ->
+                    Article(
+                        article = article,
+                        onImagesClick = { dialogState.show(it) },
+                        onArticleFileClick = { viewModel.downloadAndOpenArticleFile(it) }
+                    )
+                }
 
                 Spacer(Modifier.height(16.dp))
             }
@@ -181,7 +150,7 @@ private fun Article(
             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface),
             linkClicked = {
                 val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(it)
+                    data = it.toUri()
                 }
                 context.startActivity(intent)
             }
@@ -302,7 +271,7 @@ private fun ImagesDialogContent(
     images: List<String>
 )
 {
-    var currentImageIndex by remember(images) { mutableStateOf(0) }
+    var currentImageIndex by remember(images) { mutableIntStateOf(0) }
 
     Column {
         Box(

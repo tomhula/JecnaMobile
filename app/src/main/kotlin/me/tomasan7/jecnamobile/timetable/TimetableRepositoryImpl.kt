@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
 import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import javax.inject.Inject
 

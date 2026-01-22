@@ -13,7 +13,6 @@ import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import java.io.File
-import kotlin.collections.toMutableMap
 import kotlin.time.Clock
 
 private const val LOG_TAG = "CacheRepository"

@@ -6,11 +6,11 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.util.network.UnresolvedAddressException
-import io.ktor.utils.io.CancellationException
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.web.Auth
+import io.ktor.util.network.*
+import io.ktor.utils.io.*
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel

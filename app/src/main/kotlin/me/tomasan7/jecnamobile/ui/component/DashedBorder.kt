@@ -110,35 +110,45 @@ fun Modifier.dashedBorder(width: Dp, brush: Brush, shape: Shape, on: Dp, off: Dp
                         floatArrayOf(on.toPx(), off.toPx())
                     )
                 )
-                pathClip = if (outline is Outline.Rounded) {
-                    Path().apply { addRoundRect(outline.roundRect) }
-                } else if (outline is Outline.Generic) {
-                    outline.path
-                } else {
-                    // should not get here because we check for Outline.Rectangle
-                    // above
-                    null
+                pathClip = when (outline)
+                {
+                    is Outline.Rounded -> Path().apply { addRoundRect(outline.roundRect) }
+                    is Outline.Generic -> outline.path
+                    else ->
+                    {
+                        // should not get here because we check for Outline.Rectangle
+                        // above
+                        null
+                    }
                 }
 
                 insetPath =
-                    if (insetOutline is Outline.Rounded &&
-                        !insetOutline.roundRect.isSimple
-                    ) {
-                        // Rounded rect with non equal corner radii needs a path
-                        // to be pre-translated
-                        Path().apply {
-                            addRoundRect(insetOutline.roundRect)
-                            translate(Offset(inset, inset))
+                    when (insetOutline)
+                    {
+                        is Outline.Rounded if !insetOutline.roundRect.isSimple ->
+                        {
+                            // Rounded rect with non equal corner radii needs a path
+                            // to be pre-translated
+                            Path().apply {
+                                addRoundRect(insetOutline.roundRect)
+                                translate(Offset(inset, inset))
+                            }
                         }
-                    } else if (insetOutline is Outline.Generic) {
-                        // Generic paths must be created and pre-translated
-                        Path().apply {
-                            addPath(insetOutline.path, Offset(inset, inset))
+
+                        is Outline.Generic ->
+                        {
+                            // Generic paths must be created and pre-translated
+                            Path().apply {
+                                addPath(insetOutline.path, Offset(inset, inset))
+                            }
                         }
-                    } else {
-                        // Drawing a round rect with equal corner radii without
-                        // usage of a path
-                        null
+
+                        else ->
+                        {
+                            // Drawing a round rect with equal corner radii without
+                            // usage of a path
+                            null
+                        }
                     }
             }
         }
@@ -221,4 +231,3 @@ fun Modifier.dashedBorder(width: Dp, brush: Brush, shape: Shape, on: Dp, off: Dp
             }
         }
     }
-

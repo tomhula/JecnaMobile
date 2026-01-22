@@ -6,7 +6,7 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
 import me.tomasan7.jecnamobile.util.removeAccent
-import java.util.Locale
+import java.util.*
 
 @Immutable
 data class TeachersState(

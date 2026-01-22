@@ -10,7 +10,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.grade.Subject
@@ -18,17 +17,18 @@ import io.github.tomhula.jecnaapi.data.notification.Notification
 import io.github.tomhula.jecnaapi.data.notification.NotificationReference
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
+import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.settings.Settings
-import me.tomasan7.jecnamobile.util.settingsDataStore
-import kotlin.time.Instant
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
-import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.util.settingsDataStore
 import javax.inject.Inject
 import kotlin.time.Clock
+import kotlin.time.Instant
 
 @HiltViewModel
 class GradesViewModel @Inject constructor(

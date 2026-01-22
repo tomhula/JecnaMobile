@@ -2,12 +2,11 @@ package me.tomasan7.jecnamobile.timetable
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import me.tomasan7.jecnamobile.util.CachedData
 import java.io.File
 import javax.inject.Inject

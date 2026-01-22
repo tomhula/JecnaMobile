@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.tomhula.jecnaapi.parser.ParseException
-import io.ktor.util.network.UnresolvedAddressException
+import io.ktor.util.network.*
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch

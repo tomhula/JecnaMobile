@@ -1,36 +1,24 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
 import android.content.Context
-import android.content.IntentFilter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import coil.request.ImageRequest
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.http.Cookie
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
-import io.github.tomhula.jecnaapi.parser.ParseException
-import io.ktor.http.HttpHeaders
-import me.tomasan7.jecnamobile.JecnaMobileApplication
-import me.tomasan7.jecnamobile.LoginStateProvider
+import io.ktor.http.*
+import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
-import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
 
 @HiltViewModel

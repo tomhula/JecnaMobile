@@ -4,7 +4,6 @@ import androidx.datastore.core.Serializer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.SerializationException
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import me.tomasan7.jecnamobile.settings.Settings
 import java.io.InputStream

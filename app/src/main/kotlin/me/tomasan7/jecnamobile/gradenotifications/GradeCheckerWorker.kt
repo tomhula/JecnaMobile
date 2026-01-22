@@ -12,13 +12,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
-import androidx.work.Constraints
-import androidx.work.CoroutineWorker
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.WorkerParameters
+import androidx.work.*
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.github.tomhula.jecnaapi.JecnaClient
@@ -27,10 +21,10 @@ import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.data.grade.Subject
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
-import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.MainActivity
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChange
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker

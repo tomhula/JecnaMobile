@@ -2,14 +2,8 @@ package me.tomasan7.jecnamobile.util
 
 import io.github.tomhula.jecnaapi.data.grade.Grade
 import io.github.tomhula.jecnaapi.data.grade.Grades
-import io.github.tomhula.jecnaapi.data.grade.Subject
 import me.tomasan7.jecnamobile.grades.PredictedGrade
-import me.tomasan7.jecnamobile.ui.theme.grade_0
-import me.tomasan7.jecnamobile.ui.theme.grade_1
-import me.tomasan7.jecnamobile.ui.theme.grade_2
-import me.tomasan7.jecnamobile.ui.theme.grade_3
-import me.tomasan7.jecnamobile.ui.theme.grade_4
-import me.tomasan7.jecnamobile.ui.theme.grade_5
+import me.tomasan7.jecnamobile.ui.theme.*
 
 fun getGradeColor(gradeValue: Int) = when (gradeValue)
 {

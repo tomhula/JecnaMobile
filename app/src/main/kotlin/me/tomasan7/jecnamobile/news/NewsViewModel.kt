@@ -29,10 +29,10 @@ import io.ktor.http.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.LoginStateProvider
-import me.tomasan7.jecnamobile.caching.CacheRepository
-import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
@@ -93,7 +93,7 @@ class NewsViewModel @Inject constructor(
 
     fun downloadAndOpenArticleFile(articleFile: ArticleFile) = viewModelScope.launch {
         val url = WebJecnaClient.getUrlForPath(articleFile.downloadPath)
-        val request = DownloadManager.Request(Uri.parse(url)).apply {
+        val request = DownloadManager.Request(url.toUri()).apply {
             setTitle(articleFile.label)
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, articleFile.filename)

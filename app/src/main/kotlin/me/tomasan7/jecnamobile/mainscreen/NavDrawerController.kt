@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-class NavDrawerController constructor(
+class NavDrawerController(
     private val drawerState: DrawerState,
     private val coroutineScope: CoroutineScope
 ) {

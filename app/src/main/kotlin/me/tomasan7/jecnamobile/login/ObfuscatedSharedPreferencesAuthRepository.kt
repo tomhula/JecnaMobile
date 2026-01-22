@@ -2,6 +2,7 @@ package me.tomasan7.jecnamobile.login
 
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.tomhula.jecnaapi.web.Auth
 import java.io.DataInputStream
@@ -9,7 +10,6 @@ import java.io.DataOutputStream
 import javax.inject.Inject
 import kotlin.io.encoding.Base64
 import kotlin.random.Random
-import androidx.core.content.edit
 
 private const val LOG_TAG = "AuthRepository"
 

@@ -1,11 +1,6 @@
 package me.tomasan7.jecnamobile.ui.component
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 
