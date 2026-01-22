@@ -1,7 +1,8 @@
 [versions]
-plugin-android = "8.13.2"
-plugin-kotlin = "2.2.21"
-plugin-ksp = "2.3.3"
+plugin-android = "9.0.0"
+plugin-kotlin = "2.3.0"
+# TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
+plugin-ksp = "2.3.5-SNAPSHOT"
 
 jecnaAPI = "9.1.0"
 
@@ -10,15 +11,15 @@ compose-android-bom = "2026.01.00"
 composeDestinations = "2.3.0"
 composeStateEvents = "2.2.0"
 composeHtml = "1.0.2"
-composeCoil = "2.6.0"
-accompanist = "0.32.0"
+composeCoil = "2.7.0"
+accompanist = "0.37.3"
 
-activity = "1.12.1"
+activity = "1.12.2"
 
-hilt-dagger = "2.57.1"
+hilt-dagger = "2.59"
 hilt-android = "1.3.0"
-work = "2.10.4"
-datastore = "1.0.0"
+work = "2.11.0"
+datastore = "1.2.0"
 serialization = "1.9.0"
 
 [libraries]
@@ -52,10 +53,9 @@ serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-jso
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "plugin-android" }
-android-kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "plugin-kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "plugin-kotlin" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "plugin-ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-kotlin" }
-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "plugin-kotlin" }
+legacy-kapt = { id = "com.android.legacy-kapt", version.ref = "plugin-android" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-dagger" }
