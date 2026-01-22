@@ -9,15 +9,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -31,10 +23,10 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
-import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
+import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.InfoRow
+import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination<SubScreensNavGraph>
@@ -85,10 +77,10 @@ fun RoomScreen(
                     val room = uiState.room
 
                     room.floor?.let {
-                        InfoRow(R.string.classroom_floor, room.floor!!)
+                        InfoRow(R.string.room_floor, room.floor!!)
                     }
                     room.manager?.let {
-                        InfoRow(R.string.classroom_manager, room.manager!!.fullName, Modifier.clickable(onClick = {
+                        InfoRow(R.string.room_manager, room.manager!!.fullName, Modifier.clickable(onClick = {
                             navigator.navigate(
                                 TeacherScreenDestination(room.manager!!)
                             )
@@ -96,13 +88,13 @@ fun RoomScreen(
                     }
 
                     room.homeroomOf?.let {
-                        InfoRow(R.string.classroom_main_class, it)
+                        InfoRow(R.string.room_main_class, it)
                     }
 
                     room.timetable?.let()
                     {
                         Text(
-                            text = stringResource(R.string.classroom_title_timetable),
+                            text = stringResource(R.string.room_title_timetable),
                             style = MaterialTheme.typography.titleLarge
                         )
                         Timetable(

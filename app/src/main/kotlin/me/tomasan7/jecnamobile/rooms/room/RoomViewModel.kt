@@ -12,14 +12,14 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.ktor.util.network.UnresolvedAddressException
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.parser.ParseException
+import io.ktor.util.network.*
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.rooms.RoomsRepository
@@ -95,7 +95,7 @@ class RoomViewModel @Inject constructor(
             catch (e: ParseException)
             {
                 changeUiState(
-                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_classroom))
+                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_room))
                 )
             }
             catch (e: CancellationException)
@@ -104,7 +104,7 @@ class RoomViewModel @Inject constructor(
             }
             catch (e: Exception)
             {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.classroom_load_error)))
+                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.room_load_error)))
                 e.printStackTrace()
             }
             finally

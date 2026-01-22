@@ -90,7 +90,7 @@ class RoomsViewModel @Inject constructor(
             catch (e: ParseException)
             {
                 changeUiState(
-                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_classrooms))
+                    snackBarMessageEvent = triggered(appContext.getString(R.string.error_unsupported_rooms))
                 )
             }
             catch (e: CancellationException)
@@ -99,7 +99,7 @@ class RoomsViewModel @Inject constructor(
             }
             catch (e: Exception)
             {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.classrooms_load_error)))
+                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.rooms_load_error)))
                 e.printStackTrace()
             }
             finally

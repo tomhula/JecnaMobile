@@ -21,7 +21,7 @@ fun DialogRow(
     Surface(
         tonalElevation = 10.dp,
         shape = RoundedCornerShape(28.dp),
-        onClick = onClick,
+        onClick = onClick as () -> Unit,
     ) {
         Column(Modifier.padding(top = 5.dp, start = 15.dp, end = 15.dp, bottom = 15.dp)) {
             Text(

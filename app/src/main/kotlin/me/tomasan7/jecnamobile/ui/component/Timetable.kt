@@ -279,8 +279,8 @@ private fun LessonDialogContent(
                     onClick = { onTeacherClick(TeacherReference(teacher.full, teacher.short!!)) }
                 )
             if (lesson.classroom != null)
-                DialogRow(stringResource(R.string.timetable_dialog_classroom), lesson.classroom!!,
-                    { onRoomClick(RoomReference(stringResource(R.string.timetable_dialog_classroom) +" "+ lesson.classroom!!, lesson.classroom!!)) })
+                DialogRow(stringResource(R.string.timetable_dialog_room), lesson.classroom!!,
+                    { onRoomClick(RoomReference(stringResource(R.string.timetable_dialog_room) +" "+ lesson.classroom!!, lesson.classroom!!)) })
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }
