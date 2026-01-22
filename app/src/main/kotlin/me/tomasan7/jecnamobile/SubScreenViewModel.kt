@@ -17,7 +17,7 @@ import java.net.UnknownHostException
 private const val LOG_TAG = "SubScreenViewModel"
 
 abstract class SubScreenViewModel<T>(
-    @param:ApplicationContext
+    @ApplicationContext
     protected val appContext: Context,
 ) : ViewModel()
 {

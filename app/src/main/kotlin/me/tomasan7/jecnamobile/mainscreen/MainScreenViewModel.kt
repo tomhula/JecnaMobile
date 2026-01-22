@@ -38,7 +38,7 @@ private const val LOG_TAG = "MainScreenViewmodel"
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    @param:ApplicationContext
+    @ApplicationContext
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,

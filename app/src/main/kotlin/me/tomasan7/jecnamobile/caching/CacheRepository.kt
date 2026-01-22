@@ -18,7 +18,7 @@ import kotlin.time.Clock
 private const val LOG_TAG = "CacheRepository"
 
 class CacheRepository<T, P>(
-    @param:ApplicationContext
+    @ApplicationContext
     private val appContext: Context,
     val key: String,
     dataSerializer: KSerializer<T>,
