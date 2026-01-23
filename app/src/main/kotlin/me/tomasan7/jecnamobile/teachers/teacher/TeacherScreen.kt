@@ -1,10 +1,8 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -21,14 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
@@ -37,8 +32,8 @@ import me.tomasan7.jecnamobile.ui.component.Timetable
 fun TeacherScreen(
     teacherReference: TeacherReference,
     onBackClick: () -> Unit,
+    onRoomClick: (RoomReference) -> Unit,
     viewModel: TeacherViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
 )
 {
     DisposableEffect(Unit) {
@@ -98,7 +93,7 @@ fun TeacherScreen(
                         Timetable(
                             timetable = it,
                             modifier = Modifier.padding(10.dp),
-                            onRoomClick = {navigator.navigate(RoomScreenDestination(it))}
+                            onRoomClick = onRoomClick
                         )
                     }
                 }
