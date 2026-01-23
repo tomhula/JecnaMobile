@@ -1,5 +1,6 @@
 rootProject.name = "JecnaMobile"
 include(":app")
+include(":composeApp")
 
 pluginManagement {
     repositories {

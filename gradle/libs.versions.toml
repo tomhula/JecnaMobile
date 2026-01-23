@@ -3,6 +3,8 @@ plugin-android = "9.0.0"
 plugin-kotlin = "2.3.0"
 # TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
 plugin-ksp = "2.3.5-SNAPSHOT"
+plugin-compose = "1.10.0"
+plugin-compose-hotReload = "1.0.0"
 
 jecnaAPI = "9.1.0"
 
@@ -52,8 +54,12 @@ datastore = { module = "androidx.datastore:datastore", version.ref = "datastore"
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 
 [plugins]
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "plugin-kotlin" }
 android-application = { id = "com.android.application", version.ref = "plugin-android" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "plugin-kotlin" }
+compose = { id = "org.jetbrains.compose", version.ref = "plugin-compose" }
+compose-hot-reload = { id = "org.jetbrains.compose.hot-reload", version.ref = "plugin-compose-hotReload" }
+androidMultiplatformLibrary = { id = "com.android.kotlin.multiplatform.library", version.ref = "plugin-android" }
 
 ksp = { id = "com.google.devtools.ksp", version.ref = "plugin-ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-kotlin" }
