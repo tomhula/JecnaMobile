@@ -82,8 +82,6 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.navigation3.ui)
     implementation(libs.navigation3.runtime)
-    implementation(libs.composeDestinations.core)
-    ksp(libs.composeDestinations.ksp)
 
     implementation(libs.activity.ktx)
 
