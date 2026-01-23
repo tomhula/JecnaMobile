@@ -1,0 +1,39 @@
+<resources>
+    <string name="month">Měsíc</string>
+    <string name="school_year">Školní rok</string>
+    <string name="school_year_half">Pololetí</string>
+    <string name="school_year_half_1">1.</string>
+    <string name="school_year_half_2">2.</string>
+
+    <string name="monday">Pondělí</string>
+    <string name="tuesday">Úterý</string>
+    <string name="wednesday">Středa</string>
+    <string name="thursday">Čtvrtek</string>
+    <string name="friday">Pátek</string>
+    <string name="saturday">Sobota</string>
+    <string name="sunday">Neděle</string>
+    
+    <string name="january">Leden</string>
+    <string name="february">Únor</string>
+    <string name="march">Březen</string>
+    <string name="april">Duben</string>
+    <string name="may">Květen</string>
+    <string name="june">Červen</string>
+    <string name="july">Červenec</string>
+    <string name="august">Srpen</string>
+    <string name="september">Září</string>
+    <string name="october">Říjen</string>
+    <string name="november">Listopad</string>
+    <string name="december">Prosinec</string>
+
+    <string name="close">Zavřít</string>
+
+    <!-- ##### Timetable ##### -->
+
+    <string name="timetable_dialog_subject">Předmět</string>
+    <string name="timetable_dialog_teacher">Učitel</string>
+    <string name="timetable_dialog_classroom">Učebna</string>
+    <string name="timetable_dialog_group">Skupina</string>
+
+
+</resources>
