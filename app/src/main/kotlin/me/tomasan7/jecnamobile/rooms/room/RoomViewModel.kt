@@ -5,7 +5,6 @@ import android.content.IntentFilter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -15,6 +14,7 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.room.RoomReference
+import io.github.tomhula.jecnaapi.data.room.RoomsPage
 import io.github.tomhula.jecnaapi.parser.ParseException
 import io.ktor.util.network.*
 import kotlinx.coroutines.CancellationException
@@ -22,6 +22,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.rooms.RoomsRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import javax.inject.Inject
@@ -32,7 +33,7 @@ class RoomViewModel @Inject constructor(
     private val appContext: Context,
     jecnaClient: JecnaClient,
     private val repository: RoomsRepository
-) : ViewModel()
+) : SubScreenViewModel<RoomsPage>(appContext)
 {
     var uiState by mutableStateOf(RoomState())
         private set

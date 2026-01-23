@@ -17,21 +17,18 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.theme.teacher_search_query_highlight
 import me.tomasan7.jecnamobile.util.removeAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun RoomsSubScreen(
     navDrawerController: NavDrawerController,
