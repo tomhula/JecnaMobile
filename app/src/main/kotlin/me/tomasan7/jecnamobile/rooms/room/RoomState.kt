@@ -11,4 +11,3 @@ data class RoomState(
     val room: Room? = null,
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
-
