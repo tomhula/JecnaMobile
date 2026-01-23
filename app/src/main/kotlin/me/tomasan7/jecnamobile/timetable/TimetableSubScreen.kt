@@ -16,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
@@ -29,6 +30,7 @@ import me.tomasan7.jecnamobile.ui.component.*
 fun TimetableSubScreen(
     navDrawerController: NavDrawerController,
     onTeacherClick: (TeacherReference) -> Unit,
+    onRoomClick: (RoomReference) -> Unit,
     viewModel: TimetableViewModel = hiltViewModel()
 )
 {
@@ -90,6 +92,7 @@ fun TimetableSubScreen(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
                         hideClass = true,
+                        onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )
             }

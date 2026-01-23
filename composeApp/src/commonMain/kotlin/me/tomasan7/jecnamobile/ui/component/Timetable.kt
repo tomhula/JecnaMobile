@@ -16,12 +16,18 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
-import jecnamobile.composeapp.generated.resources.*
+import jecnamobile.composeapp.generated.resources.Res
+import jecnamobile.composeapp.generated.resources.close
+import jecnamobile.composeapp.generated.resources.timetable_dialog_classroom
+import jecnamobile.composeapp.generated.resources.timetable_dialog_group
+import jecnamobile.composeapp.generated.resources.timetable_dialog_room
+import jecnamobile.composeapp.generated.resources.timetable_dialog_teacher
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.util.getWeekDayName
@@ -35,6 +41,7 @@ fun Timetable(
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
+    onRoomClick: (RoomReference) -> Unit = { }
 )
 {
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
@@ -112,7 +119,8 @@ fun Timetable(
                 LessonDialogContent(
                     lesson = lesson,
                     onCloseClick = { dialogState.hide() },
-                    onTeacherClick = { onTeacherClick(it) }
+                    onTeacherClick = { dialogState.hide(); onTeacherClick(it) },
+                    onRoomClick = { dialogState.hide(); onRoomClick(it) }
                 )
             }
         )
@@ -241,9 +249,11 @@ private fun DayLabel(
 private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
-    onTeacherClick: (TeacherReference) -> Unit
+    onTeacherClick: (TeacherReference) -> Unit,
+    onRoomClick: (RoomReference) -> Unit
 )
 {
+    val roomLabel = stringResource(Res.string.timetable_dialog_room)
     DialogContainer(
         title = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -276,6 +286,18 @@ private fun LessonDialogContent(
                 )
             if (lesson.classroom != null)
                 DialogRow(stringResource(Res.string.timetable_dialog_classroom), lesson.classroom!!)
+                DialogRow(
+                    label = stringResource(Res.string.timetable_dialog_room),
+                    value = lesson.classroom!!,
+                    onClick = {
+                        onRoomClick(
+                            RoomReference(
+                                name = roomLabel + " " + lesson.classroom!!,
+                                roomCode = lesson.classroom!!
+                            )
+                        )
+                    }
+                )
             if (lesson.group != null)
                 DialogRow(stringResource(Res.string.timetable_dialog_group), lesson.group!!)
         }

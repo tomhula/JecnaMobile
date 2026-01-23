@@ -337,5 +337,6 @@ private val DATE_FORMATTER = LocalDate.Format {
     day(padding = Padding.NONE)
     char('.')
     monthNumber(padding = Padding.NONE)
+    char('.')
     year()
 }

@@ -48,28 +48,31 @@ class AttendancesViewModel @Inject constructor(
         loadReal()
     }
 
-    override fun setCacheDataUiState(data: CachedDataNew<AttendancesPage, SchoolYearMonthParams>) = changeUiState(
-        attendancesPage = data.data,
-        lastUpdateTimestamp = data.timestamp,
-        isCache = true
-    )
-
-    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingCache() = uiState.isCache
-    override fun getParams() = SchoolYearMonthParams(uiState.selectedSchoolYear, uiState.selectedMonth)
-
-    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
-
-    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading)
+    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     override fun setDataUiState(data: AttendancesPage) = changeUiState(
         attendancesPage = data,
         lastUpdateTimestamp = Clock.System.now(),
+        selectedSchoolYear = data.selectedSchoolYear,
+        selectedMonth = data.selectedMonth,
         isCache = false
     )
 
-    fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+    override fun setCacheDataUiState(data: CachedDataNew<AttendancesPage, SchoolYearMonthParams>) = changeUiState(
+        attendancesPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        selectedSchoolYear = data.data.selectedSchoolYear,
+        selectedMonth = data.data.selectedMonth,
+        isCache = true
+    )
 
+    override fun getParams() = SchoolYearMonthParams(uiState.selectedSchoolYear, uiState.selectedMonth)
+    
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading)
+    
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         attendancesPage: AttendancesPage? = uiState.attendancesPage,

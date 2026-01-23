@@ -1,10 +1,8 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -22,10 +20,11 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
+import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +32,7 @@ import me.tomasan7.jecnamobile.ui.component.Timetable
 fun TeacherScreen(
     teacherReference: TeacherReference,
     onBackClick: () -> Unit,
+    onRoomClick: (RoomReference) -> Unit,
     viewModel: TeacherViewModel = hiltViewModel(),
 )
 {
@@ -92,7 +92,8 @@ fun TeacherScreen(
                     ) {
                         Timetable(
                             timetable = it,
-                            modifier = Modifier.padding(10.dp)
+                            modifier = Modifier.padding(10.dp),
+                            onRoomClick = onRoomClick
                         )
                     }
                 }
@@ -184,59 +185,3 @@ private fun InfoTable(teacher: Teacher)
         }
     }
 }
-
-@Composable
-private fun InfoRow(
-    label: String,
-    value: String,
-    modifier: Modifier = Modifier
-)
-{
-    Row(modifier.height(IntrinsicSize.Min)) {
-        Surface(
-            tonalElevation = 20.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier
-                .fillMaxHeight()
-                .width(150.dp)
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                Text(
-                    text = label,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
-        }
-
-        HorizontalSpacer(size = 5.dp)
-
-        Surface(
-            tonalElevation = 4.dp,
-            shape = RoundedCornerShape(4.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart
-            ) {
-                SelectionContainer {
-                    Text(
-                        text = value,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun InfoRow(
-    @StringRes
-    label: Int,
-    value: String,
-    modifier: Modifier = Modifier
-) = InfoRow(stringResource(label), value, modifier)

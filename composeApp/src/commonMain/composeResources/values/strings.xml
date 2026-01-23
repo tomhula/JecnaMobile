@@ -34,6 +34,7 @@
     <string name="timetable_dialog_teacher">Učitel</string>
     <string name="timetable_dialog_classroom">Učebna</string>
     <string name="timetable_dialog_group">Skupina</string>
+    <string name="timetable_dialog_room">Učebna</string>
 
 
 </resources>

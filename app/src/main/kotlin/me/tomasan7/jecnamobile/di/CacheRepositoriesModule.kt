@@ -17,6 +17,7 @@ import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.caching.*
 import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
+import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import javax.inject.Singleton
 
@@ -75,14 +76,16 @@ internal object CacheRepositoriesModule
         @ApplicationContext
         appContext: Context,
         repository: TimetableRepository
-    ) = CacheRepository(
-        appContext,
-        "timetable",
-        serializer<TimetablePage>(),
-        serializer<SchoolYearPeriodParams>()
-    ) {
-        repository.getTimetablePage(it.schoolYear, it.periodId)
-    }
+    ): CacheRepository<TimetablePage, SchoolYearPeriodParams> = TimetableCacheRepository(
+        key = "timetable",
+        appContext = appContext,
+        fetcher = { 
+            if (it.periodId == SchoolYearPeriodParams.CURRENT_PERIOD_ID)
+                repository.getTimetablePage(it.schoolYear, null as Int?)
+            else
+                repository.getTimetablePage(it.schoolYear, it.periodId)
+        }
+    )
 
     @Provides
     @Singleton

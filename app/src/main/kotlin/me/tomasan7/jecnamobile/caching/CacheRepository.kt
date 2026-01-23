@@ -17,13 +17,13 @@ import kotlin.time.Clock
 
 private const val LOG_TAG = "CacheRepository"
 
-class CacheRepository<T, P>(
+open class CacheRepository<T, P>(
     @ApplicationContext
     private val appContext: Context,
     val key: String,
     dataSerializer: KSerializer<T>,
     paramsSerializer: KSerializer<P>,
-    private val fetcher: suspend (P) -> T
+    protected val fetcher: suspend (P) -> T
 )
 {
     private val entireCacheSerializer = MapSerializer(paramsSerializer, CachedDataNew.serializer(dataSerializer, paramsSerializer))
@@ -33,16 +33,16 @@ class CacheRepository<T, P>(
     fun isCacheAvailable() = cacheFile.exists()
 
     @OptIn(ExperimentalSerializationApi::class)
-    suspend fun getCache(params: P): CachedDataNew<T, P>?
+    open suspend fun getCache(params: P): CachedDataNew<T, P>?
     {
-        Log.d(LOG_TAG, "$key: Reading cache")
+        logReadingCache()
         val entireCache = loadEntireCache()
         return entireCache?.get(params)
     }
-
-    suspend fun getRealAndCache(params: P): T
+    
+    open suspend fun getRealAndCache(params: P): T
     {
-        Log.d(LOG_TAG, "$key: Fetching real data")
+        logFetchingRealData()
         val data = fetcher(params)
         val entireCache = loadEntireCache()?.toMutableMap() ?: mutableMapOf()
         entireCache[params] = CachedDataNew(data, params, timestamp = Clock.System.now())
@@ -51,7 +51,7 @@ class CacheRepository<T, P>(
     }
     
     @OptIn(ExperimentalSerializationApi::class)
-    private suspend fun loadEntireCache(): Map<P, CachedDataNew<T, P>>?
+    protected suspend fun loadEntireCache(): Map<P, CachedDataNew<T, P>>?
     {
         if (!isCacheAvailable())
             return null
@@ -76,7 +76,7 @@ class CacheRepository<T, P>(
     }
     
     @OptIn(ExperimentalSerializationApi::class)
-    private suspend fun writeEntireCache(entireCache: Map<P, CachedDataNew<T, P>>)
+    protected suspend fun writeEntireCache(entireCache: Map<P, CachedDataNew<T, P>>)
     {
         withContext(Dispatchers.IO) {
             val outputStream = cacheFile.outputStream()
@@ -94,5 +94,15 @@ class CacheRepository<T, P>(
                 outputStream.close()
             }   
         }
+    }
+
+    protected fun logReadingCache()
+    {
+        Log.d(LOG_TAG, "$key: Reading cache")
+    }
+
+    protected fun logFetchingRealData()
+    {
+        Log.d(LOG_TAG, "$key: Fetching real data")
     }
 }

@@ -50,18 +50,23 @@ class GradesViewModel @Inject constructor(
     override fun setCacheDataUiState(data: CachedDataNew<GradesPage, SchoolYearHalfParams>) = changeUiState(
         gradesPage = data.data,
         lastUpdateTimestamp = data.timestamp,
+        selectedSchoolYear = data.data.selectedSchoolYear,
+        selectedSchoolYearHalf = data.data.selectedSchoolYearHalf,
         isCache = true
     )
 
     override fun setDataUiState(data: GradesPage) = changeUiState(
         gradesPage = data,
         lastUpdateTimestamp = Clock.System.now(),
+        selectedSchoolYear = data.selectedSchoolYear,
+        selectedSchoolYearHalf = data.selectedSchoolYearHalf,
         isCache = false
     )
 
+    override fun getParams() = SchoolYearHalfParams(uiState.selectedSchoolYear, uiState.selectedSchoolYearHalf)
+    
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
     override fun isCurrentlyShowingCache() = uiState.isCache
-    override fun getParams() = SchoolYearHalfParams(uiState.selectedSchoolYear, uiState.selectedSchoolYearHalf)
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
     

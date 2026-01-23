@@ -46,7 +46,9 @@ class TeacherViewModel @Inject constructor(
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     override fun setDataUiState(data: Teacher) = changeUiState(teacher = data)
+    
     override suspend fun fetchRealData() = repository.getTeacher(teacherReference)
+    
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
