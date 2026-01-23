@@ -35,7 +35,8 @@ fun RoomScreen(
 )
 {
     DisposableEffect(Unit) {
-        viewModel.enteredComposition(roomReference)
+        viewModel.setRoomReference(roomReference)
+        viewModel.enteredComposition()
         onDispose {
             viewModel.leftComposition()
         }
@@ -52,7 +53,7 @@ fun RoomScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(RoomReference.name, navigator::popBackStack) },
+        topBar = { TopAppBar(roomReference.name, navigator::popBackStack) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(
