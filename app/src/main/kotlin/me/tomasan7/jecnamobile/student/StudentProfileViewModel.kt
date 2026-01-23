@@ -35,18 +35,21 @@ class StudentProfileViewModel @Inject constructor(
 
     var uiState by mutableStateOf(StudentProfileState())
         private set
-    
-    override suspend fun fetchRealData() = repository.getCurrentStudent()
-    override fun setDataUiState(data: Student) = changeUiState(student = data)
-    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
-    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     override fun loadReal()
     {
         super.loadReal()
         loadLocker()
     }
+    
+    override suspend fun fetchRealData() = repository.getCurrentStudent()
+    
+    override fun setDataUiState(data: Student) = changeUiState(student = data)
+    
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
+    
     fun loadLocker()
     {
         if (uiState.lockerLoading || uiState.locker != null)
@@ -77,6 +80,18 @@ class StudentProfileViewModel @Inject constructor(
     }
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+    
+    fun createImageRequest(path: String): ImageRequest = ImageRequest.Builder(appContext).apply {
+        data(WebJecnaClient.getUrlForPath(path))
+        crossfade(true)
+        val sessionCookie = getSessionCookieBlocking() ?: return@apply
+        setHeader(HttpHeaders.Cookie, sessionCookie.toHeaderString())
+        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
+    }.build()
+
+    private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
+
+    private fun Cookie.toHeaderString() = "$name=$value"
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
@@ -96,16 +111,4 @@ class StudentProfileViewModel @Inject constructor(
             lockerError = lockerError,
         )
     }
-
-    fun createImageRequest(path: String): ImageRequest = ImageRequest.Builder(appContext).apply {
-        data(WebJecnaClient.getUrlForPath(path))
-        crossfade(true)
-        val sessionCookie = getSessionCookieBlocking() ?: return@apply
-        setHeader(HttpHeaders.Cookie, sessionCookie.toHeaderString())
-        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
-    }.build()
-
-    private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }
-
-    private fun Cookie.toHeaderString() = "$name=$value"
 }

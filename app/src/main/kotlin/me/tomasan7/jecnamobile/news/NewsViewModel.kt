@@ -63,21 +63,24 @@ class NewsViewModel @Inject constructor(
         openDownloadedFile(downloadId)
     }
 
-    override fun setCacheDataUiState(data: CachedDataNew<NewsPage, NoParams>) = changeUiState(
-        newsPage = data.data,
-        lastUpdateTimestamp = data.timestamp,
-        isCache = true
-    )
-    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingCache() = uiState.isCache
-    override fun getParams() = NoParams
-    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
-    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
     override fun setDataUiState(data: NewsPage) = changeUiState(
         newsPage = data,
         lastUpdateTimestamp = Clock.System.now(),
         isCache = false
     )
+    
+    override fun setCacheDataUiState(data: CachedDataNew<NewsPage, NoParams>) = changeUiState(
+        newsPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        isCache = true
+    )
+
+    override fun getParams() = NoParams
+    
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 

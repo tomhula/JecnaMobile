@@ -39,10 +39,12 @@ class RoomViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
+    override suspend fun fetchRealData(): Room = repository.getRoom(roomReference)
+
+    override fun setDataUiState(data: Room) = changeUiState(room = data)
+
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
-    override fun setDataUiState(data: Room) = changeUiState(room = data)
-    override suspend fun fetchRealData(): Room = repository.getRoom(roomReference)
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,

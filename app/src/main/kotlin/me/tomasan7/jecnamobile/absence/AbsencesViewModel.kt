@@ -43,22 +43,24 @@ class AbsencesViewModel @Inject constructor(
     
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    override fun setCacheDataUiState(data: CachedDataNew<AbsencesPage, SchoolYear>) = changeUiState(
-        absencesPage = data.data,
-        lastUpdateTimestamp = data.timestamp,
-        isCache = true
-    )
-
     override fun setDataUiState(data: AbsencesPage) = changeUiState(
         absencesPage = data,
         lastUpdateTimestamp = Clock.System.now(),
+        selectedSchoolYear = data.selectedSchoolYear,
         isCache = false
     )
 
-    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun setCacheDataUiState(data: CachedDataNew<AbsencesPage, SchoolYear>) = changeUiState(
+        absencesPage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        selectedSchoolYear = data.data.selectedSchoolYear,
+        isCache = true
+    )
 
-    override fun isCurrentlyShowingCache() = uiState.isCache
     override fun getParams() = uiState.selectedSchoolYear
+
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 

@@ -21,18 +21,22 @@ class TeachersViewModel @Inject constructor(
     private val repository: TeachersRepository
 ) : SubScreenViewModel<TeachersPage>(appContext)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_teachers)
+    override val loadErrorMessage = appContext.getString(R.string.teachers_load_error)
+    
     var uiState by mutableStateOf(TeachersState())
         private set
-
-    /*init
-    {
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal()
-    }*/
 
     fun onFilterFieldValueChange(value: String) = changeUiState(filterFieldValue = value)
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override suspend fun fetchRealData(): TeachersPage = repository.getTeachersPage()
+
+    override fun setDataUiState(data: TeachersPage) = changeUiState(teachersPage = data)
+    
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
@@ -48,12 +52,4 @@ class TeachersViewModel @Inject constructor(
             snackBarMessageEvent = snackBarMessageEvent
         )
     }
-
-    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_teachers)
-    override val loadErrorMessage = appContext.getString(R.string.teachers_load_error)
-
-    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
-    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
-    override fun setDataUiState(data: TeachersPage) = changeUiState(teachersPage = data)
-    override suspend fun fetchRealData(): TeachersPage = repository.getTeachersPage()
 }

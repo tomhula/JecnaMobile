@@ -21,12 +21,22 @@ class RoomsViewModel @Inject constructor(
     private val repository: RoomsRepository
 ) : SubScreenViewModel<RoomsPage>(appContext)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_rooms)
+    override val loadErrorMessage = appContext.getString(R.string.rooms_load_error)
+    
     var uiState by mutableStateOf(RoomsState())
         private set
 
     fun onFilterFieldValueChange(value: String) = changeUiState(filterFieldValue = value)
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override suspend fun fetchRealData(): RoomsPage = repository.getRoomsPage()
+
+    override fun setDataUiState(data: RoomsPage) = changeUiState(roomsPage = data)
+
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
@@ -42,12 +52,4 @@ class RoomsViewModel @Inject constructor(
             snackBarMessageEvent = snackBarMessageEvent
         )
     }
-
-    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_rooms)
-    override val loadErrorMessage = appContext.getString(R.string.rooms_load_error)
-
-    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
-    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
-    override fun setDataUiState(data: RoomsPage) = changeUiState(roomsPage = data)
-    override suspend fun fetchRealData(): RoomsPage = repository.getRoomsPage()
 }
