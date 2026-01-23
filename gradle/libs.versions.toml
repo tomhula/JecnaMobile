@@ -3,6 +3,7 @@ plugin-android = "9.0.0"
 plugin-kotlin = "2.3.0"
 # TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
 plugin-ksp = "2.3.5-SNAPSHOT"
+
 jecnaAPI = "9.1.0"
 
 compose-android-bom = "2026.01.00"
@@ -23,6 +24,7 @@ serialization = "1.10.0"
 
 [libraries]
 jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
+
 compose-android-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-android-bom" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
