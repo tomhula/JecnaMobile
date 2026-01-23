@@ -137,7 +137,7 @@ fun MainScreen(
         content = {
             NavDisplay(
                 backStack = navBackStack,
-                onBack = {},
+                onBack = { navBackStack.pop() },
                 entryProvider = { key ->
                     when (key)
                     {
