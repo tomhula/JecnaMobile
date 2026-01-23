@@ -21,8 +21,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.grade.Behaviour
 import io.github.tomhula.jecnaapi.data.grade.FinalGrade
@@ -37,10 +35,8 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
@@ -57,11 +53,10 @@ import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun GradesSubScreen(
     navDrawerController: NavDrawerController,
-    navigator: DestinationsNavigator,
+    onTeacherClick: (TeacherReference) -> Unit,
     viewModel: GradesViewModel = hiltViewModel()
 )
 {
@@ -169,7 +164,7 @@ fun GradesSubScreen(
                 content = { grade ->
                     GradeDialogContent(
                         grade = grade,
-                        onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
+                        onTeacherClick = { objectDialogState.hide(); onTeacherClick(it) },
                         onCloseClick = { objectDialogState.hide() }
                     )
                 }
@@ -178,7 +173,7 @@ fun GradesSubScreen(
             if (uiState.dialogNotification != null)
                 NotificationDialog(
                     onDismissRequest = { viewModel.onNotificationDialogDismiss() },
-                    onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
+                    onTeacherClick = { viewModel.onNotificationDialogDismiss(); onTeacherClick(it) },
                     notification = uiState.dialogNotification
                 )
 

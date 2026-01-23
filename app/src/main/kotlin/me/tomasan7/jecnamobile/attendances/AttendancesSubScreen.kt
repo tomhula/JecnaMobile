@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.attendance.Attendance
 import io.github.tomhula.jecnaapi.data.attendance.AttendanceType
@@ -30,14 +29,12 @@ import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.getWeekDayName
 
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun AttendancesSubScreen(
     navDrawerController: NavDrawerController,

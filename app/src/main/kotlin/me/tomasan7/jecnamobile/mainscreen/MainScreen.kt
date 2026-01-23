@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.mainscreen
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,37 +15,34 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.navigation.dependency
-import com.ramcosta.composedestinations.navigation.navGraph
-import com.ramcosta.composedestinations.utils.findDestination
-import com.ramcosta.composedestinations.utils.toDestinationsNavigator
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import kotlinx.coroutines.launch
-import me.tomasan7.jecnamobile.NavGraphs
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
-import me.tomasan7.jecnamobile.destinations.MainScreenDestination
-import me.tomasan7.jecnamobile.destinations.SettingsScreenDestination
-import me.tomasan7.jecnamobile.destinations.StudentProfileScreenDestination
-import me.tomasan7.jecnamobile.navgraphs.SubScreensGraph
-import me.tomasan7.jecnamobile.util.rememberMutableStateOf
+import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
+import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
+import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
+import me.tomasan7.jecnamobile.grades.GradesSubScreen
+import me.tomasan7.jecnamobile.news.NewsSubScreen
+import me.tomasan7.jecnamobile.settings.SettingsScreen
+import me.tomasan7.jecnamobile.student.StudentProfileScreen
+import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
+import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
+import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
-import androidx.core.net.toUri
 
-@Destination<RootGraph>
 @Composable
 fun MainScreen(
-    navigator: DestinationsNavigator,
+    onNavigateToLogin: () -> Unit,
     viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
@@ -57,33 +53,14 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val destinationItems = SubScreenDestination.entries
     val linkItems = SidebarLink.entries
-    var selectedItem by rememberMutableStateOf(SubScreenDestination.Timetable)
-    val subScreensNavController = rememberNavController()
-    val subScreensNavigator = remember(subScreensNavController) { subScreensNavController.toDestinationsNavigator() }
-    val startRoute = remember { NavGraphs.subScreens.findDestination(settings.openSubScreenRoute)!! }
-    // Workaround, because DestinationsNavHost does not accept a DestinationSpec as start
-    val startDirection = remember(startRoute) {
-        object : com.ramcosta.composedestinations.spec.Direction {
-            override val route: String = startRoute.route
-        }
-    }
+    val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)
-
-    LaunchedEffect(subScreensNavController) {
-        subScreensNavController.addOnDestinationChangedListener { _, destination, _ ->
-            val newSelectedItem = destinationItems.find { it.destination.route == destination.route }
-            if (newSelectedItem != null)
-                selectedItem = newSelectedItem
-        }
-    }
 
     EventEffect(
         event = viewModel.navigateToLoginEvent,
         onConsumed = viewModel::onLoginEventConsumed
     ) {
-        navigator.navigate(LoginScreenDestination) {
-            popUpTo(LoginScreenDestination)
-        }
+        onNavigateToLogin()
     }
     
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -108,7 +85,7 @@ fun MainScreen(
                 )
 
                 destinationItems.forEach { item ->
-                    val selected = item === selectedItem
+                    val selected = item === navBackStack.lastOrNull()
                     DestinationItem(
                         item = item,
                         selected = selected,
@@ -117,16 +94,8 @@ fun MainScreen(
                             if (selected)
                                 return@onClick
 
-                            /* https://developer.android.com/jetpack/compose/navigation#bottom-nav */
-                            subScreensNavigator.navigate(item.destination) {
-                                popUpTo(startRoute) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-
-                            }
-                            selectedItem = item
+                            navBackStack.clear()
+                            navBackStack.add(item)
                         }
                     )
                 }
@@ -148,39 +117,95 @@ fun MainScreen(
                     SidebarButtonsRow(
                         onProfileClick = {
                             scope.launch { drawerState.close() }
-                            subScreensNavigator.navigate(StudentProfileScreenDestination)
+                            navBackStack.add(StudentProfileDestination)
                         },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
-                            subScreensNavigator.navigate(SettingsScreenDestination)
+                            navBackStack.add(SettingsScreenDestination)
                         },
                         onLogoutClick = {
                             viewModel.logout()
-                            navigator.navigate(LoginScreenDestination) {
-                                popUpTo(MainScreenDestination) {
-                                    inclusive = true
-                                }
-                            }
+                            onNavigateToLogin()
                         }
                     )
                 }
             }
         },
         content = {
-            DestinationsNavHost(
-                navGraph = SubScreensGraph,
-                start = startDirection,
-                navController = subScreensNavController,
-                modifier = Modifier.fillMaxSize(),
-                dependenciesContainerBuilder = {
-                    navGraph(SubScreensGraph) {
-                        dependency(navDrawerController)
+            NavDisplay(
+                backStack = navBackStack,
+                onBack = {},
+                entryProvider = { key ->
+                    when (key)
+                    {
+                        is SubScreenDestination -> when (key)
+                        {
+                            SubScreenDestination.News -> NavEntry(key) {
+                                NewsSubScreen(navDrawerController)
+                            }
+
+                            SubScreenDestination.Grades -> NavEntry(key) {
+                                GradesSubScreen(navDrawerController, onTeacherClick = { 
+                                    navBackStack.add(TeacherScreenDestination(it))
+                                })
+                            }
+
+                            SubScreenDestination.Timetable -> NavEntry(key) {
+                                TimetableSubScreen(navDrawerController, onTeacherClick = {
+                                    navBackStack.add(TeacherScreenDestination(it))
+                                })
+                            }
+
+                            SubScreenDestination.Canteen -> NavEntry(key) {
+                                CanteenSubScreen(navDrawerController)
+                            }
+
+                            SubScreenDestination.Attendances -> NavEntry(key) {
+                                AttendancesSubScreen(navDrawerController)
+                            }
+
+                            SubScreenDestination.Absences -> NavEntry(key) {
+                                AbsencesSubScreen(navDrawerController)
+                            }
+
+                            SubScreenDestination.Teachers -> NavEntry(key) {
+                                TeachersSubScreen(navDrawerController, onTeacherClick = {
+                                    navBackStack.add(TeacherScreenDestination(it))
+                                })
+                            }
+                        }
+                        is TeacherScreenDestination -> NavEntry(key) {
+                            TeacherScreen(
+                                teacherReference = key.reference,
+                                onBackClick = { navBackStack.pop() }
+                            )
+                        }
+
+                        is StudentProfileDestination -> NavEntry(key) {
+                            StudentProfileScreen(
+                                onBackClick = { navBackStack.pop() }
+                            )
+                        }
+
+                        is SettingsScreenDestination -> NavEntry(key) {
+                            SettingsScreen(
+                                onBackClick = { navBackStack.pop() }
+                            )
+                        }
+
+                        else -> NavEntry(Unit) { Text("Unknown route") }
                     }
                 }
             )
         }
     )
 }
+
+private fun <T> MutableList<T>.pop() = if (size > 1) removeAt(lastIndex) else Unit
+
+private data class TeacherScreenDestination(val reference: TeacherReference) : NavKey
+private data object StudentProfileDestination: NavKey
+private data object SettingsScreenDestination: NavKey
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable

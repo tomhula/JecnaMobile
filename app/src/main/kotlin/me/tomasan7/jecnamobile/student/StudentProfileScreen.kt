@@ -22,8 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.student.Guardian
 import io.github.tomhula.jecnaapi.data.student.Locker
@@ -33,15 +31,13 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun StudentProfileScreen(
-    viewModel: StudentProfileViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    onBackClick: () -> Unit,
+    viewModel: StudentProfileViewModel = hiltViewModel()
 )
 {
     DisposableEffect(Unit) {
@@ -62,7 +58,7 @@ fun StudentProfileScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(stringResource(R.string.profile_title), navigator::popBackStack) },
+        topBar = { TopAppBar(stringResource(R.string.profile_title), onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(

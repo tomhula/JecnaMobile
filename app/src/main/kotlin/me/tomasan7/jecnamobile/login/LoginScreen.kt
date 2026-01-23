@@ -23,18 +23,12 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.LoginScreenDestination
-import me.tomasan7.jecnamobile.destinations.MainScreenDestination
 import me.tomasan7.jecnamobile.ui.component.OutlinedPasswordField
 
-@Destination<RootGraph>(start = true)
 @Composable
 fun LoginScreen(
-    navigator: DestinationsNavigator,
+    onLoginSuccess: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 )
 {
@@ -42,13 +36,7 @@ fun LoginScreen(
 
     LaunchedEffect(uiState.loginResult) {
         if (uiState.loginResult is LoginResult.Success)
-        {
-            navigator.navigate(MainScreenDestination) {
-                popUpTo(LoginScreenDestination) {
-                    inclusive = true
-                }
-            }
-        }
+            onLoginSuccess()
     }
 
     if (uiState.isLoading)

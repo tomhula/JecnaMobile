@@ -15,9 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.R
@@ -25,15 +24,13 @@ import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
 import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.*
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>(start = true)
 @Composable
 fun TimetableSubScreen(
     navDrawerController: NavDrawerController,
-    navigator: DestinationsNavigator,
+    onTeacherClick: (TeacherReference) -> Unit,
     viewModel: TimetableViewModel = hiltViewModel()
 )
 {
@@ -95,8 +92,8 @@ fun TimetableSubScreen(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
                         hideClass = true,
-                        onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) },
-                        onRoomClick = {navigator.navigate(RoomScreenDestination(it))}
+                        onRoomClick = {navigator.navigate(RoomScreenDestination(it))},
+                        onTeacherClick = onTeacherClick
                     )
             }
         }

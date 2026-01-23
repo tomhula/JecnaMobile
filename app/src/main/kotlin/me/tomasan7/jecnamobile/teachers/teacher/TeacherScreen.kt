@@ -1,8 +1,10 @@
 package me.tomasan7.jecnamobile.teachers.teacher
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -31,10 +33,10 @@ import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun TeacherScreen(
     teacherReference: TeacherReference,
+    onBackClick: () -> Unit,
     viewModel: TeacherViewModel = hiltViewModel(),
     navigator: DestinationsNavigator
 )
@@ -58,7 +60,7 @@ fun TeacherScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(teacherReference.fullName, navigator::popBackStack) },
+        topBar = { TopAppBar(teacherReference.fullName, onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(

@@ -5,7 +5,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.ramcosta.composedestinations.spec.DirectionDestinationSpec
+import androidx.navigation3.runtime.NavKey
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.destinations.*
 
@@ -15,7 +15,7 @@ enum class SubScreenDestination(
     val label: Int,
     val icon: ImageVector,
     val iconSelected: ImageVector = icon
-)
+) : NavKey
 {
     News(NewsSubScreenDestination, R.string.sidebar_news, Icons.Outlined.Newspaper, Icons.Filled.Newspaper),
     Grades(GradesSubScreenDestination, R.string.sidebar_grades, Icons.Outlined.Grade, Icons.Filled.Grade),
