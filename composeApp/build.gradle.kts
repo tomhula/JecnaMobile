@@ -9,7 +9,7 @@ kotlin {
     jvm()
     
     androidLibrary {
-        namespace = "me.tomasan7.jecnamobile.shared"
+        namespace = "me.tomasan7.jecnamobile.composeapp"
         compileSdk = 36
         minSdk = 26
     }
