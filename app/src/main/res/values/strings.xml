@@ -40,6 +40,7 @@
     <string name="sidebar_news">Novinky</string>
     <string name="sidebar_teachers">Učitelé</string>
     <string name="sidebar_canteen">Jídelna</string>
+    <string name="sidebar_rooms">Učebny</string>
     <string name="sidebar_settings">Nastavení</string>
     <string name="sidebar_logout">Odhlásit se</string>
 
@@ -169,12 +170,13 @@
     <string name="teacher_title_timetable">Rozvrh hodin</string>
 
     <string name="teacher_load_error">Při načítání učitele došlo k chybě.</string>
+    <string name="room_load_error">Při načítání učebny došlo k chybě.</string>
 
     <!-- ##### Timetable ##### -->
 
     <string name="timetable_dialog_subject">Předmět</string>
     <string name="timetable_dialog_teacher">Učitel</string>
-    <string name="timetable_dialog_classroom">Učebna</string>
+    <string name="timetable_dialog_room">Učebna</string>
     <string name="timetable_dialog_group">Skupina</string>
 
 
@@ -250,6 +252,8 @@
     <string name="error_unsupported_menu">Žádané menu je v nepodporovaném formátu.</string>
     <string name="error_unsupported_teachers">Stránka s učiteli je v nepodporovaném formátu.</string>
     <string name="error_unsupported_teacher">Stránka učitele je v nepodporovaném formátu.</string>
+    <string name="error_unsupported_rooms">Stránka s učebnami je v nepodporovaném formátu.</string>
+    <string name="error_unsupported_room">Stránka učebny je v nepodporovaném formátu.</string>
     <string name="error_unsupported_student_profile">Profilová stránka studenta v nepodporovaném formátu.</string>
     <string name="error_unsupported_credit">Kredit je v nepodporovaném formátu.</string>
     <string name="error_order">Při objednávání došlo k chybě. Zkuste to znovu později.</string>
@@ -283,5 +287,14 @@
     <string name="profile_locker_load_error">Nepodařilo se načíst informace o skříňce</string>
     <string name="profile_locker_loading">Načítání..</string>
     <string name="profile_locker_present">součastnosti</string>
+    <string name="rooms_load_error">Chyba při načítání učeben</string>
+
+    <!-- ##### Rooms Screen ##### -->
+
+    <string name="room_floor">Patro</string>
+    <string name="room_manager">Správce</string>
+    <string name="room_main_class">Kmenová učebna</string>
+    <string name="room_title_timetable">Rozvrh hodin</string>
+    <string name="rooms_search_placeholder">Název učebny/číslo</string>
 
 </resources>

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
@@ -35,6 +36,7 @@ fun Timetable(
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
+    onRoomClick: (RoomReference) -> Unit = { }
 )
 {
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
@@ -112,7 +114,8 @@ fun Timetable(
                 LessonDialogContent(
                     lesson = lesson,
                     onCloseClick = { dialogState.hide() },
-                    onTeacherClick = { onTeacherClick(it) }
+                    onTeacherClick = { onTeacherClick(it) },
+                    onRoomClick = { onRoomClick(it) }
                 )
             }
         )
@@ -241,9 +244,11 @@ private fun DayLabel(
 private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
-    onTeacherClick: (TeacherReference) -> Unit
+    onTeacherClick: (TeacherReference) -> Unit,
+    onRoomClick: (RoomReference) -> Unit
 )
 {
+    val roomLabel = stringResource(R.string.timetable_dialog_room)
     DialogContainer(
         title = {
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -275,7 +280,18 @@ private fun LessonDialogContent(
                     onClick = { onTeacherClick(TeacherReference(teacher.full, teacher.short!!)) }
                 )
             if (lesson.classroom != null)
-                DialogRow(stringResource(R.string.timetable_dialog_classroom), lesson.classroom!!)
+                DialogRow(
+                    label = stringResource(id = R.string.timetable_dialog_room),
+                    value = lesson.classroom!!,
+                    onClick = {
+                        onRoomClick(
+                            RoomReference(
+                                name = roomLabel + " " + lesson.classroom!!,
+                                roomCode = lesson.classroom!!
+                            )
+                        )
+                    }
+                )
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }

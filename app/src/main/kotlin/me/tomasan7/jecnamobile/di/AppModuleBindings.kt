@@ -15,6 +15,8 @@ import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.ObfuscationSharedPreferencesAuthRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.news.NewsRepositoryImpl
+import me.tomasan7.jecnamobile.rooms.RoomsRepository
+import me.tomasan7.jecnamobile.rooms.RoomsRepositoryImpl
 import me.tomasan7.jecnamobile.student.StudentProfileRepository
 import me.tomasan7.jecnamobile.student.StudentProfileRepositoryImpl
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
@@ -61,4 +63,8 @@ interface AppModuleBindings {
     @Binds
     @Singleton
     fun bindStudentProfileRepository(repository: StudentProfileRepositoryImpl): StudentProfileRepository
+
+    @Binds
+    @Singleton
+    fun bindRoomsRepository(repository: RoomsRepositoryImpl): RoomsRepository
 }
