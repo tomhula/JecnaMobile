@@ -148,17 +148,18 @@ fun MainScreen(
                             }
 
                             SubScreenDestination.Grades -> NavEntry(key) {
-                                GradesSubScreen(navDrawerController, onTeacherClick = { 
-                                    navBackStack.add(TeacherScreenDestination(it))
-                                })
+                                GradesSubScreen(
+                                    navDrawerController = navDrawerController,
+                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
+                                )
                             }
 
                             SubScreenDestination.Timetable -> NavEntry(key) {
-                                TimetableSubScreen(navDrawerController, onTeacherClick = {
-                                    navBackStack.add(TeacherScreenDestination(it))
-                                }, onRoomClick = {
-                                    navBackStack.add(RoomScreenDestination(it))
-                                })
+                                TimetableSubScreen(
+                                    navDrawerController = navDrawerController,
+                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) },
+                                    onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
+                                )
                             }
 
                             SubScreenDestination.Canteen -> NavEntry(key) {
@@ -174,24 +175,24 @@ fun MainScreen(
                             }
 
                             SubScreenDestination.Teachers -> NavEntry(key) {
-                                TeachersSubScreen(navDrawerController, onTeacherClick = {
-                                    navBackStack.add(TeacherScreenDestination(it))
-                                })
+                                TeachersSubScreen(
+                                    navDrawerController = navDrawerController,
+                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
+                                )
                             }
 
                             SubScreenDestination.Rooms -> NavEntry(key) {
-                                RoomsSubScreen(navDrawerController, onRoomClick = {
-                                    navBackStack.add(RoomScreenDestination(it))
-                                })
+                                RoomsSubScreen(
+                                    navDrawerController = navDrawerController,
+                                    onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
+                                )
                             }
                         }
                         is TeacherScreenDestination -> NavEntry(key) {
                             TeacherScreen(
                                 teacherReference = key.reference,
                                 onBackClick = { navBackStack.pop() },
-                                onRoomClick = {
-                                    navBackStack.add(RoomScreenDestination(it))
-                                }
+                                onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
                             )
                         }
 
@@ -199,9 +200,7 @@ fun MainScreen(
                             RoomScreen(
                                 roomReference = key.reference,
                                 onBackClick = { navBackStack.pop() },
-                                onTeacherClick = {
-                                    navBackStack.add(TeacherScreenDestination(it))
-                                }
+                                onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                             )
                         }
 
