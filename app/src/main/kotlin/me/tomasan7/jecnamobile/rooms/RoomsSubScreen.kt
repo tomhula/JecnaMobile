@@ -81,9 +81,9 @@ fun RoomsSubScreen(
 
                 VerticalSpacer(16.dp)
 
-                uiState.RoomReferencesSortedFiltered?.forEach {
+                uiState.roomReferencesSortedFiltered?.forEach {
                     ClassroomCard(
-                        RoomReference = it,
+                        roomReference = it,
                         onClick = { navigator.navigate(RoomScreenDestination(it)) },
                         searchQuery = uiState.filterFieldValue,
                         modifier = Modifier.fillMaxWidth()
@@ -134,7 +134,7 @@ private fun FilterFieldRow(
 
 @Composable
 fun ClassroomCard(
-    RoomReference: RoomReference,
+    roomReference: RoomReference,
     modifier: Modifier = Modifier,
     searchQuery: String = "",
     onClick: () -> Unit = {}
@@ -153,7 +153,7 @@ fun ClassroomCard(
                 .padding(16.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text(buildHighlightedAnnotatedString(text = RoomReference.name, searchQuery = searchQuery))
+            Text(buildHighlightedAnnotatedString(text = roomReference.name, searchQuery = searchQuery))
         }
     }
 }

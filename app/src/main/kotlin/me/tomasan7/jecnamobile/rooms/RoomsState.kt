@@ -16,9 +16,9 @@ data class RoomsState(
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
 {
-    val RoomReferencesSorted = roomsPage?.roomReferences
+    val roomReferencesSorted = roomsPage?.roomReferences
         ?.sortedWith(compareBy(Collator.getInstance(Locale.forLanguageTag("cs"))) { it.name })
 
-    val RoomReferencesSortedFiltered = RoomReferencesSorted
+    val roomReferencesSortedFiltered = roomReferencesSorted
         ?.filter { it.name.removeAccent().contains(filterFieldValue.removeAccent(), ignoreCase = true) || it.roomCode.contains(filterFieldValue, ignoreCase = true) }
 }
