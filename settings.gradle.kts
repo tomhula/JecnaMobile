@@ -2,6 +2,8 @@ rootProject.name = "JecnaMobile"
 include(":app")
 include(":composeApp")
 
+enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+
 pluginManagement {
     repositories {
         gradlePluginPortal()

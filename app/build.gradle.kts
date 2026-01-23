@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
     // https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-migrate-kotlin-kapt-plugin
@@ -43,10 +44,6 @@ android {
         }
     }
 
-    buildFeatures {
-        compose = true
-    }
-
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -64,7 +61,7 @@ ksp {
 }*/
 
 dependencies {
-    implementation(libs.jecnaAPI)
+    implementation(projects.composeApp)
 
     // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
     kapt("androidx.room:room-compiler-processing:2.8.4")

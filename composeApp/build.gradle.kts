@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.compose.compiler)
-    alias(libs.plugins.compose)
+    alias(libs.plugins.compose.multiplatform)
 }
 
 kotlin {
@@ -17,7 +17,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.jecnaAPI)
+                api(libs.jecnaAPI)
                 
                 implementation(libs.compose.material3.mp)
                 implementation(libs.compose.material.icons.extended.mp)
