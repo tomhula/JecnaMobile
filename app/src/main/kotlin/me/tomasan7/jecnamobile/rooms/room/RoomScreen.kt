@@ -18,11 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
+import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.TeacherScreenDestination
 import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
@@ -30,8 +29,9 @@ import me.tomasan7.jecnamobile.ui.component.Timetable
 @Composable
 fun RoomScreen(
     roomReference: RoomReference,
-    viewModel: RoomViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
+    onBackClick: () -> Unit,
+    onTeacherClick: (TeacherReference) -> Unit,
+    viewModel: RoomViewModel = hiltViewModel()
 )
 {
     DisposableEffect(Unit) {
@@ -53,7 +53,7 @@ fun RoomScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(roomReference.name, navigator::popBackStack) },
+        topBar = { TopAppBar(roomReference.name, onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(
@@ -79,9 +79,7 @@ fun RoomScreen(
                     }
                     room.manager?.let {
                         InfoRow(R.string.room_manager, room.manager!!.fullName, Modifier.clickable(onClick = {
-                            navigator.navigate(
-                                TeacherScreenDestination(room.manager!!)
-                            )
+                            onTeacherClick(room.manager!!)
                         }))
                     }
 
@@ -97,7 +95,7 @@ fun RoomScreen(
                         )
                         Timetable(
                             timetable = room.timetable!!,
-                            onTeacherClick = { navigator.navigate(TeacherScreenDestination(it)) })
+                            onTeacherClick = { onTeacherClick(it) })
                     }
                 }
             }

@@ -25,6 +25,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import de.palm.composestateevents.EventEffect
+import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
@@ -33,6 +34,8 @@ import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
 import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
 import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
+import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
+import me.tomasan7.jecnamobile.rooms.room.RoomScreen
 import me.tomasan7.jecnamobile.settings.SettingsScreen
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
@@ -153,6 +156,8 @@ fun MainScreen(
                             SubScreenDestination.Timetable -> NavEntry(key) {
                                 TimetableSubScreen(navDrawerController, onTeacherClick = {
                                     navBackStack.add(TeacherScreenDestination(it))
+                                }, onRoomClick = {
+                                    navBackStack.add(RoomScreenDestination(it))
                                 })
                             }
 
@@ -173,11 +178,30 @@ fun MainScreen(
                                     navBackStack.add(TeacherScreenDestination(it))
                                 })
                             }
+
+                            SubScreenDestination.Rooms -> NavEntry(key) {
+                                RoomsSubScreen(navDrawerController, onRoomClick = {
+                                    navBackStack.add(RoomScreenDestination(it))
+                                })
+                            }
                         }
                         is TeacherScreenDestination -> NavEntry(key) {
                             TeacherScreen(
                                 teacherReference = key.reference,
-                                onBackClick = { navBackStack.pop() }
+                                onBackClick = { navBackStack.pop() },
+                                onRoomClick = {
+                                    navBackStack.add(RoomScreenDestination(it))
+                                }
+                            )
+                        }
+
+                        is RoomScreenDestination -> NavEntry(key) {
+                            RoomScreen(
+                                roomReference = key.reference,
+                                onBackClick = { navBackStack.pop() },
+                                onTeacherClick = {
+                                    navBackStack.add(TeacherScreenDestination(it))
+                                }
                             )
                         }
 
@@ -204,6 +228,7 @@ fun MainScreen(
 private fun <T> MutableList<T>.pop() = if (size > 1) removeAt(lastIndex) else Unit
 
 private data class TeacherScreenDestination(val reference: TeacherReference) : NavKey
+private data class RoomScreenDestination(val reference: RoomReference) : NavKey
 private data object StudentProfileDestination: NavKey
 private data object SettingsScreenDestination: NavKey
 

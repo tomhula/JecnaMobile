@@ -17,11 +17,9 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.RoomScreenDestination
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
@@ -32,7 +30,7 @@ import me.tomasan7.jecnamobile.util.removeAccent
 @Composable
 fun RoomsSubScreen(
     navDrawerController: NavDrawerController,
-    navigator: DestinationsNavigator,
+    onRoomClick: (RoomReference) -> Unit,
     viewModel: RoomsViewModel = hiltViewModel()
 )
 {
@@ -84,7 +82,7 @@ fun RoomsSubScreen(
                 uiState.roomReferencesSortedFiltered?.forEach {
                     ClassroomCard(
                         roomReference = it,
-                        onClick = { navigator.navigate(RoomScreenDestination(it)) },
+                        onClick = { onRoomClick(it) },
                         searchQuery = uiState.filterFieldValue,
                         modifier = Modifier.fillMaxWidth()
                     )
