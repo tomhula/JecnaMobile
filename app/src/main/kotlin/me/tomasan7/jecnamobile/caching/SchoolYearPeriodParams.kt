@@ -14,6 +14,12 @@ data class SchoolYearPeriodParams(
     val schoolYear: SchoolYear,
     val periodId: Int
 )
+{
+    companion object
+    {
+        const val CURRENT_PERIOD_ID = -1
+    }
+}
 
 internal object SchoolYearPeriodParamsSerializer : KSerializer<SchoolYearPeriodParams>
 {

@@ -12,6 +12,6 @@ class TimetableRepositoryImpl @Inject constructor(
 
     override suspend fun getTimetablePage(
         schoolYear: SchoolYear,
-        periodId: Int
+        periodId: Int?
     ) = jecnaClient.getTimetablePage(schoolYear, periodId)
 }

@@ -1,32 +1,22 @@
 package me.tomasan7.jecnamobile.timetable
 
 import android.content.Context
-import android.content.IntentFilter
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import io.ktor.util.network.*
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.datetime.*
-import kotlinx.datetime.format.Padding
-import kotlinx.datetime.format.char
-import me.tomasan7.jecnamobile.JecnaMobileApplication
+import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.util.createBroadcastReceiver
-import me.tomasan7.jecnamobile.util.now
+import me.tomasan7.jecnamobile.SubScreenCacheViewModel
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
+import me.tomasan7.jecnamobile.util.CachedDataNew
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -34,153 +24,53 @@ import kotlin.time.Instant
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
     @ApplicationContext
-    private val appContext: Context,
-    jecnaClient: JecnaClient,
-    private val repository: CacheTimetableRepository
-) : ViewModel()
+    appContext: Context,
+    loginStateProvider: LoginStateProvider,
+    repository: CacheRepository<TimetablePage, SchoolYearPeriodParams>
+) : SubScreenCacheViewModel<TimetablePage, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
+    override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
+    override val loadErrorMessage = appContext.getString(R.string.timetable_load_error)
+    
     var uiState by mutableStateOf(TimetableState())
         private set
-
-    private var loadTimetableJob: Job? = null
-
-    private val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
-        val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
-
-        if (loadTimetableJob == null || loadTimetableJob!!.isCompleted)
-        {
-            if (!first)
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.back_online)))
-            loadReal(true)
-        }
-    }
-
-    init
-    {
-        loadCache()
-        if ((jecnaClient as WebJecnaClient).lastSuccessfulLoginTime != null)
-            loadReal(true)
-    }
-
-    fun enteredComposition()
-    {
-        appContext.registerReceiver(
-            loginBroadcastReceiver,
-            IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
-            Context.RECEIVER_NOT_EXPORTED
-        )
-    }
-
-    fun leftComposition()
-    {
-        loadTimetableJob?.cancel()
-        appContext.unregisterReceiver(loginBroadcastReceiver)
-    }
-
+    
     fun selectSchoolYear(schoolYear: SchoolYear)
     {
         changeUiState(selectedSchoolYear = schoolYear)
-        loadReal(false)
+        loadReal()
     }
 
     fun selectTimetablePeriod(timetablePeriod: TimetablePage.PeriodOption)
     {
         changeUiState(selectedPeriod = timetablePeriod)
-        loadReal(false)
+        loadReal()
     }
-
-    private fun loadCache()
-    {
-        if (!repository.isCacheAvailable())
-            return
-
-        viewModelScope.launch {
-            val cachedGrades = repository.getCachedTimetable() ?: return@launch
-
-            changeUiState(
-                timetablePage = cachedGrades.data,
-                selectedSchoolYear = cachedGrades.data.selectedSchoolYear,
-                selectedPeriod = cachedGrades.data.periodOptions.find { it.selected },
-                lastUpdateTimestamp = cachedGrades.timestamp,
-                isCache = true
-            )
-        }
-    }
-
-    /**
-     * @param current If true, the newset timetable will be loaded. If false, the selected one will be loaded.
-     */
-    private fun loadReal(current: Boolean)
-    {
-        loadTimetableJob?.cancel()
-
-        changeUiState(loading = true)
-
-        loadTimetableJob = viewModelScope.launch {
-            try
-            {
-                /* Load the current timetable if there is no cache or
-                the load was initiated automatically (upon open internet reconnection) */
-                val realTimetable = if (uiState.selectedPeriod == null || current)
-                    repository.getRealTimetable()
-                else
-                    repository.getRealTimetable(uiState.selectedSchoolYear, uiState.selectedPeriod!!)
-
-                changeUiState(
-                    timetablePage = realTimetable,
-                    selectedSchoolYear = realTimetable.selectedSchoolYear,
-                    selectedPeriod = realTimetable.periodOptions.find { it.selected },
-                    lastUpdateTimestamp = Clock.System.now(),
-                    isCache = false
-                )
-            }
-            catch (e: UnresolvedAddressException)
-            {
-                if (uiState.lastUpdateTimestamp != null && uiState.isCache)
-                    changeUiState(snackBarMessageEvent = triggered(getOfflineMessage()!!))
-                else
-                    changeUiState(snackBarMessageEvent =
-                    triggered(appContext.getString(R.string.no_internet_connection)))
-            }
-            catch (e: CancellationException)
-            {
-                throw e
-            }
-            catch (e: Exception)
-            {
-                changeUiState(snackBarMessageEvent = triggered(appContext.getString(R.string.timetable_load_error)))
-                e.printStackTrace()
-            }
-            finally
-            {
-                changeUiState(loading = false)
-            }
-        }
-    }
-
-    private fun getOfflineMessage(): String?
-    {
-        val cacheTimestamp = uiState.lastUpdateTimestamp ?: return null
-        val localDateTime = cacheTimestamp.toLocalDateTime(TimeZone.currentSystemDefault())
-        val localDate = localDateTime.date
-
-        val today = LocalDate.now()
-
-        return if (localDate == today)
-        {
-            val timeStr = localDateTime.time.format(OFFLINE_MESSAGE_TIME_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_time, timeStr)
-        }
-        else
-        {
-            val dateStr = localDate.format(OFFLINE_MESSAGE_DATE_FORMATTER)
-            appContext.getString(R.string.showing_offline_data_date, dateStr)
-        }
-    }
-
-    fun reload() = if (!uiState.loading) loadReal(false) else Unit
-
+    
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
+
+    override fun setDataUiState(data: TimetablePage) = changeUiState(
+        timetablePage = data,
+        lastUpdateTimestamp = Clock.System.now(),
+        selectedSchoolYear = data.selectedSchoolYear,
+        selectedPeriod = data.periodOptions.find { it.selected },
+        isCache = false
+    )
+
+    override fun setCacheDataUiState(data: CachedDataNew<TimetablePage, SchoolYearPeriodParams>) = changeUiState(
+        timetablePage = data.data,
+        lastUpdateTimestamp = data.timestamp,
+        selectedSchoolYear = data.data.selectedSchoolYear,
+        selectedPeriod = data.data.periodOptions.find { it.selected },
+        isCache = true
+    )
+    
+    override fun getParams() = SchoolYearPeriodParams(uiState.selectedSchoolYear, uiState.selectedPeriod?.id ?: SchoolYearPeriodParams.CURRENT_PERIOD_ID)
+    
+    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
+    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+    override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     private fun changeUiState(
         loading: Boolean = uiState.loading,
@@ -201,19 +91,5 @@ class TimetableViewModel @Inject constructor(
             selectedPeriod = selectedPeriod,
             snackBarMessageEvent = snackBarMessageEvent
         )
-    }
-
-    companion object
-    {
-        val OFFLINE_MESSAGE_TIME_FORMATTER = LocalTime.Format {
-            hour(padding = Padding.ZERO)
-            char(':')
-            minute(padding = Padding.ZERO)
-        }
-        val OFFLINE_MESSAGE_DATE_FORMATTER = LocalDate.Format {
-            day(padding = Padding.NONE)
-            chars(". ")
-            monthNumber(padding = Padding.NONE)
-        }
     }
 }
