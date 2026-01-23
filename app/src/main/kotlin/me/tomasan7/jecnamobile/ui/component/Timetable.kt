@@ -114,8 +114,8 @@ fun Timetable(
                 LessonDialogContent(
                     lesson = lesson,
                     onCloseClick = { dialogState.hide() },
-                    onTeacherClick = { onTeacherClick(it) },
-                    onRoomClick = { onRoomClick(it) }
+                    onTeacherClick = { dialogState.hide(); onTeacherClick(it) },
+                    onRoomClick = { dialogState.hide(); onRoomClick(it) }
                 )
             }
         )
