@@ -13,26 +13,22 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.destinations.*
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
+import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.FilledDropDownSelector
 import me.tomasan7.jecnamobile.ui.component.RadioGroup
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import me.tomasan7.jecnamobile.util.settingsAsState
 
 
-@Destination<SubScreensNavGraph>
 @Composable
 fun SettingsScreen(
-    navigator: DestinationsNavigator,
+    onBackClick: () -> Unit,
     viewModel: SettingsViewModel = hiltViewModel()
 )
 {
     Scaffold(
-        topBar = { TopAppBar(navigator::popBackStack) }
+        topBar = { TopAppBar(onBackClick = onBackClick) }
     ) { paddingValues ->
         Box(
             modifier = Modifier
@@ -48,13 +44,13 @@ fun SettingsScreen(
 private fun Settings(viewModel: SettingsViewModel)
 {
     val names = mapOf(
-        NewsSubScreenDestination.route to stringResource(R.string.sidebar_news),
-        GradesSubScreenDestination.route to stringResource(R.string.sidebar_grades),
-        TimetableSubScreenDestination.route to stringResource(R.string.sidebar_timetable),
-        CanteenSubScreenDestination.route to stringResource(R.string.sidebar_canteen),
-        AttendancesSubScreenDestination.route to stringResource(R.string.sidebar_attendances),
-        AbsencesSubScreenDestination.route to stringResource(R.string.sidebar_absences),
-        TeachersSubScreenDestination.route to stringResource(R.string.sidebar_teachers),
+        SubScreenDestination.News to stringResource(R.string.sidebar_news),
+        SubScreenDestination.Grades to stringResource(R.string.sidebar_grades),
+        SubScreenDestination.Timetable to stringResource(R.string.sidebar_timetable),
+        SubScreenDestination.Canteen to stringResource(R.string.sidebar_canteen),
+        SubScreenDestination.Attendances to stringResource(R.string.sidebar_attendances),
+        SubScreenDestination.Absences to stringResource(R.string.sidebar_absences),
+        SubScreenDestination.Teachers to stringResource(R.string.sidebar_teachers),
     )
 
     val settings by settingsAsState()

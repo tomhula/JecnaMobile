@@ -6,7 +6,6 @@ import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.Month
 import me.tomasan7.jecnamobile.R
 import java.text.Normalizer
-import java.util.*
 
 @Composable
 fun getWeekDayName(dayOfWeek: DayOfWeek) = when (dayOfWeek)

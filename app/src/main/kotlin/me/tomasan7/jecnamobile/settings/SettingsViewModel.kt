@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
+import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import javax.inject.Inject
 
@@ -23,9 +24,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setOpenSubScreen(subScreenRoute: String) = viewModelScope.launch {
+    fun setOpenSubScreen(subScreenDestination: SubScreenDestination) = viewModelScope.launch {
         settingsDataStore.updateData {
-            it.copy(openSubScreenRoute = subScreenRoute)
+            it.copy(openSubScreenRoute = subScreenDestination)
         }
     }
 }

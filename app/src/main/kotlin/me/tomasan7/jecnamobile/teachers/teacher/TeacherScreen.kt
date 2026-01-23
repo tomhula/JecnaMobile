@@ -21,23 +21,19 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.Teacher
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.SubScreensNavGraph
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.ui.component.Timetable
 
 @OptIn(ExperimentalMaterial3Api::class)
-@Destination<SubScreensNavGraph>
 @Composable
 fun TeacherScreen(
     teacherReference: TeacherReference,
+    onBackClick: () -> Unit,
     viewModel: TeacherViewModel = hiltViewModel(),
-    navigator: DestinationsNavigator
 )
 {
     DisposableEffect(Unit) {
@@ -59,7 +55,7 @@ fun TeacherScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(teacherReference.fullName, navigator::popBackStack) },
+        topBar = { TopAppBar(teacherReference.fullName, onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(

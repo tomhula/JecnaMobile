@@ -78,10 +78,10 @@ dependencies {
     implementation(libs.activity.compose)
     implementation(libs.composeHtml)
     implementation(libs.composeCoil)
-    implementation(libs.composeDestinations.core)
-    ksp(libs.composeDestinations.ksp)
     implementation(libs.composeStateEvents)
     implementation(libs.accompanist.permissions)
+    implementation(libs.navigation3.ui)
+    implementation(libs.navigation3.runtime)
 
     implementation(libs.activity.ktx)
 

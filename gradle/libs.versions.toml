@@ -8,11 +8,11 @@ jecnaAPI = "9.1.0"
 
 compose-android-bom = "2026.01.00"
 
-composeDestinations = "2.3.0"
 composeStateEvents = "2.2.0"
 composeHtml = "1.0.2"
 composeCoil = "2.7.0"
 accompanist = "0.37.3"
+nav3Core = "1.0.0"
 
 activity = "1.12.2"
 
@@ -33,12 +33,12 @@ compose-material-icons-core = { module = "androidx.compose.material:material-ico
 compose-material-icons-extended = { module = "androidx.compose.material:material-icons-extended" }
 activity-compose = { module = "androidx.activity:activity-compose" }
 
-composeDestinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "composeDestinations" }
-composeDestinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "composeDestinations" }
 composeStateEvents = { module = "com.github.leonard-palm:compose-state-events", version.ref = "composeStateEvents" }
 composeHtml = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 composeCoil = { module = "io.coil-kt:coil-compose", version.ref = "composeCoil" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
+navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 

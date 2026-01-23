@@ -1,7 +1,7 @@
 package me.tomasan7.jecnamobile.settings
 
 import kotlinx.serialization.Serializable
-import me.tomasan7.jecnamobile.destinations.TimetableSubScreenDestination
+import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 
 @Serializable
 data class Settings(
@@ -9,7 +9,7 @@ data class Settings(
     var canteenImageTolerance: Float = 0.5f,
     var canteenHelpSeen: Boolean = false,
     var gradesViewMode: GradesViewMode = GradesViewMode.GRID,
-    val openSubScreenRoute: String = TimetableSubScreenDestination.route,
+    val openSubScreenRoute: SubScreenDestination = SubScreenDestination.Timetable,
 )
 {
     enum class GradesViewMode
