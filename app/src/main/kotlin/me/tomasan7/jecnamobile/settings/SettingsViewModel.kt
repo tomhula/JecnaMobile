@@ -26,7 +26,7 @@ class SettingsViewModel @Inject constructor(
 
     fun setOpenSubScreen(subScreenDestination: SubScreenDestination) = viewModelScope.launch {
         settingsDataStore.updateData {
-            it.copy(openSubScreenRoute = subScreenDestination)
+            it.copy(defaultDestination = subScreenDestination)
         }
     }
 }

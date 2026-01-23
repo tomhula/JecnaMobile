@@ -80,7 +80,7 @@ private fun Settings(viewModel: SettingsViewModel)
             FilledDropDownSelector(
                 options = names.keys.toList(),
                 optionStringMap = { names[it]!! },
-                selectedValue = settings.openSubScreenRoute,
+                selectedValue = settings.defaultDestination,
                 onChange = { viewModel.setOpenSubScreen(it) }
             )
         }

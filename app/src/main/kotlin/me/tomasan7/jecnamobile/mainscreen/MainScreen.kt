@@ -53,7 +53,7 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val destinationItems = SubScreenDestination.entries
     val linkItems = SidebarLink.entries
-    val navBackStack = remember { mutableStateListOf<Any>(settings.openSubScreenRoute) }
+    val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)
 
     EventEffect(
