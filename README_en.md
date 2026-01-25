@@ -22,6 +22,8 @@ The minimum supported Android version is `Android 8.0 (Oreo)`.
 - [x] Notifications  
 - [x] Grade predictor  
 - [x] Canteen marketplace  
+- [X] Classrooms
+- [X] Student's profile
 
 ## Screenshots
 
