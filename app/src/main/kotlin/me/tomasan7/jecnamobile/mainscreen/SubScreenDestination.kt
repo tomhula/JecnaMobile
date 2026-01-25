@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import me.tomasan7.jecnamobile.R
 
+@Serializable
 enum class SubScreenDestination(
     @StringRes
     val label: Int,

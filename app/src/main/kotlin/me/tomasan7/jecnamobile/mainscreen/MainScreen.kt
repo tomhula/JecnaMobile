@@ -20,6 +20,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
@@ -28,6 +29,7 @@ import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
@@ -56,7 +58,8 @@ fun MainScreen(
     val scope = rememberCoroutineScope()
     val destinationItems = SubScreenDestination.entries
     val linkItems = SidebarLink.entries
-    val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
+    val navBackStack = rememberNavBackStack(settings.defaultDestination)
+    // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)
 
     EventEffect(
@@ -146,14 +149,12 @@ fun MainScreen(
                             SubScreenDestination.News -> NavEntry(key) {
                                 NewsSubScreen(navDrawerController)
                             }
-
                             SubScreenDestination.Grades -> NavEntry(key) {
                                 GradesSubScreen(
                                     navDrawerController = navDrawerController,
                                     onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                                 )
                             }
-
                             SubScreenDestination.Timetable -> NavEntry(key) {
                                 TimetableSubScreen(
                                     navDrawerController = navDrawerController,
@@ -161,26 +162,21 @@ fun MainScreen(
                                     onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
                                 )
                             }
-
                             SubScreenDestination.Canteen -> NavEntry(key) {
                                 CanteenSubScreen(navDrawerController)
                             }
-
                             SubScreenDestination.Attendances -> NavEntry(key) {
                                 AttendancesSubScreen(navDrawerController)
                             }
-
                             SubScreenDestination.Absences -> NavEntry(key) {
                                 AbsencesSubScreen(navDrawerController)
                             }
-
                             SubScreenDestination.Teachers -> NavEntry(key) {
                                 TeachersSubScreen(
                                     navDrawerController = navDrawerController,
                                     onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                                 )
                             }
-
                             SubScreenDestination.Rooms -> NavEntry(key) {
                                 RoomsSubScreen(
                                     navDrawerController = navDrawerController,
@@ -195,7 +191,6 @@ fun MainScreen(
                                 onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
                             )
                         }
-
                         is RoomScreenDestination -> NavEntry(key) {
                             RoomScreen(
                                 roomReference = key.reference,
@@ -203,20 +198,17 @@ fun MainScreen(
                                 onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                             )
                         }
-
                         is StudentProfileDestination -> NavEntry(key) {
                             StudentProfileScreen(
                                 onBackClick = { navBackStack.pop() }
                             )
                         }
-
                         is SettingsScreenDestination -> NavEntry(key) {
                             SettingsScreen(
                                 onBackClick = { navBackStack.pop() }
                             )
                         }
-
-                        else -> NavEntry(Unit) { Text("Unknown route") }
+                        else -> NavEntry(key) { Text("Unknown route") }
                     }
                 }
             )
@@ -226,9 +218,13 @@ fun MainScreen(
 
 private fun <T> MutableList<T>.pop() = if (size > 1) removeAt(lastIndex) else Unit
 
+@Serializable
 private data class TeacherScreenDestination(val reference: TeacherReference) : NavKey
+@Serializable
 private data class RoomScreenDestination(val reference: RoomReference) : NavKey
+@Serializable
 private data object StudentProfileDestination: NavKey
+@Serializable
 private data object SettingsScreenDestination: NavKey
 
 @OptIn(ExperimentalPermissionsApi::class)
