@@ -22,6 +22,7 @@ private val jecnaDateFormatter = LocalDate.Format {
     day(padding = Padding.NONE)
     char('.')
     monthNumber(padding = Padding.NONE)
+    char('.')
     year()
 }
 

@@ -1181,6 +1181,7 @@ private object Constants
         day(padding = Padding.NONE)
         char('.')
         monthNumber(padding = Padding.NONE)
+        char('.')
         year()
     }
     val gradeShape = RoundedCornerShape(7.dp)
