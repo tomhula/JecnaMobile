@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.timetable
+package me.tomasan7.jecnamobile.substitution
 
 import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.LabeledTeacherAbsences

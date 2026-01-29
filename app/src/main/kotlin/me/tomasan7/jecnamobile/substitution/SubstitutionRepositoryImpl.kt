@@ -1,10 +1,9 @@
-package me.tomasan7.jecnamobile.timetable
+package me.tomasan7.jecnamobile.substitution
 
 import io.github.stevekk11.api.SubstitutionClient
 import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.LabeledTeacherAbsences
 import io.github.stevekk11.dtos.ScheduleWithAbsences
-import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.stevekk11.dtos.SubstitutionStatus
 import java.time.LocalDate
 import javax.inject.Inject

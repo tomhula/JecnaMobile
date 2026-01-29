@@ -26,6 +26,7 @@ import kotlin.time.Clock
 import kotlin.time.Instant
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import me.tomasan7.jecnamobile.substitution.SubstitutionRepository
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
