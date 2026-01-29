@@ -65,6 +65,7 @@ ksp {
 
 dependencies {
     implementation(libs.jecnaAPI)
+    implementation(libs.jecnaSupl)
 
     // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
     kapt("androidx.room:room-compiler-processing:2.8.4")

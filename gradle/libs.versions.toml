@@ -5,7 +5,7 @@ plugin-kotlin = "2.3.0"
 plugin-ksp = "2.3.5-SNAPSHOT"
 
 jecnaAPI = "9.1.0"
-
+jecnaSupl= "1.0.3"
 compose-android-bom = "2026.01.00"
 
 composeStateEvents = "2.2.0"
@@ -24,7 +24,7 @@ serialization = "1.10.0"
 
 [libraries]
 jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
-
+jecnaSupl = { module = "io.github.stevekk11:jecna-supl", version.ref = "jecnaSupl" }
 compose-android-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-android-bom" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }

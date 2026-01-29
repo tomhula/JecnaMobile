@@ -89,3 +89,12 @@ val grade_absence_warning = Color(0xFFFF8A8A)
 val teacher_search_query_highlight = Color(0xFFCDDC39)
 
 val canteen_dish_description_difference = Color(0xFF889415)
+
+//--Substitution colors--
+val substitution = grade_5
+val dropped = Color(0xFF4CAF50)
+val joined = Color(0xFF2196F3)
+val room_change = Color(0xFFFF9800)
+val shifted = Color(0xFF9C27B0)
+val separated = Color(0xFF795548)
+
