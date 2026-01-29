@@ -79,7 +79,7 @@ fun Timetable(
                     val lessonSpots = timetable.getLessonSpotsForDay(day)!!
                     lessonSpots.forEach { lessonSpot ->
                         lessonSpot.forEach { lesson ->
-                            if (lesson.subjectName.full == sub.subject && lessonSpot.periodSpan == lessonPeriodIndex) {
+                            if (lesson.subjectName.short == sub.subject && lessonSpot.periodSpan == lessonPeriodIndex) {
                                 map[lesson] = sub
                             }
                         }
@@ -363,7 +363,7 @@ private fun LessonDialogContent(
                         onClick = {
                             onRoomClick(
                                 RoomReference(
-                                    name = roomLabel + " " + substitutionRoom,
+                                    name = "Učebna $substitutionRoom",
                                     roomCode = substitutionRoom
                                 )
                             )
