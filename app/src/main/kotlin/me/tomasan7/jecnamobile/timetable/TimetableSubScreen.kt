@@ -92,6 +92,8 @@ fun TimetableSubScreen(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
                         hideClass = true,
+                        substitutions = uiState.substitutions,
+                        teacherNameMap = uiState.teacherNameMap,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )

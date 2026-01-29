@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import io.github.stevekk11.api.SubstitutionClient
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
@@ -23,6 +24,12 @@ internal object AppModule
     @Provides
     @Singleton
     fun provideCanteenClient() = CanteenClient(autoLogin = true, userAgent = "JM")
+    
+    @Provides
+    @Singleton
+    fun provideSubstitutionClient() = SubstitutionClient().apply {
+        setEndpointUrl("https://jecnarozvrh.jzitnik.dev/versioned/v1")
+    }
     
     @Provides
     @Singleton

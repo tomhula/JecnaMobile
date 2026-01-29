@@ -9,6 +9,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import io.github.stevekk11.dtos.SubstitutedLesson
+import io.github.stevekk11.dtos.SubstitutionStatus
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.LoginStateProvider
@@ -17,16 +19,23 @@ import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.student.StudentProfileRepository
+import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<TimetablePage, SchoolYearPeriodParams>
+    repository: CacheRepository<TimetablePage, SchoolYearPeriodParams>,
+    private val substitutionRepository: SubstitutionRepository,
+    private val studentProfileRepository: StudentProfileRepository,
+    private val teachersRepository: TeachersRepository
 ) : SubScreenCacheViewModel<TimetablePage, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
@@ -49,13 +58,30 @@ class TimetableViewModel @Inject constructor(
     
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    override fun setDataUiState(data: TimetablePage) = changeUiState(
-        timetablePage = data,
-        lastUpdateTimestamp = Clock.System.now(),
-        selectedSchoolYear = data.selectedSchoolYear,
-        selectedPeriod = data.periodOptions.find { it.selected },
-        isCache = false
-    )
+    override fun setDataUiState(data: TimetablePage) {
+        changeUiState(
+            timetablePage = data,
+            lastUpdateTimestamp = Clock.System.now(),
+            selectedSchoolYear = data.selectedSchoolYear,
+            selectedPeriod = data.periodOptions.find { it.selected },
+            isCache = false
+        )
+        // Load substitutions asynchronously
+        viewModelScope.launch {
+            try {
+                val student = studentProfileRepository.getCurrentStudent()
+                val teachersPage = teachersRepository.getTeachersPage()
+                val teacherNameMap = teachersPage.teachersReferences.associate{it.tag to it.fullName}
+                substitutionRepository.setClassSymbol(student.className ?: "")
+                val substitutions = substitutionRepository.getSubstitutions()
+                val status = substitutionRepository.getSubstitutionsStatus()
+                changeUiState(substitutions = substitutions, substitutionStatus = status, teacherNameMap = teacherNameMap)
+            } catch (e: Exception) {
+                // Handle error, perhaps show snackbar
+                showSnackBarMessage("Failed to load substitutions: ${e.message}")
+            }
+        }
+    }
 
     override fun setCacheDataUiState(data: CachedDataNew<TimetablePage, SchoolYearPeriodParams>) = changeUiState(
         timetablePage = data.data,
@@ -79,17 +105,25 @@ class TimetableViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYear: SchoolYear = uiState.selectedSchoolYear,
         selectedPeriod: TimetablePage.PeriodOption? = uiState.selectedPeriod,
+        substitutions: List<SubstitutedLesson>? = uiState.substitutions,
+        substitutionStatus: SubstitutionStatus? = uiState.substitutionStatus,
+        teacherNameMap: Map<String, String> = uiState.teacherNameMap,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent
     )
     {
-        uiState = uiState.copy(
-            loading = loading,
-            timetablePage = timetablePage,
-            lastUpdateTimestamp = lastUpdateTimestamp,
-            isCache = isCache,
-            selectedSchoolYear = selectedSchoolYear,
-            selectedPeriod = selectedPeriod,
-            snackBarMessageEvent = snackBarMessageEvent
-        )
+        substitutions?.let {
+            uiState = uiState.copy(
+                loading = loading,
+                timetablePage = timetablePage,
+                lastUpdateTimestamp = lastUpdateTimestamp,
+                isCache = isCache,
+                selectedSchoolYear = selectedSchoolYear,
+                selectedPeriod = selectedPeriod,
+                substitutions = it,
+                substitutionStatus = substitutionStatus,
+                teacherNameMap = teacherNameMap,
+                snackBarMessageEvent = snackBarMessageEvent
+            )
+        }
     }
 }

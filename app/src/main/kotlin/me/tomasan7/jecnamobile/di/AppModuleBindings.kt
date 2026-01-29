@@ -21,6 +21,8 @@ import me.tomasan7.jecnamobile.student.StudentProfileRepository
 import me.tomasan7.jecnamobile.student.StudentProfileRepositoryImpl
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.teachers.TeachersRepositoryImpl
+import me.tomasan7.jecnamobile.timetable.SubstitutionRepository
+import me.tomasan7.jecnamobile.timetable.SubstitutionRepositoryImpl
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepositoryImpl
 import javax.inject.Singleton
@@ -39,6 +41,10 @@ interface AppModuleBindings {
     @Binds
     @Singleton
     fun bindTimetableRepository(repository: TimetableRepositoryImpl): TimetableRepository
+
+    @Binds
+    @Singleton
+    fun bindSubstitutionRepository(repository: SubstitutionRepositoryImpl): SubstitutionRepository
 
     @Binds
     @Singleton

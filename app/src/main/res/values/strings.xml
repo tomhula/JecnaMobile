@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Ječná Mobile</string>
     <string name="welcome_text">Vítejte v aplikaci Ječná Mobile</string>
+    <string name="supl_endpoint">https://jecnarozvrh.jzitnik.dev/versioned/v1</string>
+
 
     <!-- ##### Login Screen ##### -->
 
@@ -178,6 +180,9 @@
     <string name="timetable_dialog_teacher">Učitel</string>
     <string name="timetable_dialog_room">Učebna</string>
     <string name="timetable_dialog_group">Skupina</string>
+    <string name="timetable_dialog_sub_teacher">Náhradní učitel</string>
+    <string name="timetable_dialog_sub_room">Náhradní učebna</string>
+    <string name="timetable_dialog_sub_group">Náhradní skupina</string>
 
 
     <!-- #### Notifications ####  -->
