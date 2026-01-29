@@ -83,9 +83,9 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.navigation3.ui)
     implementation(libs.navigation3.runtime)
-
+    implementation("io.ktor:ktor-client-plugins:3.1.1")
+    implementation("io.ktor:ktor-client-cio:3.1.1")
     implementation(libs.activity.ktx)
-
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)

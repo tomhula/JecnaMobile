@@ -17,10 +17,7 @@ class SubstitutionRepositoryImpl @Inject constructor(
 
     override suspend fun getTeacherAbsences(date: LocalDate): LabeledTeacherAbsences? =
         substitutionClient.getTeacherAbsences(date)
-
-    override suspend fun getSubstitutions(): List<SubstitutedLesson>? =
-        substitutionClient.getSubstitutions()
-
+    
     override suspend fun getSubstitutionsStatus(): SubstitutionStatus =
         substitutionClient.getSubstitutionsStatus()
 

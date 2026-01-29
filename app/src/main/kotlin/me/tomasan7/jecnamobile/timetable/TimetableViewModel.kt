@@ -9,7 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
-import io.github.stevekk11.dtos.SubstitutedLesson
+import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.SubstitutionStatus
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
@@ -73,7 +73,7 @@ class TimetableViewModel @Inject constructor(
                 val teachersPage = teachersRepository.getTeachersPage()
                 val teacherNameMap = teachersPage.teachersReferences.associate{it.tag to it.fullName}
                 substitutionRepository.setClassSymbol(student.className ?: "")
-                val substitutions = substitutionRepository.getSubstitutions()
+                val substitutions = substitutionRepository.getDailySubstitutions()
                 val status = substitutionRepository.getSubstitutionsStatus()
                 changeUiState(substitutions = substitutions, substitutionStatus = status, teacherNameMap = teacherNameMap)
             } catch (e: Exception) {
@@ -105,7 +105,7 @@ class TimetableViewModel @Inject constructor(
         isCache: Boolean = uiState.isCache,
         selectedSchoolYear: SchoolYear = uiState.selectedSchoolYear,
         selectedPeriod: TimetablePage.PeriodOption? = uiState.selectedPeriod,
-        substitutions: List<SubstitutedLesson>? = uiState.substitutions,
+        substitutions: List<DailySchedule>? = uiState.substitutions,
         substitutionStatus: SubstitutionStatus? = uiState.substitutionStatus,
         teacherNameMap: Map<String, String> = uiState.teacherNameMap,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent

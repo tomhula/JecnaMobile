@@ -7,6 +7,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.ui.theme.jm_label
@@ -15,7 +16,8 @@ import me.tomasan7.jecnamobile.ui.theme.jm_label
 fun DialogRow(
     label: String,
     value: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    valueColor: Color = Color.Unspecified
 )
 {
     Surface(
@@ -35,7 +37,8 @@ fun DialogRow(
             Text(
                 text = value,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                color = valueColor
             )
         }
     }

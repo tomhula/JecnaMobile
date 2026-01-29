@@ -180,6 +180,8 @@
     <string name="timetable_dialog_teacher">Učitel</string>
     <string name="timetable_dialog_room">Učebna</string>
     <string name="timetable_dialog_group">Skupina</string>
+    <string name="timetable_dialog_status">Stav</string>
+    <string name="timetable_dialog_note">Poznámka</string>
     <string name="timetable_dialog_sub_teacher">Náhradní učitel</string>
     <string name="timetable_dialog_sub_room">Náhradní učebna</string>
     <string name="timetable_dialog_sub_group">Náhradní skupina</string>

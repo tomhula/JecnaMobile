@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -18,7 +17,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
-import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
@@ -28,12 +26,6 @@ import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
-import me.tomasan7.jecnamobile.ui.theme.dropped
-import me.tomasan7.jecnamobile.ui.theme.joined
-import me.tomasan7.jecnamobile.ui.theme.room_change
-import me.tomasan7.jecnamobile.ui.theme.separated
-import me.tomasan7.jecnamobile.ui.theme.shifted
-import me.tomasan7.jecnamobile.ui.theme.substitution
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.manipulate
 import kotlin.time.Clock
@@ -43,8 +35,6 @@ fun Timetable(
     timetable: Timetable,
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
-    substitutions: List<SubstitutedLesson> = emptyList(),
-    teacherNameMap: Map<String, String> = emptyMap(),
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
 )
@@ -69,26 +59,6 @@ fun Timetable(
     }
 
     val dialogState = rememberObjectDialogState<Lesson>()
-
-    val substitutionMap = remember(substitutions, timetable) {
-        val map = mutableMapOf<Lesson, SubstitutedLesson>()
-        substitutions.forEach { sub ->
-            val lessonPeriodIndex = sub.hour - 1
-            if (lessonPeriodIndex in timetable.lessonPeriods.indices) {
-                timetable.daysSorted.forEach { day ->
-                    val lessonSpots = timetable.getLessonSpotsForDay(day)!!
-                    lessonSpots.forEach { lessonSpot ->
-                        lessonSpot.forEach { lesson ->
-                            if (lesson.subjectName.short == sub.subject && lessonSpot.periodSpan == lessonPeriodIndex) {
-                                map[lesson] = sub
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        map
-    }
 
     Box(modifier = modifier) {
         val breakWidth = 5.dp
@@ -130,8 +100,7 @@ fun Timetable(
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
-                            breakWidth = breakWidth,
-                            getSubstitutedLesson = { lesson -> substitutionMap[lesson] }
+                            breakWidth = breakWidth
                         )
                         HorizontalSpacer(breakWidth)
                     }
@@ -146,9 +115,7 @@ fun Timetable(
                     lesson = lesson,
                     onCloseClick = { dialogState.hide() },
                     onTeacherClick = { dialogState.hide(); onTeacherClick(it) },
-                    onRoomClick = { dialogState.hide(); onRoomClick(it) },
-                    substitutedLesson = substitutionMap[lesson],
-                    teacherNameMap = teacherNameMap
+                    onRoomClick = { dialogState.hide(); onRoomClick(it) }
                 )
             }
         )
@@ -190,8 +157,7 @@ private fun LessonSpot(
     current: Boolean = false,
     next: Boolean = false,
     hideClass: Boolean = false,
-    breakWidth: Dp = 0.dp,
-    getSubstitutedLesson: (Lesson) -> SubstitutedLesson? = { null }
+    breakWidth: Dp = 0.dp
 )
 {
     val totalWidth = lessonSpot.periodSpan * 100.dp + breakWidth * (lessonSpot.periodSpan - 1)
@@ -215,8 +181,7 @@ private fun LessonSpot(
                 lesson = lesson,
                 current = current,
                 next = next,
-                hideClass = hideClass,
-                substitutedLesson = getSubstitutedLesson(lesson)
+                hideClass = hideClass
             )
         }
     }
@@ -230,28 +195,16 @@ private fun Lesson(
     onClick: () -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
-    hideClass: Boolean = false,
-    substitutedLesson: SubstitutedLesson? = null
+    hideClass: Boolean = false
 )
 {
     val shape = RoundedCornerShape(5.dp)
-    val baseColor = if (current) MaterialTheme.colorScheme.inverseSurface else MaterialTheme.colorScheme.surface
-    val substitutionColor = when {
-        substitutedLesson?.isDropped == true -> dropped
-        substitutedLesson?.isJoined == true -> joined
-        substitutedLesson?.isSeparated == true -> separated
-        substitutedLesson?.roomChanged == true -> room_change
-        substitutedLesson?.isShifted == true -> shifted
-        substitutedLesson != null -> substitution
-        else -> null
-    }
-    val backgroundColor = substitutionColor?.copy(alpha = 0.3f) ?: baseColor
     Surface(
         modifier = if (next) modifier.border(1.dp, MaterialTheme.colorScheme.inverseSurface, shape) else modifier,
         tonalElevation = ElevationLevel.level2,
         shadowElevation = ElevationLevel.level1,
         shape = shape,
-        color = backgroundColor,
+        color = if (current) MaterialTheme.colorScheme.inverseSurface else MaterialTheme.colorScheme.surface,
         onClick = onClick
     ) {
         Box(Modifier.padding(4.dp)) {
@@ -292,9 +245,7 @@ private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,
-    onRoomClick: (RoomReference) -> Unit,
-    substitutedLesson: SubstitutedLesson? = null,
-    teacherNameMap: Map<String, String> = emptyMap()
+    onRoomClick: (RoomReference) -> Unit
 )
 {
     val roomLabel = stringResource(R.string.timetable_dialog_room)
@@ -343,40 +294,6 @@ private fun LessonDialogContent(
                 )
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
-            if (substitutedLesson != null) {
-                val substitutionTeacher = substitutedLesson.substitutingTeacher
-                val substitutionRoom = substitutedLesson.room
-                val substitutionGroup = substitutedLesson.group
-
-                if (substitutionTeacher != null) {
-                    val fullName = teacherNameMap[substitutionTeacher] ?: substitutionTeacher
-                    DialogRow(
-                        label = stringResource(R.string.timetable_dialog_sub_teacher),
-                        value = fullName,
-                        onClick = { onTeacherClick(TeacherReference(fullName, substitutionTeacher)) }
-                    )
-                }
-                if (substitutionRoom != null) {
-                    DialogRow(
-                        label = stringResource(R.string.timetable_dialog_sub_room),
-                        value = substitutionRoom,
-                        onClick = {
-                            onRoomClick(
-                                RoomReference(
-                                    name = "Učebna $substitutionRoom",
-                                    roomCode = substitutionRoom
-                                )
-                            )
-                        }
-                    )
-                }
-                if (substitutionGroup != null) {
-                    DialogRow(
-                        label = stringResource(R.string.timetable_dialog_sub_group),
-                        value = substitutionGroup
-                    )
-                }
-            }
         }
     }
 }
