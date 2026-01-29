@@ -1,4 +1,6 @@
 [versions]
+ktorClientCio = "3.4.0"
+ktorClientPlugins = "3.1.1"
 plugin-android = "9.0.0"
 plugin-kotlin = "2.3.0"
 # TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
@@ -37,6 +39,8 @@ composeStateEvents = { module = "com.github.leonard-palm:compose-state-events", 
 composeHtml = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 composeCoil = { module = "io.coil-kt:coil-compose", version.ref = "composeCoil" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktorClientCio" }
+ktor-client-plugins = { module = "io.ktor:ktor-client-plugins", version.ref = "ktorClientPlugins" }
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 

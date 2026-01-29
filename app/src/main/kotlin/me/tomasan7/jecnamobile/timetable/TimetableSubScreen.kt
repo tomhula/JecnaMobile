@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -92,11 +94,26 @@ fun TimetableSubScreen(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
                         hideClass = true,
-                        substitutions = uiState.substitutions,
-                        teacherNameMap = uiState.teacherNameMap,
+                        //TODO: Show the data in the timetable!
+                        //substitutions = uiState.substitutions,
+                        //teacherNameMap = uiState.teacherNameMap,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )
+                InfoRow("Suplování aktuální pro", uiState.substitutionStatus?.lastUpdated ?: "Neznámo")
+                InfoRow("Četnost aktualizace", uiState.substitutionStatus?.currentUpdateSchedule.toString().ifBlank { "Neznámo" } + "minut")
+                //TODO: Just a placeholder - data will be directly in the timetable
+                Card(
+                    title = {
+                        Text(
+                            text = "Suplování",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    content = { Text(uiState.substitutions.toString()) }
+                )
             }
         }
     }
