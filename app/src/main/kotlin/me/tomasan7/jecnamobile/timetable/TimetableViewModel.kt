@@ -28,9 +28,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.substitution.SubstitutionRepository
 import androidx.compose.runtime.derivedStateOf
-import androidx.compose.ui.graphics.Color
-import io.github.tomhula.jecnaapi.data.timetable.Lesson
-import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import mergeTimetableWithSubstitutions
 
 @HiltViewModel

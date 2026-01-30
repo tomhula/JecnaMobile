@@ -36,6 +36,7 @@ import kotlin.time.Clock
 fun Timetable(
     timetable: Timetable,
     modifier: Modifier = Modifier,
+    lessonColors: Map<Lesson, Color>,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
@@ -84,6 +85,7 @@ fun Timetable(
             }
 
             timetable.daysSorted.forEach { day ->
+                
                 val rowModifier = if (mostLessonsInLessonSpotInEachDay[day]!! <= 2)
                     Modifier.height(100.dp)
                 else
@@ -98,6 +100,7 @@ fun Timetable(
                     timetable.getLessonSpotsForDay(day)!!.forEach { lessonSpot ->
                         LessonSpot(
                             lessonSpot = lessonSpot,
+                            lessonColors = lessonColors,
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
@@ -155,6 +158,7 @@ private fun TimetableLessonPeriod(
 @Composable
 private fun LessonSpot(
     lessonSpot: LessonSpot,
+    lessonColors: Map<Lesson, Color>,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -202,16 +206,17 @@ private fun Lesson(
 )
 {
     val shape = RoundedCornerShape(5.dp)
+    val borderModifier = when {
+        next -> modifier.border(2.dp, MaterialTheme.colorScheme.inverseSurface, shape)
+        substitutionColor != null -> modifier.border(2.dp, substitutionColor, shape)
+        else -> modifier
+    }
     Surface(
-        modifier = if (next) modifier.border(1.dp, MaterialTheme.colorScheme.inverseSurface, shape) else modifier,
+        modifier = borderModifier,
         tonalElevation = ElevationLevel.level2,
         shadowElevation = ElevationLevel.level1,
         shape = shape,
-        color = when {
-            current -> MaterialTheme.colorScheme.inverseSurface
-            substitutionColor != null -> substitutionColor
-            else -> MaterialTheme.colorScheme.surface
-        },
+        color = if (current) MaterialTheme.colorScheme.inverseSurface else MaterialTheme.colorScheme.surface,
         onClick = onClick
     ) {
         Box(Modifier.padding(4.dp)) {
@@ -312,6 +317,6 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
         sub.isJoined -> Color(0xFF2196F3)     // blue
         sub.isSeparated -> Color(0xFF795548)  // brown
         sub.roomChanged -> Color(0xFFFF9800)  // orange
-        else -> Color(0xFFE91E63)             // default substitution (pinkish)
+        else -> Color(0xFFE91E1E)             // default substitution
     }
 }

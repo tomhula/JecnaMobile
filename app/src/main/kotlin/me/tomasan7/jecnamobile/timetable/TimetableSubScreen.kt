@@ -88,18 +88,18 @@ fun TimetableSubScreen(
                     onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
                     onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
                 )
-
-                if (uiState.timetablePage != null)
+                
+                val (mergedTimetable, lessonColors) = viewModel.processedTimetableData ?: (null to emptyMap())
+                if (mergedTimetable != null) {
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
-                        timetable = uiState.timetablePage.timetable,
+                        timetable = mergedTimetable,
+                        lessonColors = lessonColors, // Pass the colors here
                         hideClass = true,
-                        //TODO: Show the data in the timetable!
-                        //substitutions = uiState.substitutions,
-                        //teacherNameMap = uiState.teacherNameMap,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )
+                }
                 InfoRow("Suplování aktuální pro", uiState.substitutionStatus?.lastUpdated ?: "Neznámo")
                 InfoRow("Četnost aktualizace", uiState.substitutionStatus?.currentUpdateSchedule.toString().ifBlank { "Neznámo" } + "minut")
                 //TODO: Just a placeholder - data will be directly in the timetable
