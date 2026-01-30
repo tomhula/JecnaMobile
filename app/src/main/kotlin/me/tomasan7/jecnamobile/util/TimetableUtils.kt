@@ -15,18 +15,18 @@ import kotlin.reflect.jvm.isAccessible
  */
 fun mergeTimetableWithSubstitutions(
     baseTimetable: Timetable,
-    dailySchedules: List<DailySchedule>
+    dailySchedules: List<DailySchedule>?
 ): Pair<Timetable, Map<Lesson, Color>> {
     val lessonColors = mutableMapOf<Lesson, Color>()
     
-    val subsByDay = dailySchedules.associate { schedule ->
+    val subsByDay = dailySchedules?.associate { schedule ->
         val date = LocalDate.parse(schedule.date)
-        
+
         date.dayOfWeek.toKotlinDayOfWeek() to schedule.classSubs.values.flatten()
     }
 
     val updatedDaysMap = baseTimetable.days.associateWith { day ->
-        val daySubs = subsByDay[day] ?: return@associateWith baseTimetable.getLessonSpotsForDay(day)!!
+        val daySubs = subsByDay?.get(day) ?: return@associateWith baseTimetable.getLessonSpotsForDay(day)!!
 
         var currentHour = 1
         baseTimetable.getLessonSpotsForDay(day)!!.map { spot ->

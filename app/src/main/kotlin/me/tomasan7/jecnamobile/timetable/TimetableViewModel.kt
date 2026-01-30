@@ -28,6 +28,8 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.substitution.SubstitutionRepository
 import androidx.compose.runtime.derivedStateOf
+import io.github.stevekk11.dtos.LabeledTeacherAbsences
+import kotlinx.coroutines.async
 import mergeTimetableWithSubstitutions
 
 @HiltViewModel
@@ -43,10 +45,10 @@ class TimetableViewModel @Inject constructor(
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
     override val loadErrorMessage = appContext.getString(R.string.timetable_load_error)
-    
+
     var uiState by mutableStateOf(TimetableState())
         private set
-    
+
     val processedTimetableData by derivedStateOf {
         val baseTimetable = uiState.timetablePage?.timetable ?: return@derivedStateOf null
         val dailySubs = uiState.substitutions
@@ -54,6 +56,7 @@ class TimetableViewModel @Inject constructor(
         // Calls the utility function using reflection to bypass private constructor
         mergeTimetableWithSubstitutions(baseTimetable, dailySubs)
     }
+
     fun selectSchoolYear(schoolYear: SchoolYear)
     {
         changeUiState(selectedSchoolYear = schoolYear)
@@ -65,30 +68,51 @@ class TimetableViewModel @Inject constructor(
         changeUiState(selectedPeriod = timetablePeriod)
         loadReal()
     }
-    
+
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
     override fun setDataUiState(data: TimetablePage) {
-        changeUiState(
-            timetablePage = data,
-            lastUpdateTimestamp = Clock.System.now(),
-            selectedSchoolYear = data.selectedSchoolYear,
-            selectedPeriod = data.periodOptions.find { it.selected },
-            isCache = false
-        )
-        // Load substitutions asynchronously
         viewModelScope.launch {
             try {
-                val student = studentProfileRepository.getCurrentStudent()
-                val teachersPage = teachersRepository.getTeachersPage()
-                val teacherNameMap = teachersPage.teachersReferences.associate{it.tag to it.fullName}
+                /* 1. Start fetching background data in parallel while we have the TimetablePage */
+                val studentDeferred = async { studentProfileRepository.getCurrentStudent() }
+                val teachersPageDeferred = async { teachersRepository.getTeachersPage() }
+                /* Wait for student to set the class symbol for substitutions */
+                val student = studentDeferred.await()
                 substitutionRepository.setClassSymbol(student.className ?: "")
-                val substitutions = substitutionRepository.getDailySubstitutions()
-                val status = substitutionRepository.getSubstitutionsStatus()
-                changeUiState(substitutions = substitutions, substitutionStatus = status, teacherNameMap = teacherNameMap)
+                /* 2. Fetch all substitution-related data in parallel */
+                val substitutionsDeferred = async { substitutionRepository.getDailySubstitutions() }
+                val statusDeferred = async { substitutionRepository.getSubstitutionsStatus() }
+                val absencesDeferred = async { substitutionRepository.getTeacherAbsences() }
+                val substitutions = substitutionsDeferred.await()
+                val status = statusDeferred.await()
+                val absences = absencesDeferred.await()
+                val teachersPage = teachersPageDeferred.await()
+                val teacherNameMap = teachersPage.teachersReferences.associate { it.tag to it.fullName }
+                
+                changeUiState(
+                    timetablePage = data,
+                    lastUpdateTimestamp = Clock.System.now(),
+                    selectedSchoolYear = data.selectedSchoolYear,
+                    selectedPeriod = data.periodOptions.find { it.selected },
+                    isCache = false,
+                    substitutions = substitutions,
+                    substitutionStatus = status,
+                    teacherNameMap = teacherNameMap,
+                    teacherAbsences = absences
+                )
             } catch (e: Exception) {
-                // Handle error, perhaps show snackbar
+                changeUiState(
+                    timetablePage = data,
+                    lastUpdateTimestamp = Clock.System.now(),
+                    selectedSchoolYear = data.selectedSchoolYear,
+                    selectedPeriod = data.periodOptions.find { it.selected },
+                    isCache = false
+                )
                 showSnackBarMessage("Failed to load substitutions: ${e.message}")
+            } finally {
+                /* Ensure the refresh indicator stops spinning */
+                setLoadingUiState(false)
             }
         }
     }
@@ -100,9 +124,12 @@ class TimetableViewModel @Inject constructor(
         selectedPeriod = data.data.periodOptions.find { it.selected },
         isCache = true
     )
-    
-    override fun getParams() = SchoolYearPeriodParams(uiState.selectedSchoolYear, uiState.selectedPeriod?.id ?: SchoolYearPeriodParams.CURRENT_PERIOD_ID)
-    
+
+    override fun getParams() = SchoolYearPeriodParams(
+        uiState.selectedSchoolYear,
+        uiState.selectedPeriod?.id ?: SchoolYearPeriodParams.CURRENT_PERIOD_ID
+    )
+
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
     override fun isCurrentlyShowingCache() = uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
@@ -118,22 +145,22 @@ class TimetableViewModel @Inject constructor(
         substitutions: List<DailySchedule>? = uiState.substitutions,
         substitutionStatus: SubstitutionStatus? = uiState.substitutionStatus,
         teacherNameMap: Map<String, String> = uiState.teacherNameMap,
-        snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent
+        snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
+        teacherAbsences: List<LabeledTeacherAbsences>? = uiState.teacherAbsences
     )
     {
-        substitutions?.let {
-            uiState = uiState.copy(
-                loading = loading,
-                timetablePage = timetablePage,
-                lastUpdateTimestamp = lastUpdateTimestamp,
-                isCache = isCache,
-                selectedSchoolYear = selectedSchoolYear,
-                selectedPeriod = selectedPeriod,
-                substitutions = it,
-                substitutionStatus = substitutionStatus,
-                teacherNameMap = teacherNameMap,
-                snackBarMessageEvent = snackBarMessageEvent
-            )
-        }
+        uiState = uiState.copy(
+            loading = loading,
+            timetablePage = timetablePage,
+            lastUpdateTimestamp = lastUpdateTimestamp,
+            isCache = isCache,
+            selectedSchoolYear = selectedSchoolYear,
+            selectedPeriod = selectedPeriod,
+            substitutions = substitutions,
+            substitutionStatus = substitutionStatus,
+            teacherNameMap = teacherNameMap,
+            snackBarMessageEvent = snackBarMessageEvent,
+            teacherAbsences = teacherAbsences
+        )
     }
 }

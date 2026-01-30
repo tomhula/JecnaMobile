@@ -28,6 +28,12 @@ import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
+import me.tomasan7.jecnamobile.ui.theme.dropped
+import me.tomasan7.jecnamobile.ui.theme.joined
+import me.tomasan7.jecnamobile.ui.theme.room_change
+import me.tomasan7.jecnamobile.ui.theme.shifted
+import me.tomasan7.jecnamobile.ui.theme.separated
+import me.tomasan7.jecnamobile.ui.theme.substitution
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.manipulate
 import kotlin.time.Clock
@@ -350,11 +356,11 @@ private fun LessonDialogContent(
 fun getSubstitutionColor(sub: SubstitutedLesson): Color
 {
     return when {
-        sub.isDropped -> Color(0xFF4CAF50)    // green
-        sub.isShifted -> Color(0xFF9C27B0)    // purple
-        sub.isJoined -> Color(0xFF2196F3)     // blue
-        sub.isSeparated -> Color(0xFF795548)  // brown
-        sub.roomChanged -> Color(0xFFFF9800)  // orange
-        else -> Color(0xFFE91E1E)             // default substitution
+        sub.isDropped -> dropped
+        sub.isShifted -> shifted
+        sub.isJoined -> joined
+        sub.isSeparated -> separated
+        sub.roomChanged -> room_change
+        else -> substitution
     }
 }

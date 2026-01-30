@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
+import io.github.stevekk11.dtos.LabeledTeacherAbsences
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
@@ -94,31 +95,79 @@ fun TimetableSubScreen(
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
                         timetable = mergedTimetable,
-                        lessonColors = lessonColors, // Pass the colors here
+                        lessonColors = lessonColors,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )
                 }
                 InfoRow("Suplování aktuální pro", uiState.substitutionStatus?.lastUpdated ?: "Neznámo")
-                InfoRow("Četnost aktualizace", uiState.substitutionStatus?.currentUpdateSchedule.toString().ifBlank { "Neznámo" } + "minut")
-                //TODO: Just a placeholder - data will be directly in the timetable
-                Card(
-                    title = {
-                        Text(
-                            text = "Suplování",
-                            style = MaterialTheme.typography.titleMedium,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    content = { Text(uiState.substitutions.toString()) }
-                )
+                InfoRow("Četnost aktualizace", uiState.substitutionStatus?.currentUpdateSchedule.toString() + " minut")
+                TeacherAbsencesSection(uiState.teacherAbsences)
             }
         }
     }
 }
+@Composable
+private fun TeacherAbsencesSection(
+    teacherAbsences: List<LabeledTeacherAbsences>?,
+    modifier: Modifier = Modifier
+) {
+    if (teacherAbsences.isNullOrEmpty()) return
 
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        Text(
+            text = "Absence učitelů",
+            style = MaterialTheme.typography.titleMedium
+        )
+        teacherAbsences.forEach { labeledAbsence ->
+            ExpandableCard(
+                modifier = Modifier.fillMaxWidth(),
+                title = { Text(labeledAbsence.date) }
+            ) {
+                Column(
+                    modifier = Modifier.padding(vertical = 4.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    labeledAbsence.absences.forEach { absence ->
+                        Column {
+                            val type = when (absence.type)
+                            {
+                                "single" -> "hodina"
+                                "wholeDay" -> "celý den"
+                                "range" -> "rozsah"
+                                "invalid" -> "neznámý typ"
+                                else -> absence.type
+                            }
+
+                            Text(
+                                text = "${absence.teacher ?: absence.teacherCode ?: "Neznámý učitel"}: $type",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                            if (absence.hours != null) {
+                                Text(
+                                    text = "${absence.hours!!.from}. - ${absence.hours!!.to}. hodina",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                            if (!absence.message.isNullOrBlank()) {
+                                Text(
+                                    text = absence.message!!,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.secondary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 @Composable
 private fun PeriodSelectors(
     timetablePeriodOptions: List<TimetablePage.PeriodOption>,
