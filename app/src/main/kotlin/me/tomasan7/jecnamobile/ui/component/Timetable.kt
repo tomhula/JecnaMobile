@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
@@ -195,6 +197,7 @@ private fun Lesson(
     onClick: () -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
+    substitutionColor: Color? = null,
     hideClass: Boolean = false
 )
 {
@@ -204,7 +207,11 @@ private fun Lesson(
         tonalElevation = ElevationLevel.level2,
         shadowElevation = ElevationLevel.level1,
         shape = shape,
-        color = if (current) MaterialTheme.colorScheme.inverseSurface else MaterialTheme.colorScheme.surface,
+        color = when {
+            current -> MaterialTheme.colorScheme.inverseSurface
+            substitutionColor != null -> substitutionColor
+            else -> MaterialTheme.colorScheme.surface
+        },
         onClick = onClick
     ) {
         Box(Modifier.padding(4.dp)) {
@@ -295,5 +302,16 @@ private fun LessonDialogContent(
             if (lesson.group != null)
                 DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
         }
+    }
+}
+fun getSubstitutionColor(sub: SubstitutedLesson): Color
+{
+    return when {
+        sub.isDropped -> Color(0xFF4CAF50)    // green
+        sub.isShifted -> Color(0xFF9C27B0)    // purple
+        sub.isJoined -> Color(0xFF2196F3)     // blue
+        sub.isSeparated -> Color(0xFF795548)  // brown
+        sub.roomChanged -> Color(0xFFFF9800)  // orange
+        else -> Color(0xFFE91E63)             // default substitution (pinkish)
     }
 }

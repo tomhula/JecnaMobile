@@ -27,6 +27,11 @@ import kotlin.time.Instant
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.substitution.SubstitutionRepository
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.ui.graphics.Color
+import io.github.tomhula.jecnaapi.data.timetable.Lesson
+import io.github.tomhula.jecnaapi.data.timetable.Timetable
+import mergeTimetableWithSubstitutions
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
@@ -45,6 +50,13 @@ class TimetableViewModel @Inject constructor(
     var uiState by mutableStateOf(TimetableState())
         private set
     
+    val processedTimetableData by derivedStateOf {
+        val baseTimetable = uiState.timetablePage?.timetable ?: return@derivedStateOf null
+        val dailySubs = uiState.substitutions
+
+        // Calls the utility function using reflection to bypass private constructor
+        mergeTimetableWithSubstitutions(baseTimetable, dailySubs)
+    }
     fun selectSchoolYear(schoolYear: SchoolYear)
     {
         changeUiState(selectedSchoolYear = schoolYear)
