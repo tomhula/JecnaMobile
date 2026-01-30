@@ -36,7 +36,7 @@ import kotlin.time.Clock
 fun Timetable(
     timetable: Timetable,
     modifier: Modifier = Modifier,
-    lessonColors: Map<Lesson, Color>,
+    lessonColors: Map<Lesson, Color> = emptyMap(),
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
@@ -158,7 +158,7 @@ private fun TimetableLessonPeriod(
 @Composable
 private fun LessonSpot(
     lessonSpot: LessonSpot,
-    lessonColors: Map<Lesson, Color>,
+    lessonColors: Map<Lesson, Color>?,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -203,14 +203,15 @@ private fun Lesson(
     next: Boolean = false,
     substitutionColor: Color? = null,
     hideClass: Boolean = false
-)
-{
+) {
     val shape = RoundedCornerShape(5.dp)
+    
     val borderModifier = when {
-        next -> modifier.border(2.dp, MaterialTheme.colorScheme.inverseSurface, shape)
+        next -> modifier.border(1.dp, MaterialTheme.colorScheme.inverseSurface, shape)
         substitutionColor != null -> modifier.border(2.dp, substitutionColor, shape)
         else -> modifier
     }
+
     Surface(
         modifier = borderModifier,
         tonalElevation = ElevationLevel.level2,
@@ -221,15 +222,52 @@ private fun Lesson(
     ) {
         Box(Modifier.padding(4.dp)) {
             if (lesson.subjectName.short != null)
-                Text(lesson.subjectName.short!!, Modifier.align(Alignment.Center), fontWeight = FontWeight.Bold)
-            if (!hideClass && lesson.clazz != null)
-                Text(lesson.clazz!!, Modifier.align(Alignment.BottomStart))
+                Text(
+                    text = lesson.subjectName.short!!,
+                    modifier = Modifier.align(Alignment.Center),
+                    fontWeight = FontWeight.Bold
+                )
+
+            /* Bottom-Left corner:
+            If it's a substitution, we show the 'originalText' (stored in lesson.clazz) in Red.
+            Otherwise, we show the standard class name if hideClass is false.
+            */
+            if (substitutionColor != null && lesson.clazz != null) {
+                Text(
+                    text = lesson.clazz!!,
+                    modifier = Modifier.align(Alignment.BottomStart),
+                    color = Color.Red,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            } else if (!hideClass && lesson.clazz != null) {
+                Text(
+                    text = lesson.clazz!!,
+                    modifier = Modifier.align(Alignment.BottomStart)
+                )
+            }
+
+            /* Teacher (Top-Left) */
             if (lesson.teacherName?.short != null)
-                Text(lesson.teacherName!!.short!!, Modifier.align(Alignment.TopStart))
+                Text(
+                    text = lesson.teacherName!!.short!!,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+
+            /* Classroom (Top-Right) */
             if (lesson.classroom != null)
-                Text(lesson.classroom!!, Modifier.align(Alignment.TopEnd))
+                Text(
+                    text = lesson.classroom!!,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                )
+
+            /* Group (Bottom-Right) */
             if (lesson.group != null)
-                Text(lesson.group!!, Modifier.align(Alignment.BottomEnd), fontSize = 10.sp)
+                Text(
+                    text = lesson.group!!,
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    fontSize = 10.sp
+                )
         }
     }
 }

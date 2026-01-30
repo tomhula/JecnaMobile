@@ -43,7 +43,8 @@ fun mergeTimetableWithSubstitutions(
                         val updatedLesson = lesson.copy(
                             subjectName = sub.subject?.let { lesson.subjectName.copy(full = it, short = it) } ?: lesson.subjectName,
                             teacherName = sub.substitutingTeacher?.let { lesson.teacherName?.copy(full = it, short = it) } ?: lesson.teacherName,
-                            classroom = sub.room ?: lesson.classroom
+                            classroom = sub.room ?: lesson.classroom,
+                            clazz = sub.originalText ?: lesson.clazz
                         )
                         lessonColors[updatedLesson] = getSubstitutionColor(sub)
                         updatedLesson
