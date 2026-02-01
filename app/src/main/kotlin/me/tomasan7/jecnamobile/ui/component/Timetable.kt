@@ -40,6 +40,9 @@ import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.manipulate
 import kotlin.time.Clock
 
+// Regex for matching ISO date format (YYYY-MM-DD)
+private val ISO_DATE_REGEX = Regex("\\d{4}-\\d{2}-\\d{2}")
+
 @Composable
 fun Timetable(
     timetable: Timetable,
@@ -394,21 +397,17 @@ private fun getDaySubstitutions(
     if (dailySchedules == null) return emptyMap()
     
     // Find the schedule that matches this day of week
-    // The date format in DailySchedule is typically a date string
-    // We need to match it to the day of the week
-    // Since we don't have a direct date mapping, we'll use the week day name
-    val dayName = getWeekDayName(day)
-    
-    // Try to find a schedule that matches this day
-    // The schedule might have date in various formats, but we'll look for day name match
     val schedule = dailySchedules.firstOrNull { schedule ->
-        // The date might be in format like "2024-01-15" or might include day name
-        // For now, we'll try a simple approach: find schedules where the date
-        // corresponds to the current week's date for this day
-        // Since this is complex without proper date info, we'll use a simpler approach:
-        // If the schedule has the day name or we can parse the date
-        schedule.date.contains(dayName, ignoreCase = true) ||
-        tryParseDayFromDate(schedule.date) == day
+        // First, try to parse the date to get the day of week
+        val parsedDay = tryParseDayFromDate(schedule.date)
+        if (parsedDay != null) {
+            parsedDay == day
+        } else {
+            // Fallback: check if the date string exactly equals the day name
+            // This handles cases where the API returns day names instead of dates
+            val dayName = getWeekDayName(day)
+            schedule.date.equals(dayName, ignoreCase = true)
+        }
     }
     
     return schedule?.classSubs ?: emptyMap()
@@ -416,12 +415,12 @@ private fun getDaySubstitutions(
 
 /**
  * Attempts to parse a day of week from a date string.
- * Supports common date formats.
+ * Supports ISO date format (YYYY-MM-DD).
  */
 private fun tryParseDayFromDate(dateString: String): DayOfWeek? {
     return try {
         // Try to parse as ISO date format (YYYY-MM-DD)
-        if (dateString.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
+        if (ISO_DATE_REGEX.matches(dateString)) {
             val parts = dateString.split("-")
             val year = parts[0].toInt()
             val month = parts[1].toInt()
@@ -432,7 +431,11 @@ private fun tryParseDayFromDate(dateString: String): DayOfWeek? {
         } else {
             null
         }
-    } catch (e: Exception) {
+    } catch (e: IllegalArgumentException) {
+        // Invalid date values
+        null
+    } catch (e: NumberFormatException) {
+        // Failed to parse numbers
         null
     }
 }
