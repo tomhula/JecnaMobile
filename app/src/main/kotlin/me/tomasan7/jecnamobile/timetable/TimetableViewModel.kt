@@ -67,8 +67,9 @@ class TimetableViewModel @Inject constructor(
                     dailySubstitutions = dailySubstitutions
                 )
             } catch (e: Exception) {
-                // Silently fail if substitution data is not available
+                // Log the error for debugging, but don't show to user
                 // This ensures timetable still works without substitutions
+                android.util.Log.w("TimetableViewModel", "Failed to load substitution data", e)
             }
         }
     }

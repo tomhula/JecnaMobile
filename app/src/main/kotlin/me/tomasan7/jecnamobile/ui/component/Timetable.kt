@@ -194,10 +194,11 @@ private fun LessonSpot(
             val substitutedLesson = findSubstitutionForLesson(lesson, substitutions)
             val substitutionColor = substitutedLesson?.let { getSubstitutionColor(it) }
             
-            // TODO: Extract originalText from SubstitutedLesson once the exact structure is known
+            // FIXME: Extract originalText from SubstitutedLesson once the exact structure is known
             // The SubstitutedLesson likely has a field indicating what was originally scheduled.
             // Common possibilities: originalTeacher, originalSubject, originalText, or similar.
             // For now, we use null which will fall back to showing lesson.clazz in red.
+            // See IMPLEMENTATION_NOTES.md for details.
             val originalText: String? = null
             
             Lesson(
@@ -388,7 +389,9 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
 /**
  * Finds the substitution for a given lesson by matching key attributes.
  * 
- * TODO: Implement proper matching logic once SubstitutedLesson structure is known.
+ * FIXME: Implement proper matching logic once SubstitutedLesson structure is known.
+ * Currently returns null, which means NO SUBSTITUTIONS WILL BE DISPLAYED.
+ * 
  * The substitution should be matched based on:
  * - Day of week (from the timetable)
  * - Lesson period/hour
@@ -397,12 +400,14 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
  * 
  * The map key format from DailySchedule.classSubs likely encodes this information.
  * Common key formats might be: "hour_group", "day_hour_subject", etc.
+ * 
+ * See IMPLEMENTATION_NOTES.md in the repository root for detailed completion guide.
  */
 private fun findSubstitutionForLesson(
     lesson: Lesson,
     substitutions: Map<String, SubstitutedLesson>
 ): SubstitutedLesson? {
-    // Current limitation: Without knowing the exact structure of SubstitutedLesson
+    // CURRENT LIMITATION: Without knowing the exact structure of SubstitutedLesson
     // and the key format, we cannot reliably match substitutions to lessons.
     // 
     // The substitution data comes from DailySchedule.classSubs which is a map.
