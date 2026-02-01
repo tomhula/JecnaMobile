@@ -21,6 +21,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
+import me.tomasan7.jecnamobile.student.StudentProfileRepository
 import me.tomasan7.jecnamobile.substitution.SubstitutionRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import javax.inject.Inject
@@ -33,7 +34,8 @@ class TimetableViewModel @Inject constructor(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
     repository: CacheRepository<TimetablePage, SchoolYearPeriodParams>,
-    private val substitutionRepository: SubstitutionRepository
+    private val substitutionRepository: SubstitutionRepository,
+    private val studentRepository: StudentProfileRepository
 ) : SubScreenCacheViewModel<TimetablePage, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
@@ -57,6 +59,7 @@ class TimetableViewModel @Inject constructor(
     private fun loadSubstitutionData() {
         viewModelScope.launch {
             try {
+                studentRepository.getCurrentStudent().className?.let { substitutionRepository.setClassSymbol(it) }
                 val substitutionStatus = substitutionRepository.getSubstitutionsStatus()
                 val teacherAbsences = substitutionRepository.getTeacherAbsences()
                 val dailySubstitutions = substitutionRepository.getDailySubstitutions()
@@ -67,8 +70,6 @@ class TimetableViewModel @Inject constructor(
                     dailySubstitutions = dailySubstitutions
                 )
             } catch (e: Exception) {
-                // Log the error for debugging, but don't show to user
-                // This ensures timetable still works without substitutions
                 android.util.Log.w("TimetableViewModel", "Failed to load substitution data", e)
             }
         }

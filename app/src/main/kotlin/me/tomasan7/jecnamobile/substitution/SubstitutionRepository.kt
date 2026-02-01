@@ -7,6 +7,7 @@ import io.github.stevekk11.dtos.SubstitutionStatus
 import java.time.LocalDate
 
 interface SubstitutionRepository {
+
     suspend fun getTeacherAbsences(): List<LabeledTeacherAbsences>?
     suspend fun getTeacherAbsences(date: LocalDate): LabeledTeacherAbsences?
     suspend fun getSubstitutionsStatus(): SubstitutionStatus

@@ -398,19 +398,12 @@ private fun getDaySubstitutions(
     
     // Find the schedule that matches this day of week
     val schedule = dailySchedules.firstOrNull { schedule ->
-        // First, try to parse the date to get the day of week
-        val parsedDay = tryParseDayFromDate(schedule.date)
-        if (parsedDay != null) {
-            parsedDay == day
-        } else {
-            // Fallback: check if the date string exactly equals the day name
-            // This handles cases where the API returns day names instead of dates
-            val dayName = getWeekDayName(day)
-            schedule.date.equals(dayName, ignoreCase = true)
-        }
+        // Try to parse the date to get the day of week
+        tryParseDayFromDate(schedule.date) == day
     }
     
-    return schedule?.classSubs ?: emptyMap()
+    @Suppress("UNCHECKED_CAST")
+    return (schedule?.classSubs as? Map<Int, List<SubstitutedLesson>>) ?: emptyMap()
 }
 
 /**
@@ -452,18 +445,6 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
     }
 }
 
-/**
- * Finds the substitution for a given lesson by matching key attributes.
- * 
- * Matches substitutions for a specific day and hour based on:
- * - Hour/period number (from hourIndex parameter)
- * - Group (for split lessons)
- * - Subject or teacher (for additional validation)
- * 
- * @param lesson The lesson to find a substitution for
- * @param hourIndex The hour/period number (1-indexed)
- * @param daySubstitutions Map of hour to list of substitutions for this specific day
- */
 private fun findSubstitutionForLesson(
     lesson: Lesson,
     hourIndex: Int,
@@ -480,7 +461,8 @@ private fun findSubstitutionForLesson(
             lesson.group == sub.group
         } else {
             // If lesson has no group, accept substitutions with no group or empty group
-            sub.group == null || sub.group.isEmpty()
+            val subGroup = sub.group
+            subGroup == null || subGroup.isEmpty()
         }
     }
     
@@ -492,7 +474,6 @@ private fun findSubstitutionForLesson(
     
     // Multiple candidates - try to find best match by subject and teacher
     return candidates.firstOrNull { sub ->
-        // Match by subject (if available on both sides)
         val subjectMatches = if (sub.subject != null && lesson.subjectName.short != null) {
             lesson.subjectName.short.equals(sub.subject, ignoreCase = true)
         } else {
@@ -500,8 +481,9 @@ private fun findSubstitutionForLesson(
         }
         
         // Match by teacher (if available on both sides)
-        val teacherMatches = if (sub.missingTeacher != null && lesson.teacherName?.short != null) {
-            lesson.teacherName.short.equals(sub.missingTeacher, ignoreCase = true)
+        val teacherShort = lesson.teacherName?.short
+        val teacherMatches = if (sub.missingTeacher != null && teacherShort != null) {
+            teacherShort.equals(sub.missingTeacher, ignoreCase = true)
         } else {
             false
         }
@@ -514,7 +496,8 @@ private fun findSubstitutionForLesson(
         lesson.subjectName.short.equals(sub.subject, ignoreCase = true)
     } ?: candidates.firstOrNull { sub ->
         // Try matching by teacher only
-        sub.missingTeacher != null && lesson.teacherName?.short != null &&
-        lesson.teacherName.short.equals(sub.missingTeacher, ignoreCase = true)
-    } ?: candidates.first() // Fall back to first candidate if no specific match
+        val teacherShort = lesson.teacherName?.short
+        sub.missingTeacher != null && teacherShort != null &&
+        teacherShort.equals(sub.missingTeacher, ignoreCase = true)
+    } ?: candidates.first()
 }
