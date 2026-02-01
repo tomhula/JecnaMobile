@@ -224,15 +224,22 @@ private fun TimetablePeriodSelector(
 /**
  * Process daily substitutions into a flat map for easier lookup.
  * Combines all substitutions from all days into a single map.
+ * 
+ * Note: classSubs is Map<Int, List<SubstitutedLesson>> where the key is the hour
+ * and the value is a list of substitutions for that hour (multiple substitutions
+ * can occur in the same hour for different groups or subjects).
  */
 private fun processSubstitutions(dailySchedules: List<DailySchedule>?): Map<String, SubstitutedLesson> {
     if (dailySchedules == null) return emptyMap()
     
     val result = mutableMapOf<String, SubstitutedLesson>()
     dailySchedules.forEach { schedule ->
-        schedule.classSubs.forEach { (key, substitutedLesson) ->
-            // Use a composite key that includes the date for uniqueness
-            result["${schedule.date}_$key"] = substitutedLesson
+        schedule.classSubs.forEach { (hour, substitutionsList) ->
+            // Each hour can have multiple substitutions (for different groups)
+            substitutionsList.forEachIndexed { index, substitutedLesson ->
+                // Use a composite key: date_hour_index for uniqueness
+                result["${schedule.date}_${hour}_$index"] = substitutedLesson
+            }
         }
     }
     return result
