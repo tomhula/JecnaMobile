@@ -90,12 +90,10 @@ fun TimetableSubScreen(
                     onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
                 )
                 
-                val (mergedTimetable, lessonColors) = viewModel.processedTimetableData ?: (null to emptyMap())
-                if (mergedTimetable != null) {
+                if (uiState.timetablePage != null) {
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
-                        timetable = mergedTimetable,
-                        lessonColors = lessonColors,
+                        timetable = uiState.timetablePage.timetable,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
