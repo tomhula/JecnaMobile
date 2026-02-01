@@ -104,9 +104,10 @@ fun Timetable(
                             .fillMaxHeight()
                     )
                     HorizontalSpacer(breakWidth)
-                    timetable.getLessonSpotsForDay(day)!!.forEach { lessonSpot ->
+                    timetable.getLessonSpotsForDay(day)!!.forEachIndexed { hourIndex, lessonSpot ->
                         LessonSpot(
                             lessonSpot = lessonSpot,
+                            hourIndex = hourIndex + 1, // Hours are 1-indexed
                             lessonColors = lessonColors,
                             substitutions = substitutions,
                             onLessonClick = { dialogState.show(it) },
@@ -166,6 +167,7 @@ private fun TimetableLessonPeriod(
 @Composable
 private fun LessonSpot(
     lessonSpot: LessonSpot,
+    hourIndex: Int,
     lessonColors: Map<Lesson, Color>?,
     substitutions: Map<String, SubstitutedLesson> = emptyMap(),
     onLessonClick: (Lesson) -> Unit = {},
@@ -191,15 +193,11 @@ private fun LessonSpot(
                 lessonModifier.height(50.dp)
 
             // Find substitution for this lesson
-            val substitutedLesson = findSubstitutionForLesson(lesson, substitutions)
+            val substitutedLesson = findSubstitutionForLesson(lesson, hourIndex, substitutions)
             val substitutionColor = substitutedLesson?.let { getSubstitutionColor(it) }
             
-            // FIXME: Extract originalText from SubstitutedLesson once the exact structure is known
-            // The SubstitutedLesson likely has a field indicating what was originally scheduled.
-            // Common possibilities: originalTeacher, originalSubject, originalText, or similar.
-            // For now, we use null which will fall back to showing lesson.clazz in red.
-            // See IMPLEMENTATION_NOTES.md for details.
-            val originalText: String? = null
+            // Extract originalText from SubstitutedLesson
+            val originalText = substitutedLesson?.originalText
             
             Lesson(
                 modifier = lessonModifier,
@@ -389,49 +387,47 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
 /**
  * Finds the substitution for a given lesson by matching key attributes.
  * 
- * FIXME: Implement proper matching logic once SubstitutedLesson structure is known.
- * Currently returns null, which means NO SUBSTITUTIONS WILL BE DISPLAYED.
- * 
- * The substitution should be matched based on:
- * - Day of week (from the timetable)
- * - Lesson period/hour
- * - Group (if the lesson is split)
- * - Subject or teacher code
- * 
- * The map key format from DailySchedule.classSubs likely encodes this information.
- * Common key formats might be: "hour_group", "day_hour_subject", etc.
- * 
- * See IMPLEMENTATION_NOTES.md in the repository root for detailed completion guide.
+ * Matches substitutions from DailySchedule.classSubs map based on:
+ * - Hour/period number (map key is Int, the hour)
+ * - Group (for split lessons)
+ * - Subject or teacher (for additional validation)
  */
 private fun findSubstitutionForLesson(
     lesson: Lesson,
+    hourIndex: Int,
     substitutions: Map<String, SubstitutedLesson>
 ): SubstitutedLesson? {
-    // CURRENT LIMITATION: Without knowing the exact structure of SubstitutedLesson
-    // and the key format, we cannot reliably match substitutions to lessons.
-    // 
-    // The substitution data comes from DailySchedule.classSubs which is a map.
-    // We need to know:
-    // 1. What the map key format is (e.g., "Monday_2" for Monday 2nd period)
-    // 2. What fields SubstitutedLesson has to match against lesson properties
-    // 
-    // For now, returning null to avoid showing incorrect substitutions.
-    // This means substitutions won't be displayed until this function is completed.
-    
-    return null
-    
-    // Example of what the matching logic might look like once we know the structure:
-    /*
-    return substitutions.entries.firstOrNull { (key, sub) ->
-        // Parse the key to extract day, hour, group
-        val (day, hour, group) = parseSubstitutionKey(key)
+    // The map from processSubstitutions uses "date_hour" as key
+    // We need to find any substitution that matches this hour
+    return substitutions.values.firstOrNull { sub ->
+        // Match by hour (required)
+        val hourMatches = sub.hour == hourIndex
         
-        // Match against lesson properties
-        val hourMatches = lesson.period == hour
-        val groupMatches = lesson.group == null || lesson.group == group
-        val subjectMatches = lesson.subjectName.short == sub.subject
+        // Match by group if lesson is split
+        val groupMatches = if (lesson.group != null) {
+            // If lesson has a group, substitution must match that group
+            lesson.group == sub.group
+        } else {
+            // If lesson has no group, accept substitutions with no group or any group
+            true
+        }
         
-        hourMatches && groupMatches && subjectMatches
-    }?.value
-    */
+        // Match by subject as additional validation (if available)
+        val subjectMatches = if (sub.subject != null && lesson.subjectName.short != null) {
+            lesson.subjectName.short.equals(sub.subject, ignoreCase = true)
+        } else {
+            true // If no subject in substitution or lesson, don't filter by it
+        }
+        
+        // Match by teacher (if available)
+        val teacherMatches = if (sub.missingTeacher != null && lesson.teacherName?.short != null) {
+            lesson.teacherName.short.equals(sub.missingTeacher, ignoreCase = true)
+        } else {
+            true // If no teacher info, don't filter by it
+        }
+        
+        // A substitution matches if hour matches and group is compatible
+        // Subject and teacher are used as additional filters when available
+        hourMatches && groupMatches && (subjectMatches || teacherMatches)
+    }
 }
