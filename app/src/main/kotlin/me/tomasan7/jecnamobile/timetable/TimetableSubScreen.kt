@@ -93,15 +93,11 @@ fun TimetableSubScreen(
                 )
                 
                 if (uiState.timetablePage != null) {
-                    // Process daily substitutions into a map for easier lookup
-                    val substitutionsMap = remember(uiState.dailySubstitutions) {
-                        processSubstitutions(uiState.dailySubstitutions)
-                    }
-                    
+                    // Pass daily substitutions directly to Timetable for day-specific matching
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
-                        substitutions = substitutionsMap,
+                        dailySubstitutions = uiState.dailySubstitutions,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
@@ -219,32 +215,4 @@ private fun TimetablePeriodSelector(
         selectedValue = selectedOption,
         onChange = onChange
     )
-}
-
-/**
- * Process daily substitutions into a flat map for easier lookup.
- * Combines all substitutions from all days into a single map.
- * 
- * Note: classSubs is Map<Int, List<SubstitutedLesson>> where the key is the hour
- * and the value is a list of substitutions for that hour (multiple substitutions
- * can occur in the same hour for different groups or subjects).
- */
-private fun processSubstitutions(dailySchedules: List<DailySchedule>?): Map<String, SubstitutedLesson> {
-    if (dailySchedules == null) return emptyMap()
-    
-    val result = mutableMapOf<String, SubstitutedLesson>()
-    dailySchedules.forEach { schedule ->
-        schedule.classSubs.forEach { (hour, substitutionsList) ->
-            // Each hour can have multiple substitutions (for different groups)
-            substitutionsList.forEach { substitutedLesson ->
-                // Create a stable unique key using date, hour, group, and subject
-                // This ensures the same substitution gets the same key across updates
-                val groupPart = substitutedLesson.group ?: "nogroup"
-                val subjectPart = substitutedLesson.subject ?: "nosub"
-                val key = "${schedule.date}_${hour}_${groupPart}_${subjectPart}"
-                result[key] = substitutedLesson
-            }
-        }
-    }
-    return result
 }

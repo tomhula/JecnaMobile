@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
@@ -26,6 +27,7 @@ import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.theme.dropped
@@ -43,7 +45,7 @@ fun Timetable(
     timetable: Timetable,
     modifier: Modifier = Modifier,
     lessonColors: Map<Lesson, Color> = emptyMap(),
-    substitutions: Map<String, SubstitutedLesson> = emptyMap(),
+    dailySubstitutions: List<DailySchedule>? = null,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
@@ -92,6 +94,10 @@ fun Timetable(
             }
 
             timetable.daysSorted.forEach { day ->
+                // Get substitutions for this specific day
+                val daySubstitutions = remember(dailySubstitutions, day) {
+                    getDaySubstitutions(dailySubstitutions, day)
+                }
                 
                 val rowModifier = if (mostLessonsInLessonSpotInEachDay[day]!! <= 2)
                     Modifier.height(100.dp)
@@ -109,7 +115,7 @@ fun Timetable(
                             lessonSpot = lessonSpot,
                             hourIndex = hourIndex + 1, // Hours are 1-indexed
                             lessonColors = lessonColors,
-                            substitutions = substitutions,
+                            daySubstitutions = daySubstitutions,
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
@@ -169,7 +175,7 @@ private fun LessonSpot(
     lessonSpot: LessonSpot,
     hourIndex: Int,
     lessonColors: Map<Lesson, Color>?,
-    substitutions: Map<String, SubstitutedLesson> = emptyMap(),
+    daySubstitutions: Map<Int, List<SubstitutedLesson>>,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -193,7 +199,7 @@ private fun LessonSpot(
                 lessonModifier.height(50.dp)
 
             // Find substitution for this lesson
-            val substitutedLesson = findSubstitutionForLesson(lesson, hourIndex, substitutions)
+            val substitutedLesson = findSubstitutionForLesson(lesson, hourIndex, daySubstitutions)
             val substitutionColor = substitutedLesson?.let { getSubstitutionColor(it) }
             
             // Extract originalText from SubstitutedLesson
@@ -372,6 +378,65 @@ private fun LessonDialogContent(
         }
     }
 }
+
+/**
+ * Gets substitutions for a specific day from the list of daily schedules.
+ * Matches the day of week to the date in the schedule.
+ * 
+ * @param dailySchedules List of schedules with dates
+ * @param day The day of week to get substitutions for
+ * @return Map of hour to list of substitutions for that day
+ */
+private fun getDaySubstitutions(
+    dailySchedules: List<DailySchedule>?,
+    day: DayOfWeek
+): Map<Int, List<SubstitutedLesson>> {
+    if (dailySchedules == null) return emptyMap()
+    
+    // Find the schedule that matches this day of week
+    // The date format in DailySchedule is typically a date string
+    // We need to match it to the day of the week
+    // Since we don't have a direct date mapping, we'll use the week day name
+    val dayName = getWeekDayName(day)
+    
+    // Try to find a schedule that matches this day
+    // The schedule might have date in various formats, but we'll look for day name match
+    val schedule = dailySchedules.firstOrNull { schedule ->
+        // The date might be in format like "2024-01-15" or might include day name
+        // For now, we'll try a simple approach: find schedules where the date
+        // corresponds to the current week's date for this day
+        // Since this is complex without proper date info, we'll use a simpler approach:
+        // If the schedule has the day name or we can parse the date
+        schedule.date.contains(dayName, ignoreCase = true) ||
+        tryParseDayFromDate(schedule.date) == day
+    }
+    
+    return schedule?.classSubs ?: emptyMap()
+}
+
+/**
+ * Attempts to parse a day of week from a date string.
+ * Supports common date formats.
+ */
+private fun tryParseDayFromDate(dateString: String): DayOfWeek? {
+    return try {
+        // Try to parse as ISO date format (YYYY-MM-DD)
+        if (dateString.matches(Regex("\\d{4}-\\d{2}-\\d{2}"))) {
+            val parts = dateString.split("-")
+            val year = parts[0].toInt()
+            val month = parts[1].toInt()
+            val day = parts[2].toInt()
+            
+            // Use kotlinx.datetime to get day of week
+            LocalDate(year, month, day).dayOfWeek
+        } else {
+            null
+        }
+    } catch (e: Exception) {
+        null
+    }
+}
+
 fun getSubstitutionColor(sub: SubstitutedLesson): Color
 {
     return when {
@@ -387,35 +452,36 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
 /**
  * Finds the substitution for a given lesson by matching key attributes.
  * 
- * Matches substitutions from DailySchedule.classSubs map based on:
- * - Hour/period number (map key is Int, the hour)
+ * Matches substitutions for a specific day and hour based on:
+ * - Hour/period number (from hourIndex parameter)
  * - Group (for split lessons)
  * - Subject or teacher (for additional validation)
+ * 
+ * @param lesson The lesson to find a substitution for
+ * @param hourIndex The hour/period number (1-indexed)
+ * @param daySubstitutions Map of hour to list of substitutions for this specific day
  */
 private fun findSubstitutionForLesson(
     lesson: Lesson,
     hourIndex: Int,
-    substitutions: Map<String, SubstitutedLesson>
+    daySubstitutions: Map<Int, List<SubstitutedLesson>>
 ): SubstitutedLesson? {
-    // The map from processSubstitutions uses "date_hour" as key
-    // We need to find any substitution that matches this hour
-    val candidates = substitutions.values.filter { sub ->
-        // Match by hour (required)
-        val hourMatches = sub.hour == hourIndex
-        
+    // Get all substitutions for this hour on this day
+    val hourSubstitutions = daySubstitutions[hourIndex] ?: return null
+    
+    // Filter candidates by group match
+    val candidates = hourSubstitutions.filter { sub ->
         // Match by group if lesson is split
-        val groupMatches = if (lesson.group != null) {
+        if (lesson.group != null) {
             // If lesson has a group, substitution must match that group
             lesson.group == sub.group
         } else {
-            // If lesson has no group, accept substitutions with no group or any group
+            // If lesson has no group, accept substitutions with no group or empty group
             sub.group == null || sub.group.isEmpty()
         }
-        
-        hourMatches && groupMatches
     }
     
-    // If no candidates, return null
+    // If no candidates after group filtering, return null
     if (candidates.isEmpty()) return null
     
     // If only one candidate, return it
@@ -437,7 +503,7 @@ private fun findSubstitutionForLesson(
             false
         }
         
-        // Prefer matches with both subject and teacher, then either one
+        // Prefer matches with both subject and teacher
         subjectMatches && teacherMatches
     } ?: candidates.firstOrNull { sub ->
         // Try matching by subject only
