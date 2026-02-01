@@ -3,6 +3,7 @@ package me.tomasan7.jecnamobile.timetable
 import androidx.compose.runtime.Immutable
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
+import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.LabeledTeacherAbsences
 import io.github.stevekk11.dtos.SubstitutionStatus
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
@@ -19,5 +20,6 @@ data class TimetableState(
     val selectedPeriod: TimetablePage.PeriodOption? = timetablePage?.periodOptions?.find { it.selected },
     val snackBarMessageEvent: StateEventWithContent<String> = consumed(),
     val substitutionStatus : SubstitutionStatus? = null,
-    val teacherAbsences : List<LabeledTeacherAbsences>? = null
+    val teacherAbsences : List<LabeledTeacherAbsences>? = null,
+    val dailySubstitutions: List<DailySchedule>? = null
 )

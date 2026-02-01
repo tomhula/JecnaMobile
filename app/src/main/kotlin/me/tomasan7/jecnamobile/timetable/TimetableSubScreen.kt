@@ -18,7 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
+import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.LabeledTeacherAbsences
+import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
@@ -91,9 +93,11 @@ fun TimetableSubScreen(
                 )
                 
                 if (uiState.timetablePage != null) {
+                    // Pass daily substitutions directly to Timetable for day-specific matching
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
+                        dailySubstitutions = uiState.dailySubstitutions,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
