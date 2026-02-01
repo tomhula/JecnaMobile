@@ -236,9 +236,13 @@ private fun processSubstitutions(dailySchedules: List<DailySchedule>?): Map<Stri
     dailySchedules.forEach { schedule ->
         schedule.classSubs.forEach { (hour, substitutionsList) ->
             // Each hour can have multiple substitutions (for different groups)
-            substitutionsList.forEachIndexed { index, substitutedLesson ->
-                // Use a composite key: date_hour_index for uniqueness
-                result["${schedule.date}_${hour}_$index"] = substitutedLesson
+            substitutionsList.forEach { substitutedLesson ->
+                // Create a stable unique key using date, hour, group, and subject
+                // This ensures the same substitution gets the same key across updates
+                val groupPart = substitutedLesson.group ?: "nogroup"
+                val subjectPart = substitutedLesson.subject ?: "nosub"
+                val key = "${schedule.date}_${hour}_${groupPart}_${subjectPart}"
+                result[key] = substitutedLesson
             }
         }
     }
