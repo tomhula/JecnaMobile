@@ -193,13 +193,12 @@ private fun LessonSpot(
             // Find substitution for this lesson
             val substitutedLesson = findSubstitutionForLesson(lesson, substitutions)
             val substitutionColor = substitutedLesson?.let { getSubstitutionColor(it) }
-            // Extract original text from the substituted lesson if available
-            // The original text field name may vary; trying common possibilities
-            val originalText = substitutedLesson?.let { 
-                // Attempt to extract original text; this is a placeholder
-                // The actual property name depends on the SubstitutedLesson structure
-                null // Will be filled in once we know the actual structure
-            }
+            
+            // TODO: Extract originalText from SubstitutedLesson once the exact structure is known
+            // The SubstitutedLesson likely has a field indicating what was originally scheduled.
+            // Common possibilities: originalTeacher, originalSubject, originalText, or similar.
+            // For now, we use null which will fall back to showing lesson.clazz in red.
+            val originalText: String? = null
             
             Lesson(
                 modifier = lessonModifier,
@@ -388,23 +387,46 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
 
 /**
  * Finds the substitution for a given lesson by matching key attributes.
- * The substitution map keys are expected to contain lesson identifiers.
  * 
- * Note: This is a simple implementation that tries to match lessons to substitutions.
- * The actual matching logic may need to be refined based on the actual data structure
- * and key format from the API.
+ * TODO: Implement proper matching logic once SubstitutedLesson structure is known.
+ * The substitution should be matched based on:
+ * - Day of week (from the timetable)
+ * - Lesson period/hour
+ * - Group (if the lesson is split)
+ * - Subject or teacher code
+ * 
+ * The map key format from DailySchedule.classSubs likely encodes this information.
+ * Common key formats might be: "hour_group", "day_hour_subject", etc.
  */
 private fun findSubstitutionForLesson(
     lesson: Lesson,
     substitutions: Map<String, SubstitutedLesson>
 ): SubstitutedLesson? {
-    // Since we don't have access to the exact data structure of SubstitutedLesson,
-    // we'll use a simple heuristic: check if any substitution key contains
-    // identifiable information from the lesson.
+    // Current limitation: Without knowing the exact structure of SubstitutedLesson
+    // and the key format, we cannot reliably match substitutions to lessons.
+    // 
+    // The substitution data comes from DailySchedule.classSubs which is a map.
+    // We need to know:
+    // 1. What the map key format is (e.g., "Monday_2" for Monday 2nd period)
+    // 2. What fields SubstitutedLesson has to match against lesson properties
+    // 
+    // For now, returning null to avoid showing incorrect substitutions.
+    // This means substitutions won't be displayed until this function is completed.
     
-    // For now, just check if there's any substitution in the map
-    // The actual matching will depend on the key format from the API
-    // which may include day, hour, group, subject, or teacher info
+    return null
     
-    return substitutions.values.firstOrNull()
+    // Example of what the matching logic might look like once we know the structure:
+    /*
+    return substitutions.entries.firstOrNull { (key, sub) ->
+        // Parse the key to extract day, hour, group
+        val (day, hour, group) = parseSubstitutionKey(key)
+        
+        // Match against lesson properties
+        val hourMatches = lesson.period == hour
+        val groupMatches = lesson.group == null || lesson.group == group
+        val subjectMatches = lesson.subjectName.short == sub.subject
+        
+        hourMatches && groupMatches && subjectMatches
+    }?.value
+    */
 }
