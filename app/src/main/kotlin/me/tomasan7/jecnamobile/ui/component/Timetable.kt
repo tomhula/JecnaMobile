@@ -43,6 +43,7 @@ fun Timetable(
     timetable: Timetable,
     modifier: Modifier = Modifier,
     lessonColors: Map<Lesson, Color> = emptyMap(),
+    substitutions: Map<String, SubstitutedLesson> = emptyMap(),
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
@@ -107,6 +108,7 @@ fun Timetable(
                         LessonSpot(
                             lessonSpot = lessonSpot,
                             lessonColors = lessonColors,
+                            substitutions = substitutions,
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
@@ -165,6 +167,7 @@ private fun TimetableLessonPeriod(
 private fun LessonSpot(
     lessonSpot: LessonSpot,
     lessonColors: Map<Lesson, Color>?,
+    substitutions: Map<String, SubstitutedLesson> = emptyMap(),
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -187,12 +190,17 @@ private fun LessonSpot(
             else
                 lessonModifier.height(50.dp)
 
+            // Find substitution for this lesson
+            val substitutedLesson = findSubstitutionForLesson(lesson, substitutions)
+            val substitutionColor = substitutedLesson?.let { getSubstitutionColor(it) }
+            
             Lesson(
                 modifier = lessonModifier,
                 onClick = { onLessonClick(lesson) },
                 lesson = lesson,
                 current = current,
                 next = next,
+                substitutionColor = substitutionColor,
                 hideClass = hideClass
             )
         }
@@ -362,5 +370,38 @@ fun getSubstitutionColor(sub: SubstitutedLesson): Color
         sub.isSeparated -> separated
         sub.roomChanged -> room_change
         else -> substitution
+    }
+}
+
+/**
+ * Finds the substitution for a given lesson by matching key attributes.
+ * The substitution map keys are in the format expected by the API.
+ */
+private fun findSubstitutionForLesson(
+    lesson: Lesson,
+    substitutions: Map<String, SubstitutedLesson>
+): SubstitutedLesson? {
+    // Try to find by matching lesson attributes
+    // The key format is typically based on day, hour, and potentially group/class
+    return substitutions.values.firstOrNull { sub ->
+        // Match by teacher short code if available
+        val teacherMatches = lesson.teacherName?.short?.let { 
+            it.equals(sub.teacher, ignoreCase = true) 
+        } ?: false
+        
+        // Match by subject
+        val subjectMatches = lesson.subjectName.short?.let {
+            it.equals(sub.subject, ignoreCase = true)
+        } ?: false
+        
+        // Match by group if lesson is split
+        val groupMatches = if (lesson.group != null) {
+            lesson.group == sub.group
+        } else {
+            true // If no group in lesson, don't filter by group
+        }
+        
+        // Consider it a match if teacher and subject match and group is compatible
+        (teacherMatches || subjectMatches) && groupMatches
     }
 }

@@ -18,7 +18,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
+import io.github.stevekk11.dtos.DailySchedule
 import io.github.stevekk11.dtos.LabeledTeacherAbsences
+import io.github.stevekk11.dtos.SubstitutedLesson
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
@@ -91,9 +93,15 @@ fun TimetableSubScreen(
                 )
                 
                 if (uiState.timetablePage != null) {
+                    // Process daily substitutions into a map for easier lookup
+                    val substitutionsMap = remember(uiState.dailySubstitutions) {
+                        processSubstitutions(uiState.dailySubstitutions)
+                    }
+                    
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
+                        substitutions = substitutionsMap,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
@@ -211,4 +219,21 @@ private fun TimetablePeriodSelector(
         selectedValue = selectedOption,
         onChange = onChange
     )
+}
+
+/**
+ * Process daily substitutions into a flat map for easier lookup.
+ * Combines all substitutions from all days into a single map.
+ */
+private fun processSubstitutions(dailySchedules: List<DailySchedule>?): Map<String, SubstitutedLesson> {
+    if (dailySchedules == null) return emptyMap()
+    
+    val result = mutableMapOf<String, SubstitutedLesson>()
+    dailySchedules.forEach { schedule ->
+        schedule.classSubs.forEach { (key, substitutedLesson) ->
+            // Use a composite key that includes the date for uniqueness
+            result["${schedule.date}_$key"] = substitutedLesson
+        }
+    }
+    return result
 }
