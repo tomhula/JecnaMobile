@@ -399,7 +399,7 @@ private fun findSubstitutionForLesson(
 ): SubstitutedLesson? {
     // The map from processSubstitutions uses "date_hour" as key
     // We need to find any substitution that matches this hour
-    return substitutions.values.firstOrNull { sub ->
+    val candidates = substitutions.values.filter { sub ->
         // Match by hour (required)
         val hourMatches = sub.hour == hourIndex
         
@@ -409,25 +409,43 @@ private fun findSubstitutionForLesson(
             lesson.group == sub.group
         } else {
             // If lesson has no group, accept substitutions with no group or any group
-            true
+            sub.group == null || sub.group.isEmpty()
         }
         
-        // Match by subject as additional validation (if available)
+        hourMatches && groupMatches
+    }
+    
+    // If no candidates, return null
+    if (candidates.isEmpty()) return null
+    
+    // If only one candidate, return it
+    if (candidates.size == 1) return candidates.first()
+    
+    // Multiple candidates - try to find best match by subject and teacher
+    return candidates.firstOrNull { sub ->
+        // Match by subject (if available on both sides)
         val subjectMatches = if (sub.subject != null && lesson.subjectName.short != null) {
             lesson.subjectName.short.equals(sub.subject, ignoreCase = true)
         } else {
-            true // If no subject in substitution or lesson, don't filter by it
+            false
         }
         
-        // Match by teacher (if available)
+        // Match by teacher (if available on both sides)
         val teacherMatches = if (sub.missingTeacher != null && lesson.teacherName?.short != null) {
             lesson.teacherName.short.equals(sub.missingTeacher, ignoreCase = true)
         } else {
-            true // If no teacher info, don't filter by it
+            false
         }
         
-        // A substitution matches if hour matches and group is compatible
-        // Subject and teacher are used as additional filters when available
-        hourMatches && groupMatches && (subjectMatches || teacherMatches)
-    }
+        // Prefer matches with both subject and teacher, then either one
+        subjectMatches && teacherMatches
+    } ?: candidates.firstOrNull { sub ->
+        // Try matching by subject only
+        sub.subject != null && lesson.subjectName.short != null &&
+        lesson.subjectName.short.equals(sub.subject, ignoreCase = true)
+    } ?: candidates.firstOrNull { sub ->
+        // Try matching by teacher only
+        sub.missingTeacher != null && lesson.teacherName?.short != null &&
+        lesson.teacherName.short.equals(sub.missingTeacher, ignoreCase = true)
+    } ?: candidates.first() // Fall back to first candidate if no specific match
 }
