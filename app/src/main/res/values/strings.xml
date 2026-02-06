@@ -30,6 +30,9 @@
     <string name="settings_open_subscreen_description">Obrazovka, která se otevře po spuštění aplikace.</string>
     <string name="settings_canteen_image_tolerance_title">Tolerance fotek v jídelně</string>
     <string name="settings_canteen_image_tolerance_description">Minimální shoda, kterou fotka musí mít, aby se zobrazila.</string>
+    <string name="settings_substitution_server_title">Server mimořádného rozvrhu</string>
+    <string name="settings_substitution_server_description">URL serveru poskytujícího data pro mimořádný rozvrh.</string>
+    <string name="settings_substitution_server_url">URL serveru</string>
 
     <!-- ##### Main Screen ##### -->
 
@@ -102,6 +105,21 @@
 
     <string name="timetable_period">Období</string>
     <string name="timetable_load_error">Při načítání rozvrhu došlo k chybě.</string>
+    <string name="substitution_load_error">Chyba mimořádného rozvrhu, kliknutím otevřete.</string>
+    
+    <string name="subtitution_info">Mimořádný rozvrh: poslední aktualizace: %1s, aktualizováno %2$s.</string>
+    <plurals name="substitution_update_interval_minutes">
+        <item quantity="one">každou minutu</item>
+        <item quantity="few">každé %d minuty</item>
+        <item quantity="many">každých %d minut</item>
+        <item quantity="other">každých %d minut</item>
+    </plurals>
+    <plurals name="subtitution_update_interval_hours">
+        <item quantity="one">každou hodinu</item>
+        <item quantity="few">každé %d hodiny</item>
+        <item quantity="many">každých %d hodin</item>
+        <item quantity="other">každých %d hodin</item>
+    </plurals>
 
     <!-- ##### Canteen SubScreen ##### -->
 

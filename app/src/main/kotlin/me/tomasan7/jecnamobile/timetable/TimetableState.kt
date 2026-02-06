@@ -11,6 +11,7 @@ import kotlin.time.Instant
 data class TimetableState(
     val loading: Boolean = false,
     val timetablePage: TimetablePage? = null,
+    val substitutions: SubstitutionData? = null,
     val lastUpdateTimestamp: Instant? = null,
     val isCache: Boolean = false,
     val selectedSchoolYear: SchoolYear = timetablePage?.selectedSchoolYear ?: SchoolYear.current(),

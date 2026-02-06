@@ -19,6 +19,11 @@ import me.tomasan7.jecnamobile.ui.component.FilledDropDownSelector
 import me.tomasan7.jecnamobile.ui.component.RadioGroup
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import me.tomasan7.jecnamobile.util.settingsAsState
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 
 
 @Composable
@@ -82,6 +87,29 @@ private fun Settings(viewModel: SettingsViewModel)
                 optionStringMap = { names[it]!! },
                 selectedValue = settings.defaultDestination,
                 onChange = { viewModel.setOpenSubScreen(it) }
+            )
+        }
+
+        Option(
+            title = stringResource(R.string.settings_substitution_server_title),
+            description = stringResource(R.string.settings_substitution_server_description)
+        ) {
+            var url by remember { mutableStateOf(settings.substitutionServerUrl) }
+
+            LaunchedEffect(settings.substitutionServerUrl) {
+                if (url != settings.substitutionServerUrl) {
+                    url = settings.substitutionServerUrl
+                }
+            }
+
+            OutlinedTextField(
+                value = url,
+                onValueChange = { 
+                    url = it
+                    viewModel.setSubstitutionServerUrl(it) 
+                },
+                label = { Text(stringResource(R.string.settings_substitution_server_url)) },
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }

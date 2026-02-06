@@ -8,6 +8,7 @@ import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import me.tomasan7.jecnamobile.LoginStateProvider
+import uniffi.jecna_supl_client.JecnaSuplClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 
@@ -23,6 +24,10 @@ internal object AppModule
     @Provides
     @Singleton
     fun provideCanteenClient() = CanteenClient(autoLogin = true, userAgent = "JM")
+
+    @Provides
+    @Singleton
+    fun provideSubstitutionClient() = JecnaSuplClient()
     
     @Provides
     @Singleton

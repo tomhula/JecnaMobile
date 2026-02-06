@@ -11,6 +11,7 @@ data class Settings(
     var gradesViewMode: GradesViewMode = GradesViewMode.GRID,
     val openSubScreenRoute: String? = null,
     val defaultDestination: SubScreenDestination = openSubScreenRoute?.let { legacySubScreenRouteToDefaultDestination(it) } ?: SubScreenDestination.Timetable,
+    val substitutionServerUrl: String = "https://jecnarozvrh.jzitnik.dev/",
 )
 {
     enum class GradesViewMode

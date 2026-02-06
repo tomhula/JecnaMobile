@@ -5,6 +5,7 @@ plugin-kotlin = "2.3.0"
 plugin-ksp = "2.3.5-SNAPSHOT"
 
 jecnaAPI = "9.1.0"
+jecnaSupl = "0.1.1"
 
 compose-android-bom = "2026.01.00"
 
@@ -24,6 +25,8 @@ serialization = "1.10.0"
 
 [libraries]
 jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
+jecnaSupl-client = { module = "cz.jzitnik:jecna-supl-client", version.ref = "jecnaSupl" }
+jecnaSupl-android = { module = "cz.jzitnik:jecna-supl-client-android", version.ref = "jecnaSupl" }
 
 compose-android-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-android-bom" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }

@@ -1,5 +1,7 @@
 package me.tomasan7.jecnamobile.timetable
 
+import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +27,15 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
 
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.core.net.toUri
+import me.tomasan7.jecnamobile.mainscreen.SidebarLink
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimetableSubScreen(
@@ -43,6 +54,7 @@ fun TimetableSubScreen(
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current;
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -86,15 +98,67 @@ fun TimetableSubScreen(
                     onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
                     onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
                 )
+                
+                if (uiState.timetablePage != null) {
+                    val period = uiState.selectedPeriod
+                    val substitutionsMap: Map<DayOfWeek, List<String?>> = remember(uiState.substitutions, period) {
+                        runCatching {
+                            uiState.substitutions
+                                ?.data
+                                ?.associate { item ->
+                                    val date = LocalDate.parse(item.date)
+                                    date.dayOfWeek to item.lessons
+                                }
+                                ?: emptyMap()
+                        }.getOrDefault(emptyMap())
+                    }
 
-                if (uiState.timetablePage != null)
+                    if (uiState.substitutions == null) {
+                        val sidebarLink = SidebarLink.SubstitutionTimetable;
+                        
+                        Text(
+                            text = stringResource(R.string.substitution_load_error),
+                            modifier = Modifier.clickable(onClick = {
+                                val intent = Intent(Intent.ACTION_VIEW)
+                                intent.data = sidebarLink.link.toUri()
+                                context.startActivity(intent)
+                            })
+                        )
+                    } else {
+                        val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
+                            pluralStringResource(
+                                id = R.plurals.substitution_update_interval_minutes,
+                                count = uiState.substitutions.currentUpdateSchedule,
+                                uiState.substitutions.currentUpdateSchedule
+                            )
+                        } else {
+                            val hours = uiState.substitutions.currentUpdateSchedule / 60
+                            pluralStringResource(
+                                id = R.plurals.subtitution_update_interval_hours,
+                                count = uiState.substitutions.currentUpdateSchedule,
+                                hours 
+                            )
+                        }
+                        val finalText = stringResource(
+                            R.string.subtitution_info,
+                            uiState.substitutions.lastUpdated,
+                            intervalText
+                        )
+                        Log.d("Idk", uiState.substitutions.currentUpdateSchedule.toString())
+                        Text(
+                            text = finalText,
+                        )
+                    }
+
                     Timetable(
                         modifier = Modifier.fillMaxSize(),
                         timetable = uiState.timetablePage.timetable,
+                        substitutions = substitutionsMap,
                         hideClass = true,
                         onRoomClick = onRoomClick,
                         onTeacherClick = onTeacherClick
                     )
+                }
             }
         }
     }

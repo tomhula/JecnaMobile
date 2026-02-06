@@ -33,6 +33,7 @@ import kotlin.time.Clock
 @Composable
 fun Timetable(
     timetable: Timetable,
+    substitutions: Map<DayOfWeek, List<String?>> = emptyMap(),
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
@@ -93,10 +94,13 @@ fun Timetable(
                             .fillMaxHeight()
                     )
                     HorizontalSpacer(breakWidth)
-                    timetable.getLessonSpotsForDay(day)!!.forEach { lessonSpot ->
+                    timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
                         LessonSpot(
                             lessonSpot = lessonSpot,
+                            substitution = substitutions[day]?.getOrNull(index),
                             onLessonClick = { dialogState.show(it) },
+                            onTeacherClick = onTeacherClick,
+                            onRoomClick = onRoomClick,
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
@@ -153,6 +157,9 @@ private fun TimetableLessonPeriod(
 @Composable
 private fun LessonSpot(
     lessonSpot: LessonSpot,
+    substitution: String? = null,
+    onTeacherClick: (TeacherReference) -> Unit,
+    onRoomClick: (RoomReference) -> Unit,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -167,22 +174,32 @@ private fun LessonSpot(
         lessonSpotModifier = lessonSpotModifier.fillMaxHeight()
 
     Column(lessonSpotModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        lessonSpot.forEach { lesson ->
-            /* If there is < 2 lessons, they are stretched to  */
-            var lessonModifier = Modifier.fillMaxWidth()
-            lessonModifier = if (lessonSpot.size <= 2)
-                lessonModifier.weight(1f)
-            else
-                lessonModifier.height(50.dp)
-
-            Lesson(
-                modifier = lessonModifier,
-                onClick = { onLessonClick(lesson) },
-                lesson = lesson,
-                current = current,
-                next = next,
-                hideClass = hideClass
+        if (substitution != null) {
+            SubstitutionLesson(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                text = substitution,
+                onTeacherClick = onTeacherClick,
+                onRoomClick = onRoomClick,
+                lessonSpot = lessonSpot
             )
+        } else {
+            lessonSpot.forEach { lesson ->
+                /* If there is < 2 lessons, they are stretched to  */
+                var lessonModifier = Modifier.fillMaxWidth()
+                lessonModifier = if (lessonSpot.size <= 2)
+                    lessonModifier.weight(1f)
+                else
+                    lessonModifier.height(50.dp)
+
+                Lesson(
+                    modifier = lessonModifier,
+                    onClick = { onLessonClick(lesson) },
+                    lesson = lesson,
+                    current = current,
+                    next = next,
+                    hideClass = hideClass
+                )
+            }
         }
     }
 }
@@ -241,7 +258,7 @@ private fun DayLabel(
 }
 
 @Composable
-private fun LessonDialogContent(
+fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,
