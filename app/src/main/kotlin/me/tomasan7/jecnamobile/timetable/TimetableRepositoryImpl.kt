@@ -7,6 +7,8 @@ import javax.inject.Inject
 import uniffi.jecna_supl_client.JecnaSuplClient
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 
@@ -31,8 +33,8 @@ class TimetableRepositoryImpl @Inject constructor(
 
     private var cachedClassName: String? = null
 
-    private suspend fun fetchSubstitutions(): SubstitutionData? {
-        return try {
+    private suspend fun fetchSubstitutions(): SubstitutionData? = withContext(Dispatchers.IO) {
+        try {
             val settings = context.settingsDataStore.data.first()
             val serverUrl = settings.substitutionServerUrl.trim()
             substitutionClient.setProvider(serverUrl)
