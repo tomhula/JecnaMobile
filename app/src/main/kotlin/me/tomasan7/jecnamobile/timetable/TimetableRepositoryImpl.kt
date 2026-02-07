@@ -4,12 +4,12 @@ import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import javax.inject.Inject
 
-import uniffi.jecna_supl_client.JecnaSuplClient
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import android.content.Context
+import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import dagger.hilt.android.qualifiers.ApplicationContext
 
 class TimetableRepositoryImpl @Inject constructor(

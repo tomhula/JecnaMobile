@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.di
 
+import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -8,7 +9,6 @@ import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import me.tomasan7.jecnamobile.LoginStateProvider
-import uniffi.jecna_supl_client.JecnaSuplClient
 import javax.inject.Singleton
 import kotlin.time.Duration.Companion.seconds
 

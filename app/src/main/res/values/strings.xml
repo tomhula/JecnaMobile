@@ -315,4 +315,8 @@
     <string name="room_title_timetable">Rozvrh hodin</string>
     <string name="rooms_search_placeholder">Název učebny/číslo</string>
 
+    <string name="substitution_dialog_title">Suplování</string>
+    <string name="substitution_show_original">Zobrazit původní</string>
+    <string name="substitution_dialog_text_label">Text mimořádné změny</string>
+
 </resources>
