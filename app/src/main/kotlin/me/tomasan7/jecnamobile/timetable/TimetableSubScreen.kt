@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -35,6 +34,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.core.net.toUri
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -113,51 +117,89 @@ fun TimetableSubScreen(
                         }.getOrDefault(emptyMap())
                     }
 
-                    if (uiState.substitutions == null) {
-                        val sidebarLink = SidebarLink.SubstitutionTimetable;
-                        
-                        Text(
-                            text = stringResource(R.string.substitution_load_error),
-                            modifier = Modifier.clickable(onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW)
-                                intent.data = sidebarLink.link.toUri()
-                                context.startActivity(intent)
-                            })
-                        )
-                    } else {
-                        val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
-                            pluralStringResource(
-                                id = R.plurals.substitution_update_interval_minutes,
-                                count = uiState.substitutions.currentUpdateSchedule,
-                                uiState.substitutions.currentUpdateSchedule
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (uiState.substitutions == null) {
+                            val sidebarLink = SidebarLink.SubstitutionTimetable;
+                            
+                            Text(
+                                text = stringResource(R.string.substitution_load_error),
+                                modifier = Modifier.clickable(onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW)
+                                    intent.data = sidebarLink.link.toUri()
+                                    context.startActivity(intent)
+                                })
                             )
                         } else {
-                            val hours = uiState.substitutions.currentUpdateSchedule / 60
-                            pluralStringResource(
-                                id = R.plurals.subtitution_update_interval_hours,
-                                count = uiState.substitutions.currentUpdateSchedule,
-                                hours 
-                            )
+                                val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
+                                    pluralStringResource(
+                                        id = R.plurals.substitution_update_interval_minutes,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        uiState.substitutions.currentUpdateSchedule
+                                    )
+                                } else {
+                                    val hours = uiState.substitutions.currentUpdateSchedule / 60
+                                    pluralStringResource(
+                                        id = R.plurals.subtitution_update_interval_hours,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        hours 
+                                    )
+                                }
+                                Text(
+                                    text = stringResource(
+                                        R.string.subtitution_info,
+                                        uiState.substitutions.lastUpdated,
+                                        intervalText
+                                    ),
+                                )
+
+                                val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+                                val today = now.date
+                                
+                                val (targetDate, labelRes) = remember(today, now.hour, now.minute, uiState.timetablePage) {
+                                    val currentTime = now.time
+                                    val timetable = uiState.timetablePage.timetable
+                                    val todayLessons = timetable.getLessonSpotsForDay(today.dayOfWeek)
+                                    
+                                    val lastLessonEndTime = todayLessons
+                                        ?.mapIndexedNotNull { index, spot -> if (spot.isNotEmpty()) index else null }
+                                        ?.lastOrNull()
+                                        ?.let { lastIndex -> timetable.lessonPeriods.getOrNull(lastIndex)?.to }
+
+                                    val dayFinished = lastLessonEndTime?.let { currentTime >= it } ?: (now.hour >= 16)
+
+                                    when {
+                                        now.dayOfWeek == DayOfWeek.SATURDAY -> {
+                                            today.plus(DatePeriod(days = 2)) to R.string.substitution_day_info_monday
+                                        }
+                                        now.dayOfWeek == DayOfWeek.SUNDAY -> {
+                                            today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_monday
+                                        }
+                                        dayFinished -> {
+                                            if (now.dayOfWeek == DayOfWeek.FRIDAY) {
+                                                today.plus(DatePeriod(days = 3)) to R.string.substitution_day_info_monday
+                                            } else {
+                                                today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_tomorrow
+                                            }
+                                        }
+                                        else -> today to R.string.substitution_day_info
+                                    }
+                                }
+
+                                val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                if (targetInfo != null && targetInfo.takesPlace.isNotBlank()) {
+                                    TakesPlaceInfo(stringResource(labelRes), targetInfo.takesPlace)
+                                }
                         }
-                        val finalText = stringResource(
-                            R.string.subtitution_info,
-                            uiState.substitutions.lastUpdated,
-                            intervalText
-                        )
-                        Log.d("Idk", uiState.substitutions.currentUpdateSchedule.toString())
-                        Text(
-                            text = finalText,
+
+                        Timetable(
+                            modifier = Modifier.fillMaxSize(),
+                            timetable = uiState.timetablePage.timetable,
+                            substitutions = substitutionsMap,
+                            hideClass = true,
+                            onRoomClick = onRoomClick,
+                            onTeacherClick = onTeacherClick
                         )
                     }
-
-                    Timetable(
-                        modifier = Modifier.fillMaxSize(),
-                        timetable = uiState.timetablePage.timetable,
-                        substitutions = substitutionsMap,
-                        hideClass = true,
-                        onRoomClick = onRoomClick,
-                        onTeacherClick = onTeacherClick
-                    )
                 }
             }
         }

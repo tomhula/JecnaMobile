@@ -34,6 +34,10 @@
     <string name="settings_substitution_server_description">URL serveru poskytujícího data pro mimořádný rozvrh.</string>
     <string name="settings_substitution_server_url">URL serveru</string>
 
+    <string name="substitution_day_info">Koná se</string>
+    <string name="substitution_day_info_tomorrow">Koná se zítra</string>
+    <string name="substitution_day_info_monday">Koná se v pondělí</string>
+
     <!-- ##### Main Screen ##### -->
 
     <string name="sidebar_grades">Známky</string>
