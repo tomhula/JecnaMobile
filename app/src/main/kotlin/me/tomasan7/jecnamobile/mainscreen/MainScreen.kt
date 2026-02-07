@@ -3,6 +3,8 @@ package me.tomasan7.jecnamobile.mainscreen
 import android.content.Intent
 import android.os.Build
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -83,43 +85,47 @@ fun MainScreen(
         drawerState = drawerState,
         drawerContent = {
             ModalDrawerSheet {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(all = 28.dp)
-                )
-
-                destinationItems.forEach { item ->
-                    val selected = item === navBackStack.lastOrNull()
-                    DestinationItem(
-                        item = item,
-                        selected = selected,
-                        onClick = onClick@{
-                            scope.launch { drawerState.close() }
-                            if (selected)
-                                return@onClick
-
-                            navBackStack.clear()
-                            navBackStack.add(item)
-                        }
-                    )
-                }
-
-                HorizontalDivider(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp, horizontal = 28.dp)
-                )
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(all = 28.dp)
+                    )
 
-                linkItems.forEach { LinkItem(it) }
+                    destinationItems.forEach { item ->
+                        val selected = item === navBackStack.lastOrNull()
+                        DestinationItem(
+                            item = item,
+                            selected = selected,
+                            onClick = onClick@{
+                                scope.launch { drawerState.close() }
+                                if (selected)
+                                    return@onClick
+
+                                navBackStack.clear()
+                                navBackStack.add(item)
+                            }
+                        )
+                    }
+
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 28.dp)
+                    )
+
+                    linkItems.forEach { LinkItem(it) }
+                }
 
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(start = 28.dp, end = 28.dp, bottom = 28.dp),
-                    verticalArrangement = Arrangement.Bottom
+                        .padding(start = 28.dp, end = 28.dp, bottom = 16.dp),
                 ) {
                     SidebarButtonsRow(
                         onProfileClick = {
