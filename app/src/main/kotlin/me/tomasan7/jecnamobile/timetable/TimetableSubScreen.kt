@@ -107,7 +107,7 @@ fun TimetableSubScreen(
                                 ?.data
                                 ?.associate { item ->
                                     val date = LocalDate.parse(item.date)
-                                    date.dayOfWeek to item.lessons
+                                    date.dayOfWeek to item.changes.map { it?.text }
                                 }
                                 ?: emptyMap()
                         }.getOrDefault(emptyMap())

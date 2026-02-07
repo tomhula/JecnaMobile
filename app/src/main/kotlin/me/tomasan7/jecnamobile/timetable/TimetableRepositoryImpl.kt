@@ -52,7 +52,7 @@ class TimetableRepositoryImpl @Inject constructor(
 
             if (className != null) {
                 val subs = substitutionClient.getSchedule(className)
-                SubstitutionData(subs.status.lastUpdated, subs.status.currentUpdateSchedule.toInt(), subs.schedule.map { it.toSerializable() })
+                SubstitutionData(subs.status.lastUpdated, subs.status.currentUpdateSchedule.toInt(), subs.schedule.map { (date, schedule) -> schedule.toSerializable(date) })
             } else {
                 null
             }
