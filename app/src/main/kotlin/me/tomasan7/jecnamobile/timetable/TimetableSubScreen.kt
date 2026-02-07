@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -25,6 +26,21 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
 
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.core.net.toUri
+import me.tomasan7.jecnamobile.mainscreen.SidebarLink
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimetableSubScreen(
@@ -43,6 +59,7 @@ fun TimetableSubScreen(
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current;
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -86,15 +103,106 @@ fun TimetableSubScreen(
                     onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
                     onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
                 )
+                
+                if (uiState.timetablePage != null) {
+                    val period = uiState.selectedPeriod
+                    val substitutionsMap: Map<DayOfWeek, List<String?>> = remember(uiState.substitutions, period) {
+                        runCatching {
+                            uiState.substitutions
+                                ?.data
+                                ?.associate { item ->
+                                    val date = LocalDate.parse(item.date)
+                                    date.dayOfWeek to item.changes.map { it?.text }
+                                }
+                                ?: emptyMap()
+                        }.getOrDefault(emptyMap())
+                    }
 
-                if (uiState.timetablePage != null)
-                    Timetable(
-                        modifier = Modifier.fillMaxSize(),
-                        timetable = uiState.timetablePage.timetable,
-                        hideClass = true,
-                        onRoomClick = onRoomClick,
-                        onTeacherClick = onTeacherClick
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (uiState.substitutions == null) {
+                            val sidebarLink = SidebarLink.SubstitutionTimetable;
+                            
+                            Text(
+                                text = stringResource(R.string.substitution_load_error),
+                                modifier = Modifier.clickable(onClick = {
+                                    val intent = Intent(Intent.ACTION_VIEW)
+                                    intent.data = sidebarLink.link.toUri()
+                                    context.startActivity(intent)
+                                })
+                            )
+                        } else {
+                                val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
+                                    pluralStringResource(
+                                        id = R.plurals.substitution_update_interval_minutes,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        uiState.substitutions.currentUpdateSchedule
+                                    )
+                                } else {
+                                    val hours = uiState.substitutions.currentUpdateSchedule / 60
+                                    pluralStringResource(
+                                        id = R.plurals.subtitution_update_interval_hours,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        hours 
+                                    )
+                                }
+                                Text(
+                                    text = stringResource(
+                                        R.string.subtitution_info,
+                                        uiState.substitutions.lastUpdated,
+                                        intervalText
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+
+                                val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+                                val today = now.date
+                                
+                                val (targetDate, labelRes) = remember(today, now.hour, now.minute, uiState.timetablePage) {
+                                    val currentTime = now.time
+                                    val timetable = uiState.timetablePage.timetable
+                                    val todayLessons = timetable.getLessonSpotsForDay(today.dayOfWeek)
+                                    
+                                    val lastLessonEndTime = todayLessons
+                                        ?.mapIndexedNotNull { index, spot -> if (spot.isNotEmpty()) index else null }
+                                        ?.lastOrNull()
+                                        ?.let { lastIndex -> timetable.lessonPeriods.getOrNull(lastIndex)?.to }
+
+                                    val dayFinished = lastLessonEndTime?.let { currentTime >= it } ?: (now.hour >= 16)
+
+                                    when {
+                                        now.dayOfWeek == DayOfWeek.SATURDAY -> {
+                                            today.plus(DatePeriod(days = 2)) to R.string.substitution_day_info_monday
+                                        }
+                                        now.dayOfWeek == DayOfWeek.SUNDAY -> {
+                                            today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_monday
+                                        }
+                                        dayFinished -> {
+                                            if (now.dayOfWeek == DayOfWeek.FRIDAY) {
+                                                today.plus(DatePeriod(days = 3)) to R.string.substitution_day_info_monday
+                                            } else {
+                                                today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_tomorrow
+                                            }
+                                        }
+                                        else -> today to R.string.substitution_day_info
+                                    }
+                                }
+
+                                val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                if (targetInfo != null && targetInfo.takesPlace.isNotBlank()) {
+                                    TakesPlaceInfo(stringResource(labelRes), targetInfo.takesPlace)
+                                }
+                        }
+
+                        Timetable(
+                            modifier = Modifier.fillMaxSize(),
+                            timetable = uiState.timetablePage.timetable,
+                            substitutions = substitutionsMap,
+                            hideClass = true,
+                            onRoomClick = onRoomClick,
+                            onTeacherClick = onTeacherClick
+                        )
+                    }
+                }
             }
         }
     }

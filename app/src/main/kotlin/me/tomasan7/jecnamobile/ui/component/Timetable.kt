@@ -7,6 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +25,7 @@ import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
+import kotlinx.coroutines.delay
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -33,12 +36,15 @@ import kotlin.time.Clock
 @Composable
 fun Timetable(
     timetable: Timetable,
+    substitutions: Map<DayOfWeek, List<String?>> = emptyMap(),
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
 )
 {
+    val revealedSpots = remember { mutableStateMapOf<Pair<DayOfWeek, Int>, Boolean>() }
+
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
         timetable.run {
             val result = mutableMapOf<DayOfWeek, Int>()
@@ -93,15 +99,31 @@ fun Timetable(
                             .fillMaxHeight()
                     )
                     HorizontalSpacer(breakWidth)
-                    timetable.getLessonSpotsForDay(day)!!.forEach { lessonSpot ->
+                    timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
+                        val spotKey = day to index
+                        val isRevealed = revealedSpots[spotKey] ?: false
+                        
                         LessonSpot(
                             lessonSpot = lessonSpot,
+                            substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
+                            onShowOriginal = {
+                                revealedSpots[spotKey] = true
+                            },
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
-                            breakWidth = breakWidth
+                            breakWidth = breakWidth,
+                            isRevealed = isRevealed
                         )
+
+                        if (isRevealed) {
+                            LaunchedEffect(spotKey) {
+                                delay(3000)
+                                revealedSpots[spotKey] = false
+                            }
+                        }
+
                         HorizontalSpacer(breakWidth)
                     }
                 }
@@ -153,11 +175,14 @@ private fun TimetableLessonPeriod(
 @Composable
 private fun LessonSpot(
     lessonSpot: LessonSpot,
+    substitution: String? = null,
+    onShowOriginal: () -> Unit,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
     hideClass: Boolean = false,
-    breakWidth: Dp = 0.dp
+    breakWidth: Dp = 0.dp,
+    isRevealed: Boolean = false
 )
 {
     val totalWidth = lessonSpot.periodSpan * 100.dp + breakWidth * (lessonSpot.periodSpan - 1)
@@ -166,23 +191,41 @@ private fun LessonSpot(
     if (lessonSpot.size <= 2)
         lessonSpotModifier = lessonSpotModifier.fillMaxHeight()
 
-    Column(lessonSpotModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        lessonSpot.forEach { lesson ->
-            /* If there is < 2 lessons, they are stretched to  */
-            var lessonModifier = Modifier.fillMaxWidth()
-            lessonModifier = if (lessonSpot.size <= 2)
-                lessonModifier.weight(1f)
-            else
-                lessonModifier.height(50.dp)
+    if (isRevealed) {
+        lessonSpotModifier = lessonSpotModifier.dashedBorder(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.inverseSurface,
+            shape = RoundedCornerShape(7.dp),
+            on = 8.dp,
+            off = 4.dp
+        )
+    }
 
-            Lesson(
-                modifier = lessonModifier,
-                onClick = { onLessonClick(lesson) },
-                lesson = lesson,
-                current = current,
-                next = next,
-                hideClass = hideClass
+    Column(lessonSpotModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        if (substitution != null) {
+            SubstitutionLesson(
+                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                text = substitution,
+                onShowOriginal = onShowOriginal,
             )
+        } else {
+            lessonSpot.forEach { lesson ->
+                /* If there is < 2 lessons, they are stretched to  */
+                var lessonModifier = Modifier.fillMaxWidth()
+                lessonModifier = if (lessonSpot.size <= 2)
+                    lessonModifier.weight(1f)
+                else
+                    lessonModifier.height(50.dp)
+
+                Lesson(
+                    modifier = lessonModifier,
+                    onClick = { onLessonClick(lesson) },
+                    lesson = lesson,
+                    current = current,
+                    next = next,
+                    hideClass = hideClass
+                )
+            }
         }
     }
 }
@@ -241,7 +284,7 @@ private fun DayLabel(
 }
 
 @Composable
-private fun LessonDialogContent(
+fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,

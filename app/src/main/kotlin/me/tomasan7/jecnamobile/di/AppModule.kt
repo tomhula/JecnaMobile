@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.di
 
+import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,6 +24,10 @@ internal object AppModule
     @Provides
     @Singleton
     fun provideCanteenClient() = CanteenClient(autoLogin = true, userAgent = "JM")
+
+    @Provides
+    @Singleton
+    fun provideSubstitutionClient() = JecnaSuplClient()
     
     @Provides
     @Singleton

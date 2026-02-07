@@ -29,4 +29,10 @@ class SettingsViewModel @Inject constructor(
             it.copy(defaultDestination = subScreenDestination)
         }
     }
+
+    fun setSubstitutionServerUrl(url: String) = viewModelScope.launch {
+        settingsDataStore.updateData {
+            it.copy(substitutionServerUrl = url)
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.ui.component
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -61,7 +62,7 @@ fun <T> FilledDropDownSelector(
         onChange = onChange,
         textField = { value, expanded ->
             TextField(
-                modifier = Modifier.menuAnchor(),
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
                 label = label?.let { { Text(label) } },
                 value = value,
                 readOnly = true,
@@ -92,7 +93,7 @@ fun <T> OutlinedDropDownSelector(
         onChange = onChange,
         textField = { value, expanded ->
             OutlinedTextField(
-                modifier = Modifier.menuAnchor(),
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
                 label = label?.let { { Text(label) } },
                 value = value,
                 readOnly = true,

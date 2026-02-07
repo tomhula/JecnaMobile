@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.timetable
 
 import android.content.Context
-import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
@@ -11,16 +10,16 @@ import kotlin.time.Clock
 class TimetableCacheRepository(
     key: String,
     appContext: Context,
-    fetcher: suspend (SchoolYearPeriodParams) -> TimetablePage
-) : CacheRepository<TimetablePage, SchoolYearPeriodParams>(
+    fetcher: suspend (SchoolYearPeriodParams) -> TimetableData
+) : CacheRepository<TimetableData, SchoolYearPeriodParams>(
     appContext,
     key,
-    serializer<TimetablePage>(),
+    serializer<TimetableData>(),
     serializer<SchoolYearPeriodParams>(),
     fetcher
 )
 {
-    override suspend fun getCache(params: SchoolYearPeriodParams): CachedDataNew<TimetablePage, SchoolYearPeriodParams>?
+    override suspend fun getCache(params: SchoolYearPeriodParams): CachedDataNew<TimetableData, SchoolYearPeriodParams>?
     {
         logReadingCache()
         val entireCache = loadEntireCache() ?: return null
@@ -30,18 +29,18 @@ class TimetableCacheRepository(
         
         val schoolYearTimetables = entireCache.filterKeys { it.schoolYear == params.schoolYear }
         val mostRecentOne = schoolYearTimetables.maxByOrNull { entry ->
-            entry.value.data.periodOptions.find { it.selected }!!.from
+            entry.value.data.page.periodOptions.find { it.selected }!!.from
         }?.value ?: return null
         
         return mostRecentOne
     }
 
-    override suspend fun getRealAndCache(params: SchoolYearPeriodParams): TimetablePage
+    override suspend fun getRealAndCache(params: SchoolYearPeriodParams): TimetableData
     {
         logFetchingRealData()
         val data = fetcher(params)
         val entireCache = loadEntireCache()?.toMutableMap() ?: mutableMapOf()
-        val actualParams = SchoolYearPeriodParams(data.selectedSchoolYear, data.periodOptions.find { it.selected }?.id ?: return data)
+        val actualParams = SchoolYearPeriodParams(data.page.selectedSchoolYear, data.page.periodOptions.find { it.selected }?.id ?: return data)
         entireCache[actualParams] = CachedDataNew(data, actualParams, timestamp = Clock.System.now())
         writeEntireCache(entireCache)
         return data

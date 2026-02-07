@@ -88,3 +88,14 @@
 
 -dontwarn java.lang.management.ManagementFactory
 -dontwarn java.lang.management.RuntimeMXBean
+
+#################### JNA (RELEASE SAFE) ####################
+
+-dontwarn com.sun.jna.**
+
+-keep class com.sun.jna.** { *; }
+-keep class cz.jzitnik.jecna_supl_client.** { *; }
+
+-keepclasseswithmembers class * {
+    native <methods>;
+}

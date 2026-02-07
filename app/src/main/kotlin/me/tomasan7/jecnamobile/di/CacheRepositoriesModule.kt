@@ -19,6 +19,7 @@ import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
+import me.tomasan7.jecnamobile.timetable.TimetableData
 import javax.inject.Singleton
 
 @DisableInstallInCheck
@@ -76,7 +77,7 @@ internal object CacheRepositoriesModule
         @ApplicationContext
         appContext: Context,
         repository: TimetableRepository
-    ): CacheRepository<TimetablePage, SchoolYearPeriodParams> = TimetableCacheRepository(
+    ): CacheRepository<TimetableData, SchoolYearPeriodParams> = TimetableCacheRepository(
         key = "timetable",
         appContext = appContext,
         fetcher = { 

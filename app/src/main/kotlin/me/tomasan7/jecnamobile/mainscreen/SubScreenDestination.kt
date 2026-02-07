@@ -20,6 +20,7 @@ enum class SubScreenDestination(
     News(R.string.sidebar_news, Icons.Outlined.Newspaper, Icons.Filled.Newspaper),
     Grades(R.string.sidebar_grades, Icons.Outlined.Grade, Icons.Filled.Grade),
     Timetable(R.string.sidebar_timetable, Icons.Outlined.TableChart, Icons.Filled.TableChart),
+    Substitution(R.string.sidebar_link_substitution_timetable, Icons.Outlined.TableChart, Icons.Filled.TableChart),
     Canteen(R.string.sidebar_canteen, Icons.Outlined.Restaurant, Icons.Filled.Restaurant),
     Attendances(R.string.sidebar_attendances, Icons.Outlined.DateRange, Icons.Filled.DateRange),
     Absences(R.string.sidebar_absences, Icons.Outlined.EventBusy, Icons.Filled.EventBusy),
