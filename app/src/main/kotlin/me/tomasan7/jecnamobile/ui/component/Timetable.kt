@@ -113,7 +113,8 @@ fun Timetable(
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
-                            breakWidth = breakWidth
+                            breakWidth = breakWidth,
+                            isRevealed = isRevealed
                         )
 
                         if (isRevealed) {
@@ -180,7 +181,8 @@ private fun LessonSpot(
     current: Boolean = false,
     next: Boolean = false,
     hideClass: Boolean = false,
-    breakWidth: Dp = 0.dp
+    breakWidth: Dp = 0.dp,
+    isRevealed: Boolean = false
 )
 {
     val totalWidth = lessonSpot.periodSpan * 100.dp + breakWidth * (lessonSpot.periodSpan - 1)
@@ -188,6 +190,16 @@ private fun LessonSpot(
 
     if (lessonSpot.size <= 2)
         lessonSpotModifier = lessonSpotModifier.fillMaxHeight()
+
+    if (isRevealed) {
+        lessonSpotModifier = lessonSpotModifier.dashedBorder(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.inverseSurface,
+            shape = RoundedCornerShape(7.dp),
+            on = 8.dp,
+            off = 4.dp
+        )
+    }
 
     Column(lessonSpotModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
         if (substitution != null) {
