@@ -21,8 +21,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.tomhula.jecnaapi.data.room.RoomReference
-import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -32,9 +30,7 @@ import me.tomasan7.jecnamobile.ui.ElevationLevel
 fun SubstitutionLesson(
     text: String,
     modifier: Modifier = Modifier,
-    onTeacherClick: (TeacherReference) -> Unit,
-    onRoomClick: (RoomReference) -> Unit,
-    lessonSpot: LessonSpot
+    onShowOriginal: () -> Unit,
 )
 {
     val dialogState = rememberObjectDialogState<String>()
@@ -67,12 +63,23 @@ fun SubstitutionLesson(
             DialogContainer(
                 title = {
                     Box(Modifier.padding(8.dp)) {
-                        Text("Suplování", fontWeight = FontWeight.Bold)
+                        Text(stringResource(R.string.substitution_dialog_title), fontWeight = FontWeight.Bold)
                     }
                 },
                 buttons = {
-                    TextButton(onClick = { dialogState.hide() }) {
-                        Text("Zavřít")
+                    Row(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        TextButton(onClick = {
+                            onShowOriginal()
+                            dialogState.hide()
+                        }) {
+                            Text(stringResource(R.string.substitution_show_original))
+                        }
+                        TextButton(onClick = { dialogState.hide() }) {
+                            Text(stringResource(R.string.close))
+                        }
                     }
                 }
             ) {
@@ -80,53 +87,9 @@ fun SubstitutionLesson(
                     modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     DialogRow(
-                        label = "Text mimořádné změny",
+                        label = stringResource(R.string.substitution_dialog_text_label),
                         value = fullText,
                     )
-                }
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    val roomLabel = stringResource(R.string.timetable_dialog_room)
-                    lessonSpot.forEach { lesson ->
-                        Column(
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-                                Text(
-                                    text = lesson.subjectName.full,
-                                    textAlign = TextAlign.Center,
-                                )
-                            }
-                            val teacher = lesson.teacherName
-                            if (teacher != null && teacher.short == null)
-                                DialogRow(
-                                    label = stringResource(R.string.timetable_dialog_teacher),
-                                    value = teacher.full
-                                )
-                            else if (teacher?.short != null)
-                                DialogRow(
-                                    label = stringResource(R.string.timetable_dialog_teacher),
-                                    value = teacher.full,
-                                    onClick = { onTeacherClick(TeacherReference(teacher.full, teacher.short!!)) }
-                                )
-                            if (lesson.classroom != null)
-                                DialogRow(
-                                    label = stringResource(id = R.string.timetable_dialog_room),
-                                    value = lesson.classroom!!,
-                                    onClick = {
-                                        onRoomClick(
-                                            RoomReference(
-                                                name = roomLabel + " " + lesson.classroom!!,
-                                                roomCode = lesson.classroom!!
-                                            )
-                                        )
-                                    }
-                                )
-                            if (lesson.group != null)
-                                DialogRow(stringResource(R.string.timetable_dialog_group), lesson.group!!)
-                        }
-                    }
                 }
             }
         }

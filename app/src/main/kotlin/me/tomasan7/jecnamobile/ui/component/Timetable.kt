@@ -7,6 +7,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +25,7 @@ import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
+import kotlinx.coroutines.delay
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -40,6 +43,8 @@ fun Timetable(
     onRoomClick: (RoomReference) -> Unit = { }
 )
 {
+    val revealedSpots = remember { mutableStateMapOf<Pair<DayOfWeek, Int>, Boolean>() }
+
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
         timetable.run {
             val result = mutableMapOf<DayOfWeek, Int>()
@@ -95,17 +100,29 @@ fun Timetable(
                     )
                     HorizontalSpacer(breakWidth)
                     timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
+                        val spotKey = day to index
+                        val isRevealed = revealedSpots[spotKey] ?: false
+                        
                         LessonSpot(
                             lessonSpot = lessonSpot,
-                            substitution = substitutions[day]?.getOrNull(index),
+                            substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
+                            onShowOriginal = {
+                                revealedSpots[spotKey] = true
+                            },
                             onLessonClick = { dialogState.show(it) },
-                            onTeacherClick = onTeacherClick,
-                            onRoomClick = onRoomClick,
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
                             next = timetable.getNextLessonSpot(Clock.System.now(), takeEmpty = true) === lessonSpot,
                             hideClass = hideClass,
                             breakWidth = breakWidth
                         )
+
+                        if (isRevealed) {
+                            LaunchedEffect(spotKey) {
+                                delay(3000)
+                                revealedSpots[spotKey] = false
+                            }
+                        }
+
                         HorizontalSpacer(breakWidth)
                     }
                 }
@@ -158,8 +175,7 @@ private fun TimetableLessonPeriod(
 private fun LessonSpot(
     lessonSpot: LessonSpot,
     substitution: String? = null,
-    onTeacherClick: (TeacherReference) -> Unit,
-    onRoomClick: (RoomReference) -> Unit,
+    onShowOriginal: () -> Unit,
     onLessonClick: (Lesson) -> Unit = {},
     current: Boolean = false,
     next: Boolean = false,
@@ -178,9 +194,7 @@ private fun LessonSpot(
             SubstitutionLesson(
                 modifier = Modifier.fillMaxWidth().fillMaxHeight(),
                 text = substitution,
-                onTeacherClick = onTeacherClick,
-                onRoomClick = onRoomClick,
-                lessonSpot = lessonSpot
+                onShowOriginal = onShowOriginal,
             )
         } else {
             lessonSpot.forEach { lesson ->
