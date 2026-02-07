@@ -29,6 +29,7 @@ import me.tomasan7.jecnamobile.ui.component.*
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
@@ -150,6 +151,7 @@ fun TimetableSubScreen(
                                         uiState.substitutions.lastUpdated,
                                         intervalText
                                     ),
+                                    style = MaterialTheme.typography.bodySmall
                                 )
 
                                 val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }

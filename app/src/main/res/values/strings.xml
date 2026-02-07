@@ -323,4 +323,18 @@
     <string name="substitution_show_original">Zobrazit původní</string>
     <string name="substitution_dialog_text_label">Text mimořádné změny</string>
 
+    <!-- ##### Substitutions ##### -->
+
+    <string name="substitution_all_date_label">Datum</string>
+    <string name="substitution_all_changes_title">Změny v rozvrhu</string>
+    <string name="substitution_all_absences_title">Absence učitelů</string>
+    <string name="substitution_all_absence_whole_day">Celý den</string>
+    <string name="substitution_all_absence_single">%1$d. hodinu</string>
+    <string name="substitution_all_absence_range">%1$d-%2$d hodinu</string>
+    <string name="substitution_all_absence_exkurze">Na exkurzi</string>
+    <string name="substitution_all_absence_zastoupen">Zastoupen (%1$s)</string>
+    <string name="substitution_all_absence_invalid">Neplatný záznam: %1$s</string>
+    <string name="substitution_all_teacher_unknown">Neznámý</string>
+    <string name="substitution_all_load_error">Nepodařilo se načíst mimořádný rozvrh.</string>
+    
 </resources>

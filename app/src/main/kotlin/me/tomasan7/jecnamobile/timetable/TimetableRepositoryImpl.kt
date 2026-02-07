@@ -61,4 +61,17 @@ class TimetableRepositoryImpl @Inject constructor(
             null
         }
     }
+
+    override suspend fun getAllSubstitutions(): SubstitutionAllData? = withContext(Dispatchers.IO) {
+        try {
+            val settings = context.settingsDataStore.data.first()
+            val serverUrl = settings.substitutionServerUrl.trim()
+            substitutionClient.setProvider(serverUrl)
+
+            substitutionClient.getAll().toSerializable()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
 }

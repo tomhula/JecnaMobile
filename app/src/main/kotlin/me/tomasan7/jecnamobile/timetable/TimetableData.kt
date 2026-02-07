@@ -7,10 +7,28 @@ import cz.jzitnik.jecna_supl_client.DailySchedule as JecnaDailySchedule
 import cz.jzitnik.jecna_supl_client.ChangeEntry as JecnaChangeEntry
 import cz.jzitnik.jecna_supl_client.AbsenceEntry as JecnaAbsenceEntry
 
+import cz.jzitnik.jecna_supl_client.ApiResponse as JecnaApiResponse
+import cz.jzitnik.jecna_supl_client.DailyData as JecnaDailyData
+
 @Serializable
 data class TimetableData(
     val page: TimetablePage,
     val substitutions: SubstitutionData?,
+)
+
+@Serializable
+data class SubstitutionAllData(
+    val lastUpdated: String,
+    val currentUpdateSchedule: Int,
+    val schedule: Map<String, GlobalDailyData>
+)
+
+@Serializable
+data class GlobalDailyData(
+    val info: DayInfo,
+    val changes: Map<String, List<ChangeEntry?>>,
+    val absence: List<AbsenceEntry>,
+    val takesPlace: String
 )
 
 @Serializable
@@ -31,6 +49,7 @@ data class DayInfo(
 data class ChangeEntry(
     val text: String,
     val backgroundColor: String?,
+    val foregroundColor: String?,
     val willBeSpecified: Boolean?
 )
 
@@ -93,6 +112,19 @@ data class SubstituteInfo(
     val teacherCode: String
 )
 
+fun JecnaApiResponse.toSerializable() = SubstitutionAllData(
+    lastUpdated = status.lastUpdated,
+    currentUpdateSchedule = status.currentUpdateSchedule.toInt(),
+    schedule = schedule.mapValues { it.value.toSerializable() }
+)
+
+fun JecnaDailyData.toSerializable() = GlobalDailyData(
+    info = DayInfo(info.inWork),
+    changes = changes.mapValues { it.value.map { entry -> entry?.toSerializable() } },
+    absence = absence.map { it.toSerializable() },
+    takesPlace = takesPlace
+)
+
 fun JecnaDailySchedule.toSerializable(date: String) = DailySchedule(
     date = date,
     info = DayInfo(info.inWork),
@@ -104,6 +136,7 @@ fun JecnaDailySchedule.toSerializable(date: String) = DailySchedule(
 fun JecnaChangeEntry.toSerializable() = ChangeEntry(
     text = text,
     backgroundColor = backgroundColor,
+    foregroundColor = foregroundColor,
     willBeSpecified = willBeSpecified
 )
 
