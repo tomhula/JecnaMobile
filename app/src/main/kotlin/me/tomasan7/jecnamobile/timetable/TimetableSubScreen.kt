@@ -105,8 +105,7 @@ fun TimetableSubScreen(
                 )
                 
                 if (uiState.timetablePage != null) {
-                    val period = uiState.selectedPeriod
-                    val substitutionsMap: Map<DayOfWeek, List<String?>> = remember(uiState.substitutions, period) {
+                    val substitutionsMap: Map<DayOfWeek, List<String?>> = remember(uiState.substitutions) {
                         runCatching {
                             uiState.substitutions
                                 ?.data
