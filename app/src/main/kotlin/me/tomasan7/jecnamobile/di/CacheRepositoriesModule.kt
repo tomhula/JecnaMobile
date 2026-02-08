@@ -9,7 +9,6 @@ import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
-import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.absence.AbsencesRepository
@@ -82,9 +81,9 @@ internal object CacheRepositoriesModule
         appContext = appContext,
         fetcher = { 
             if (it.periodId == SchoolYearPeriodParams.CURRENT_PERIOD_ID)
-                repository.getTimetablePage(it.schoolYear, null as Int?)
+                repository.getTimetableData(it.schoolYear, null as Int?)
             else
-                repository.getTimetablePage(it.schoolYear, it.periodId)
+                repository.getTimetableData(it.schoolYear, it.periodId)
         }
     )
 

@@ -5,9 +5,9 @@ import io.github.tomhula.jecnaapi.util.SchoolYear
 
 interface TimetableRepository
 {
-    suspend fun getTimetablePage(): TimetableData
-    suspend fun getTimetablePage(schoolYear: SchoolYear, timetablePeriod: TimetablePage.PeriodOption?) = getTimetablePage(schoolYear, timetablePeriod?.id)
-    suspend fun getTimetablePage(schoolYear: SchoolYear, periodId: Int?): TimetableData
+    suspend fun getTimetableData(): TimetableData
+    suspend fun getTimetableData(schoolYear: SchoolYear, timetablePeriod: TimetablePage.PeriodOption?) = getTimetableData(schoolYear, timetablePeriod?.id)
+    suspend fun getTimetableData(schoolYear: SchoolYear, periodId: Int?): TimetableData
 
     suspend fun getAllSubstitutions(): SubstitutionAllData?
 }

@@ -18,12 +18,12 @@ class TimetableRepositoryImpl @Inject constructor(
     @ApplicationContext private val appContext: Context
 ) : TimetableRepository
 {
-    override suspend fun getTimetablePage(): TimetableData {
+    override suspend fun getTimetableData(): TimetableData {
         val page = jecnaClient.getTimetablePage()
         return TimetableData(page, fetchSubstitutions())
     }
 
-    override suspend fun getTimetablePage(
+    override suspend fun getTimetableData(
         schoolYear: SchoolYear,
         periodId: Int?
     ): TimetableData {
@@ -33,12 +33,12 @@ class TimetableRepositoryImpl @Inject constructor(
 
     private var cachedClassName: String? = null
 
-    private suspend fun fetchSubstitutions(): SubstitutionData? = withContext(Dispatchers.IO) {
-        try {
+    private suspend fun fetchSubstitutions(): SubstitutionData? {
+        return try {
             val settings = appContext.settingsDataStore.data.first()
             val serverUrl = settings.substitutionServerUrl.trim()
             substitutionClient.setProvider(serverUrl)
-            
+
             if (cachedClassName == null) {
                 try {
                     val student = jecnaClient.getStudentProfile()
@@ -46,8 +46,8 @@ class TimetableRepositoryImpl @Inject constructor(
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-            } 
-            
+            }
+
             val className = cachedClassName
 
             if (className != null) {
@@ -61,6 +61,7 @@ class TimetableRepositoryImpl @Inject constructor(
             null
         }
     }
+
 
     override suspend fun getAllSubstitutions(): SubstitutionAllData? = withContext(Dispatchers.IO) {
         try {
