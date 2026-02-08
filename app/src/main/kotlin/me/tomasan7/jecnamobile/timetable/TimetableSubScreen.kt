@@ -119,7 +119,7 @@ fun TimetableSubScreen(
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (uiState.substitutions == null) {
-                            val sidebarLink = SidebarLink.SubstitutionTimetable;
+                            val sidebarLink = SidebarLink.SubstitutionTimetable
                             
                             Text(
                                 text = stringResource(R.string.substitution_load_error),
