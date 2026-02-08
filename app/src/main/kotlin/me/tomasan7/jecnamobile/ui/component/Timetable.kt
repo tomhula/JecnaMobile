@@ -284,7 +284,7 @@ private fun DayLabel(
 }
 
 @Composable
-fun LessonDialogContent(
+private fun LessonDialogContent(
     lesson: Lesson,
     onCloseClick: () -> Unit = {},
     onTeacherClick: (TeacherReference) -> Unit,
