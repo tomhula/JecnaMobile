@@ -15,7 +15,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 class TimetableRepositoryImpl @Inject constructor(
     private val jecnaClient: JecnaClient,
     private val substitutionClient: JecnaSuplClient,
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val appContext: Context
 ) : TimetableRepository
 {
     override suspend fun getTimetablePage(): TimetableData {
@@ -35,7 +35,7 @@ class TimetableRepositoryImpl @Inject constructor(
 
     private suspend fun fetchSubstitutions(): SubstitutionData? = withContext(Dispatchers.IO) {
         try {
-            val settings = context.settingsDataStore.data.first()
+            val settings = appContext.settingsDataStore.data.first()
             val serverUrl = settings.substitutionServerUrl.trim()
             substitutionClient.setProvider(serverUrl)
             
@@ -64,7 +64,7 @@ class TimetableRepositoryImpl @Inject constructor(
 
     override suspend fun getAllSubstitutions(): SubstitutionAllData? = withContext(Dispatchers.IO) {
         try {
-            val settings = context.settingsDataStore.data.first()
+            val settings = appContext.settingsDataStore.data.first()
             val serverUrl = settings.substitutionServerUrl.trim()
             substitutionClient.setProvider(serverUrl)
 
