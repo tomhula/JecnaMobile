@@ -119,19 +119,24 @@ fun SubstitutionSubScreen(
                         {
                             TakesPlaceInfo(label = stringResource(R.string.substitution_day_info), text = selectedDayData.takesPlace)
                         }
-
-                        if (selectedDayData.changes.isNotEmpty())
+                        else
                         {
-                            Text(text = stringResource(R.string.substitution_all_changes_title), style = MaterialTheme.typography.titleMedium)
-                            SubstitutionsTable(selectedDayData.changes)
+                            Text(text = stringResource(R.string.substitution_no_actions_take_place), style = MaterialTheme.typography.bodyMedium)
                         }
 
+                        Text(text = stringResource(R.string.substitution_all_changes_title), style = MaterialTheme.typography.titleMedium)
+                        SubstitutionsTable(selectedDayData.changes)
+
+                        Text(text = stringResource(R.string.substitution_all_absences_title), style = MaterialTheme.typography.titleMedium)
                         if (selectedDayData.absence.isNotEmpty())
                         {
-                            Text(text = stringResource(R.string.substitution_all_absences_title), style = MaterialTheme.typography.titleMedium)
                             selectedDayData.absence.forEach { entry ->
                                 TeacherAbsenceItem(entry, onTeacherClick)
                             }
+                        }
+                        else
+                        {
+                            Text(text = stringResource(R.string.substitution_no_teacher_absences), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
                 }

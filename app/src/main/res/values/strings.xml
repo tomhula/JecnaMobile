@@ -110,8 +110,8 @@
     <string name="timetable_period">Období</string>
     <string name="timetable_load_error">Při načítání rozvrhu došlo k chybě.</string>
     <string name="substitution_load_error">Chyba mimořádného rozvrhu, kliknutím otevřete.</string>
-    
-    <string name="subtitution_info">Mimořádný rozvrh: poslední aktualizace: %1s, aktualizováno %2$s.</string>
+
+    <string name="subtitution_info">Mimořádný rozvrh: poslední aktualizace: %1$s, aktualizováno %2$s.</string>
     <plurals name="substitution_update_interval_minutes">
         <item quantity="one">každou minutu</item>
         <item quantity="few">každé %d minuty</item>
@@ -336,5 +336,6 @@
     <string name="substitution_all_absence_invalid">Neplatný záznam: %1$s</string>
     <string name="substitution_all_teacher_unknown">Neznámý</string>
     <string name="substitution_all_load_error">Nepodařilo se načíst mimořádný rozvrh.</string>
-    
+    <string name="substitution_no_actions_take_place">Žádné akce se nekonají</string>
+    <string name="substitution_no_teacher_absences">Žádní učitelé nemají absenci</string>
 </resources>
