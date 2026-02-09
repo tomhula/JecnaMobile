@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,6 +27,7 @@ import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.LessonSpot
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.ElevationLevel
@@ -44,6 +46,7 @@ fun Timetable(
 )
 {
     val revealedSpots = remember { mutableStateOf(emptySet<Pair<DayOfWeek, Int>>()) }
+    val scope = rememberCoroutineScope()
 
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
         timetable.run {
@@ -107,7 +110,11 @@ fun Timetable(
                             lessonSpot = lessonSpot,
                             substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
                             onShowOriginal = {
-                                revealedSpots.value += spotKey
+                                scope.launch {
+                                    revealedSpots.value += spotKey
+                                    delay(3000)
+                                    revealedSpots.value -= spotKey
+                                }
                             },
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
@@ -116,13 +123,6 @@ fun Timetable(
                             breakWidth = breakWidth,
                             isRevealed = isRevealed
                         )
-
-                        if (isRevealed) {
-                            LaunchedEffect(spotKey) {
-                                delay(3000)
-                                revealedSpots.value -= spotKey
-                            }
-                        }
 
                         HorizontalSpacer(breakWidth)
                     }
