@@ -115,9 +115,10 @@ fun SubstitutionSubScreen(
                     val selectedDayData = uiState.data.schedule[uiState.selectedDate]
                     if (selectedDayData != null)
                     {
+                        Text(text = stringResource(R.string.substitution_day_info), style = MaterialTheme.typography.titleMedium)
                         if (selectedDayData.takesPlace.isNotBlank())
                         {
-                            TakesPlaceInfo(label = stringResource(R.string.substitution_day_info), text = selectedDayData.takesPlace)
+                            Text(text = selectedDayData.takesPlace, style = MaterialTheme.typography.bodyMedium)
                         }
                         else
                         {
