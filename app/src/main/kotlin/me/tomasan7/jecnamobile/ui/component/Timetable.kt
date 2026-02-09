@@ -8,7 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,7 +43,7 @@ fun Timetable(
     onRoomClick: (RoomReference) -> Unit = { }
 )
 {
-    val revealedSpots = remember { mutableStateMapOf<Pair<DayOfWeek, Int>, Boolean>() }
+    val revealedSpots = remember { mutableStateOf(emptySet<Pair<DayOfWeek, Int>>()) }
 
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
         timetable.run {
@@ -101,13 +101,13 @@ fun Timetable(
                     HorizontalSpacer(breakWidth)
                     timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
                         val spotKey = day to index
-                        val isRevealed = revealedSpots[spotKey] ?: false
+                        val isRevealed = revealedSpots.value.contains(spotKey)
                         
                         LessonSpot(
                             lessonSpot = lessonSpot,
                             substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
                             onShowOriginal = {
-                                revealedSpots[spotKey] = true
+                                revealedSpots.value += spotKey
                             },
                             onLessonClick = { dialogState.show(it) },
                             current = timetable.getLessonSpot(Clock.System.now()) === lessonSpot,
@@ -120,7 +120,7 @@ fun Timetable(
                         if (isRevealed) {
                             LaunchedEffect(spotKey) {
                                 delay(3000)
-                                revealedSpots[spotKey] = false
+                                revealedSpots.value -= spotKey
                             }
                         }
 
