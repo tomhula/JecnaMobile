@@ -100,7 +100,7 @@ fun SubstitutionSubScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
 
-                    val dates = uiState.data.schedule.keys.sorted()
+                    val dates = remember(uiState.data) { uiState.data.schedule.keys.sorted() }
 
                     OutlinedDropDownSelector(
                         modifier = Modifier.fillMaxWidth(),
