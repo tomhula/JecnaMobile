@@ -8,6 +8,9 @@ import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+
 import android.content.Context
 import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,17 +21,19 @@ class TimetableRepositoryImpl @Inject constructor(
     @ApplicationContext private val appContext: Context
 ) : TimetableRepository
 {
-    override suspend fun getTimetableData(): TimetableData {
+    override suspend fun getTimetableData(): TimetableData = coroutineScope {
+        val substitutionsDeferred = async { fetchSubstitutions() }
         val page = jecnaClient.getTimetablePage()
-        return TimetableData(page, fetchSubstitutions())
+        TimetableData(page, substitutionsDeferred.await())
     }
 
     override suspend fun getTimetableData(
         schoolYear: SchoolYear,
         periodId: Int?
-    ): TimetableData {
+    ): TimetableData = coroutineScope {
+        val substitutionsDeferred = async { fetchSubstitutions() }
         val page = jecnaClient.getTimetablePage(schoolYear, periodId)
-        return TimetableData(page, fetchSubstitutions())
+        TimetableData(page, substitutionsDeferred.await())
     }
 
     private var cachedClassName: String? = null
