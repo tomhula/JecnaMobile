@@ -104,6 +104,7 @@ fun SubstitutionSubScreen(
 
                     OutlinedDropDownSelector(
                         modifier = Modifier.fillMaxWidth(),
+                        textFieldModifier = Modifier.fillMaxWidth(),
                         label = stringResource(R.string.substitution_all_date_label),
                         options = dates,
                         optionStringMap = { it ?: "" },

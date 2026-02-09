@@ -62,7 +62,7 @@ fun <T> FilledDropDownSelector(
         onChange = onChange,
         textField = { value, expanded ->
             TextField(
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                modifier = Modifier.menuAnchor(),
                 label = label?.let { { Text(label) } },
                 value = value,
                 readOnly = true,
@@ -78,6 +78,7 @@ fun <T> FilledDropDownSelector(
 @Composable
 fun <T> OutlinedDropDownSelector(
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     label: String? = null,
     options: List<T>,
     selectedValue: T?,
@@ -93,7 +94,7 @@ fun <T> OutlinedDropDownSelector(
         onChange = onChange,
         textField = { value, expanded ->
             OutlinedTextField(
-                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                modifier = textFieldModifier.menuAnchor(),
                 label = label?.let { { Text(label) } },
                 value = value,
                 readOnly = true,
