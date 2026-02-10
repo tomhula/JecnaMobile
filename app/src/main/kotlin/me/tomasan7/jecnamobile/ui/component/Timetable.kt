@@ -7,8 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -45,7 +44,7 @@ fun Timetable(
     onRoomClick: (RoomReference) -> Unit = { }
 )
 {
-    val revealedSpots = remember { mutableStateOf(emptySet<Pair<DayOfWeek, Int>>()) }
+    val revealedSpots = remember { mutableStateSetOf<Pair<DayOfWeek, Int>>() }
     val scope = rememberCoroutineScope()
 
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
@@ -104,16 +103,16 @@ fun Timetable(
                     HorizontalSpacer(breakWidth)
                     timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
                         val spotKey = day to index
-                        val isRevealed = revealedSpots.value.contains(spotKey)
+                        val isRevealed = revealedSpots.contains(spotKey)
                         
                         LessonSpot(
                             lessonSpot = lessonSpot,
                             substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
                             onShowOriginal = {
                                 scope.launch {
-                                    revealedSpots.value += spotKey
+                                    revealedSpots += spotKey
                                     delay(3000)
-                                    revealedSpots.value -= spotKey
+                                    revealedSpots -= spotKey
                                 }
                             },
                             onLessonClick = { dialogState.show(it) },
