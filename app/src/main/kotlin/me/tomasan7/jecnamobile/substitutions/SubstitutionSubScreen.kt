@@ -122,20 +122,32 @@ fun SubstitutionSubScreen(
                     val selectedDayData = uiState.data.schedule[uiState.selectedDate]
                     if (selectedDayData != null)
                     {
-                        Text(text = stringResource(R.string.substitution_day_info), style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            text = stringResource(R.string.substitution_day_info),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         if (selectedDayData.takesPlace.isNotBlank())
                         {
                             Text(text = selectedDayData.takesPlace, style = MaterialTheme.typography.bodyMedium)
                         }
                         else
                         {
-                            Text(text = stringResource(R.string.substitution_no_actions_take_place), style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = stringResource(R.string.substitution_no_actions_take_place),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
 
-                        Text(text = stringResource(R.string.substitution_all_changes_title), style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            text = stringResource(R.string.substitution_all_changes_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         SubstitutionsTable(selectedDayData.changes)
 
-                        Text(text = stringResource(R.string.substitution_all_absences_title), style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            text = stringResource(R.string.substitution_all_absences_title),
+                            style = MaterialTheme.typography.titleMedium
+                        )
                         if (selectedDayData.absence.isNotEmpty())
                         {
                             selectedDayData.absence.forEach { entry ->
@@ -144,7 +156,10 @@ fun SubstitutionSubScreen(
                         }
                         else
                         {
-                            Text(text = stringResource(R.string.substitution_no_teacher_absences), style = MaterialTheme.typography.bodyMedium)
+                            Text(
+                                text = stringResource(R.string.substitution_no_teacher_absences),
+                                style = MaterialTheme.typography.bodyMedium
+                            )
                         }
                     }
                 }
@@ -195,13 +210,25 @@ private fun TeacherAbsenceItem(
             {
                 is AbsenceEntry.WholeDay -> stringResource(R.string.substitution_all_absence_whole_day)
                 is AbsenceEntry.Single -> stringResource(R.string.substitution_all_absence_single, entry.hours)
-                is AbsenceEntry.Range -> stringResource(R.string.substitution_all_absence_range, entry.hours.from, entry.hours.to)
+                is AbsenceEntry.Range -> stringResource(
+                    R.string.substitution_all_absence_range,
+                    entry.hours.from,
+                    entry.hours.to
+                )
+
                 is AbsenceEntry.Exkurze -> stringResource(R.string.substitution_all_absence_exkurze)
-                is AbsenceEntry.Zastoupen -> stringResource(R.string.substitution_all_absence_zastoupen, entry.zastupuje.teacher)
+                is AbsenceEntry.Zastoupen -> stringResource(
+                    R.string.substitution_all_absence_zastoupen,
+                    entry.zastupuje.teacher
+                )
+
                 is AbsenceEntry.Invalid -> stringResource(R.string.substitution_all_absence_invalid, entry.original)
             }
 
-            Text(text = teacherName ?: stringResource(R.string.substitution_all_teacher_unknown), fontWeight = FontWeight.Bold)
+            Text(
+                text = teacherName ?: stringResource(R.string.substitution_all_teacher_unknown),
+                fontWeight = FontWeight.Bold
+            )
             Text(text = typeText, style = MaterialTheme.typography.bodySmall)
         }
     }
