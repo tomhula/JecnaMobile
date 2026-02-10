@@ -34,6 +34,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.graphics.toColorInt
 import me.tomasan7.jecnamobile.timetable.AbsenceEntry
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
+import me.tomasan7.jecnamobile.timetable.TakesPlaceInfo
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -64,7 +65,8 @@ fun SubstitutionSubScreen(
         snackbarHostState.showSnackbar(it)
     }
 
-    if (showReportDialog.value) {
+    if (showReportDialog.value)
+    {
         ReportDialog(
             isLoading = isReporting.value,
             onDismissRequest = { if (!isReporting.value) showReportDialog.value = false },
@@ -130,9 +132,11 @@ fun SubstitutionSubScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
 
-                    val dates = remember(uiState.data) { uiState.data.schedule.keys.sorted().map {
-                        SubstitutionDay(it, LocalDate.parse(it), uiState.data.schedule[it]?.info?.inWork ?: false)
-                    } }
+                    val dates = remember(uiState.data) {
+                        uiState.data.schedule.keys.sorted().map {
+                            SubstitutionDay(it, LocalDate.parse(it), uiState.data.schedule[it]?.info?.inWork ?: false)
+                        }
+                    }
 
                     OutlinedDropDownSelector(
                         modifier = Modifier.fillMaxWidth(),
@@ -141,9 +145,12 @@ fun SubstitutionSubScreen(
                         options = dates,
                         optionStringMap = {
                             it?.let {
-                                if (it.inWork) {
+                                if (it.inWork)
+                                {
                                     it.date.format(DATE_FORMATTER) + " (příprava)"
-                                } else {
+                                }
+                                else
+                                {
                                     it.date.format(DATE_FORMATTER)
                                 }
                             } ?: ""
@@ -155,21 +162,13 @@ fun SubstitutionSubScreen(
                     val selectedDayData = uiState.data.schedule[uiState.selectedDate?.key]
                     if (selectedDayData != null)
                     {
-                        Text(
-                            text = stringResource(R.string.substitution_day_info),
-                            style = MaterialTheme.typography.titleMedium
+                        TakesPlaceInfo(
+                            label = stringResource(R.string.substitution_day_info),
+                            text = selectedDayData.takesPlace.ifBlank {
+                                stringResource(R.string.substitution_no_actions_take_place)
+                            },
+                            expandable = false
                         )
-                        if (selectedDayData.takesPlace.isNotBlank())
-                        {
-                            Text(text = selectedDayData.takesPlace, style = MaterialTheme.typography.bodyMedium)
-                        }
-                        else
-                        {
-                            Text(
-                                text = stringResource(R.string.substitution_no_actions_take_place),
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                        }
 
                         Text(
                             text = stringResource(R.string.substitution_all_changes_title),

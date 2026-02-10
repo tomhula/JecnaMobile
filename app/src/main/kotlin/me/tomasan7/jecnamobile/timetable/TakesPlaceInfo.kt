@@ -17,14 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TakesPlaceInfo(label: String, text: String) {
-    var expanded by remember { mutableStateOf(false) }
+fun TakesPlaceInfo(label: String, text: String, expandable: Boolean = true) {
+    var expanded by remember { mutableStateOf(!expandable) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = MaterialTheme.colorScheme.secondaryContainer,
+            disabledContainerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
-        onClick = { expanded = !expanded }
+        onClick = { expanded = !expanded },
+        enabled = expandable
     ) {
         Column(modifier = Modifier.padding(8.dp)) {
             Row(
@@ -46,11 +48,13 @@ fun TakesPlaceInfo(label: String, text: String) {
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
-                Icon(
-                    imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSecondaryContainer
-                )
+                if (expandable) {
+                    Icon(
+                        imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
             }
             AnimatedVisibility(
                 visible = expanded,
