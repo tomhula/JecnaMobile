@@ -33,6 +33,7 @@
     <string name="settings_substitution_server_title">Server mimořádného rozvrhu</string>
     <string name="settings_substitution_server_description">URL serveru poskytujícího data pro mimořádný rozvrh.</string>
     <string name="settings_substitution_server_url">URL serveru</string>
+    <string name="settings_restart_required">Pro projevení změn je nutný restart aplikace</string>
 
     <string name="substitution_day_info">Koná se</string>
     <string name="substitution_day_info_tomorrow">Koná se zítra</string>

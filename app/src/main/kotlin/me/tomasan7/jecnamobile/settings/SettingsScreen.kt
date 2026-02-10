@@ -108,8 +108,15 @@ private fun Settings(viewModel: SettingsViewModel)
                     url = it
                     viewModel.setSubstitutionServerUrl(it) 
                 },
+                singleLine = true,
                 label = { Text(stringResource(R.string.settings_substitution_server_url)) },
                 modifier = Modifier.fillMaxWidth()
+            )
+
+            Text(
+                text = stringResource(R.string.settings_restart_required),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
             )
         }
     }

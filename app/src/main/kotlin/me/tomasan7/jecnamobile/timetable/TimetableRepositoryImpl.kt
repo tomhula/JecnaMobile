@@ -40,10 +40,6 @@ class TimetableRepositoryImpl @Inject constructor(
 
     private suspend fun fetchSubstitutions(): SubstitutionData? {
         return try {
-            val settings = appContext.settingsDataStore.data.first()
-            val serverUrl = settings.substitutionServerUrl.trim()
-            substitutionClient.setProvider(serverUrl)
-
             if (cachedClassName == null) {
                 try {
                     val student = jecnaClient.getStudentProfile()
@@ -70,10 +66,6 @@ class TimetableRepositoryImpl @Inject constructor(
 
     override suspend fun getAllSubstitutions(): SubstitutionAllData? = withContext(Dispatchers.IO) {
         try {
-            val settings = appContext.settingsDataStore.data.first()
-            val serverUrl = settings.substitutionServerUrl.trim()
-            substitutionClient.setProvider(serverUrl)
-
             substitutionClient.getAll().toSerializable()
         } catch (e: Exception) {
             e.printStackTrace()
