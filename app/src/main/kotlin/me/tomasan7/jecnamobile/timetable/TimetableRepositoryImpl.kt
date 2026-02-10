@@ -3,6 +3,10 @@ package me.tomasan7.jecnamobile.timetable
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import javax.inject.Inject
+import android.content.Context
+import dagger.hilt.android.qualifiers.ApplicationContext
+import me.tomasan7.jecnamobile.util.settingsDataStore
+import kotlinx.coroutines.flow.first
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -15,6 +19,7 @@ import cz.jzitnik.jecna_supl_client.ReportLocation
 class TimetableRepositoryImpl @Inject constructor(
     private val jecnaClient: JecnaClient,
     private val substitutionClient: JecnaSuplClient,
+    @ApplicationContext private val context: Context,
 ) : TimetableRepository
 {
     override suspend fun getTimetableData(): TimetableData = coroutineScope {
@@ -42,6 +47,9 @@ class TimetableRepositoryImpl @Inject constructor(
     }
 
     private suspend fun fetchSubstitutions(): SubstitutionData? {
+        val settings = context.settingsDataStore.data.first()
+        if (!settings.substitutionTimetableEnabled) return null
+
         return try {
             val className = getClassName()
 

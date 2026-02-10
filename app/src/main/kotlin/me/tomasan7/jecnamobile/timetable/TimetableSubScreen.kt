@@ -117,8 +117,10 @@ fun TimetableSubScreen(
     Scaffold(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_timetable, navDrawerController) {
-                IconButton(onClick = { showReportDialog.value = true }) {
-                    Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
+                if (showSubstitution) {
+                    IconButton(onClick = { showReportDialog.value = true }) {
+                        Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
+                    }
                 }
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
