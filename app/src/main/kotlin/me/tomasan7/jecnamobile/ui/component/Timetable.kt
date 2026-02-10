@@ -120,10 +120,21 @@ fun Timetable(
                     timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
                         val spotKey = day to index
                         val isRevealed = revealedSpots.contains(spotKey)
+                        val substitution = substitutionsMap[day]?.changes?.getOrNull(index)
+                        val substitutionText = substitution?.let {
+                            if (it.willBeSpecified ?: false)
+                            {
+                                it.text + "\n" + stringResource(R.string.substitution_will_be_specified)
+                            }
+                            else
+                            {
+                                it.text
+                            }
+                        }
 
                         LessonSpot(
                             lessonSpot = lessonSpot,
-                            substitution = if (isRevealed) null else substitutionsMap[day]?.changes?.getOrNull(index)?.text,
+                            substitution = if (isRevealed) null else substitutionText,
                             onShowOriginal = {
                                 scope.launch {
                                     revealedSpots += spotKey
