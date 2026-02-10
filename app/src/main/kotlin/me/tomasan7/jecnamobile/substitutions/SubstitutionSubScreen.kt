@@ -42,6 +42,13 @@ fun SubstitutionSubScreen(
     viewModel: SubstitutionViewModel = hiltViewModel()
 )
 {
+    DisposableEffect(Unit) {
+        viewModel.enteredComposition()
+        onDispose {
+            viewModel.leftComposition()
+        }
+    }
+
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
 
@@ -60,7 +67,7 @@ fun SubstitutionSubScreen(
     ) { paddingValues ->
         PullToRefreshBox(
             isRefreshing = uiState.loading,
-            onRefresh = { viewModel.load() },
+            onRefresh = { viewModel.reload() },
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
