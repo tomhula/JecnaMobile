@@ -67,6 +67,26 @@ fun TimetableSubScreen(
     val context = LocalContext.current;
     val showReportDialog = remember { mutableStateOf(false) }
     val isReporting = remember { mutableStateOf(false) }
+    val showSubstitution = remember(
+        uiState.selectedSchoolYear,
+        uiState.selectedPeriod
+    ) {
+        val today = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+
+        val schoolYear = uiState.selectedSchoolYear
+        val period = uiState.selectedPeriod ?: return@remember false
+
+        val periodStart = period.from
+        val periodEnd = period.to
+
+        val inSchoolYear = today in schoolYear
+        val inPeriod = today >= periodStart &&
+                (periodEnd == null || today <= periodEnd)
+
+        inSchoolYear && inPeriod
+    }
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -131,18 +151,19 @@ fun TimetableSubScreen(
                 if (uiState.timetablePage != null) {
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        if (uiState.substitutions == null) {
-                            val sidebarLink = SidebarLink.SubstitutionTimetable
-                            
-                            Text(
-                                text = stringResource(R.string.substitution_load_error),
-                                modifier = Modifier.clickable(onClick = {
-                                    val intent = Intent(Intent.ACTION_VIEW)
-                                    intent.data = sidebarLink.link.toUri()
-                                    context.startActivity(intent)
-                                })
-                            )
-                        } else {
+                        if (showSubstitution) {
+                            if (uiState.substitutions == null) {
+                                val sidebarLink = SidebarLink.SubstitutionTimetable
+
+                                Text(
+                                    text = stringResource(R.string.substitution_load_error),
+                                    modifier = Modifier.clickable(onClick = {
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.data = sidebarLink.link.toUri()
+                                        context.startActivity(intent)
+                                    })
+                                )
+                            } else {
                                 val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
                                     pluralStringResource(
                                         id = R.plurals.substitution_update_interval_minutes,
@@ -154,7 +175,7 @@ fun TimetableSubScreen(
                                     pluralStringResource(
                                         id = R.plurals.subtitution_update_interval_hours,
                                         count = uiState.substitutions.currentUpdateSchedule,
-                                        hours 
+                                        hours
                                     )
                                 }
                                 Text(
@@ -168,12 +189,12 @@ fun TimetableSubScreen(
 
                                 val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
                                 val today = now.date
-                                
+
                                 val (targetDate, labelRes) = remember(today, now.hour, now.minute, uiState.timetablePage) {
                                     val currentTime = now.time
                                     val timetable = uiState.timetablePage.timetable
                                     val todayLessons = timetable.getLessonSpotsForDay(today.dayOfWeek)
-                                    
+
                                     val lastLessonEndTime = todayLessons
                                         ?.mapIndexedNotNull { index, spot -> if (spot.isNotEmpty()) index else null }
                                         ?.lastOrNull()
@@ -203,12 +224,13 @@ fun TimetableSubScreen(
                                 if (targetInfo != null && targetInfo.takesPlace.isNotBlank()) {
                                     TakesPlaceInfo(stringResource(labelRes), targetInfo.takesPlace)
                                 }
+                            }
                         }
 
                         Timetable(
                             modifier = Modifier.fillMaxSize(),
                             timetable = uiState.timetablePage.timetable,
-                            substitutions = uiState.substitutions,
+                            substitutions = if (showSubstitution) uiState.substitutions else null,
                             hideClass = true,
                             onRoomClick = onRoomClick,
                             onTeacherClick = onTeacherClick
