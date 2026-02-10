@@ -1,9 +1,12 @@
 package me.tomasan7.jecnamobile.settings
 
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -96,10 +99,21 @@ private fun Settings(viewModel: SettingsViewModel)
         ) {
             var url by remember { mutableStateOf(settings.substitutionServerUrl) }
 
-            LaunchedEffect(settings.substitutionServerUrl) {
-                if (url != settings.substitutionServerUrl) {
-                    url = settings.substitutionServerUrl
-                }
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { viewModel.setSubstitutionTimetableEnabled(!settings.substitutionTimetableEnabled) }
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_substitution_server_enable),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = settings.substitutionTimetableEnabled,
+                    onCheckedChange = { viewModel.setSubstitutionTimetableEnabled(it) }
+                )
             }
 
             OutlinedTextField(
@@ -110,7 +124,16 @@ private fun Settings(viewModel: SettingsViewModel)
                 },
                 singleLine = true,
                 label = { Text(stringResource(R.string.settings_substitution_server_url)) },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                trailingIcon = {
+                    IconButton(onClick = {
+                        val defaultUrl = Settings.DEFAULT_SUBSTITUTION_SERVER_URL
+                        url = defaultUrl
+                        viewModel.setSubstitutionServerUrl(defaultUrl)
+                    }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.settings_substitution_server_reset))
+                    }
+                }
             )
 
             Text(

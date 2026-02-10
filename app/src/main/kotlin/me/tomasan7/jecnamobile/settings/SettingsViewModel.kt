@@ -35,4 +35,10 @@ class SettingsViewModel @Inject constructor(
             it.copy(substitutionServerUrl = url)
         }
     }
+
+    fun setSubstitutionTimetableEnabled(enabled: Boolean) = viewModelScope.launch {
+        settingsDataStore.updateData {
+            it.copy(substitutionTimetableEnabled = enabled)
+        }
+    }
 }

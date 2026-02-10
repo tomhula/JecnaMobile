@@ -29,17 +29,18 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
 
 import kotlinx.datetime.DayOfWeek
-import kotlinx.datetime.LocalDate
 import androidx.compose.foundation.clickable
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.core.net.toUri
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
+import me.tomasan7.jecnamobile.util.settingsAsState
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.plus
@@ -67,10 +68,14 @@ fun TimetableSubScreen(
     val context = LocalContext.current;
     val showReportDialog = remember { mutableStateOf(false) }
     val isReporting = remember { mutableStateOf(false) }
+    val settings by settingsAsState()
     val showSubstitution = remember(
         uiState.selectedSchoolYear,
-        uiState.selectedPeriod
+        uiState.selectedPeriod,
+        settings.substitutionTimetableEnabled
     ) {
+        if (!settings.substitutionTimetableEnabled) return@remember false
+
         val today = Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .date

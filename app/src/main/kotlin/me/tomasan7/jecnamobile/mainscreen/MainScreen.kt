@@ -59,7 +59,11 @@ fun MainScreen(
     val settings by settingsAsStateAwaitFirst()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val destinationItems = SubScreenDestination.entries
+    val destinationItems = remember(settings.substitutionTimetableEnabled) {
+        SubScreenDestination.entries.filter {
+            it != SubScreenDestination.Substitution || settings.substitutionTimetableEnabled
+        }
+    }
     val linkItems = SidebarLink.entries
     val navBackStack = rememberNavBackStack(settings.defaultDestination)
     // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
