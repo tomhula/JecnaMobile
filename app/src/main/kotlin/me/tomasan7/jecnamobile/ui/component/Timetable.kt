@@ -28,7 +28,10 @@ import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.timetable.DailySchedule
+import me.tomasan7.jecnamobile.timetable.SubstitutionData
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.util.manipulate
@@ -37,7 +40,7 @@ import kotlin.time.Clock
 @Composable
 fun Timetable(
     timetable: Timetable,
-    substitutions: Map<DayOfWeek, List<String?>> = emptyMap(),
+    substitutions: SubstitutionData? = null,
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
     onTeacherClick: (TeacherReference) -> Unit = {},
@@ -46,6 +49,18 @@ fun Timetable(
 {
     val revealedSpots = remember { mutableStateSetOf<Pair<DayOfWeek, Int>>() }
     val scope = rememberCoroutineScope()
+
+    val substitutionsMap: Map<DayOfWeek, DailySchedule> = remember(substitutions) {
+        runCatching {
+            substitutions
+                ?.data
+                ?.associate { item ->
+                    val date = LocalDate.parse(item.date)
+                    date.dayOfWeek to item
+                }
+                ?: emptyMap()
+        }.getOrDefault(emptyMap())
+    }
 
     val mostLessonsInLessonSpotInEachDay = remember(timetable) {
         timetable.run {
@@ -98,16 +113,17 @@ fun Timetable(
                     DayLabel(
                         getWeekDayName(day).substring(0, 2), Modifier
                             .width(30.dp)
-                            .fillMaxHeight()
+                            .fillMaxHeight(),
+                        inWork = substitutionsMap[day]?.info?.inWork ?: false
                     )
                     HorizontalSpacer(breakWidth)
                     timetable.getLessonSpotsForDay(day)!!.forEachIndexed { index, lessonSpot ->
                         val spotKey = day to index
                         val isRevealed = revealedSpots.contains(spotKey)
-                        
+
                         LessonSpot(
                             lessonSpot = lessonSpot,
-                            substitution = if (isRevealed) null else substitutions[day]?.getOrNull(index),
+                            substitution = if (isRevealed) null else substitutionsMap[day]?.changes?.getOrNull(index)?.text,
                             onShowOriginal = {
                                 scope.launch {
                                     revealedSpots += spotKey
@@ -190,7 +206,8 @@ private fun LessonSpot(
     if (lessonSpot.size <= 2)
         lessonSpotModifier = lessonSpotModifier.fillMaxHeight()
 
-    if (isRevealed) {
+    if (isRevealed)
+    {
         lessonSpotModifier = lessonSpotModifier.dashedBorder(
             width = 1.dp,
             color = MaterialTheme.colorScheme.inverseSurface,
@@ -201,13 +218,18 @@ private fun LessonSpot(
     }
 
     Column(lessonSpotModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        if (substitution != null) {
+        if (substitution != null)
+        {
             SubstitutionLesson(
-                modifier = Modifier.fillMaxWidth().fillMaxHeight(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
                 text = substitution,
                 onShowOriginal = onShowOriginal,
             )
-        } else {
+        }
+        else
+        {
             lessonSpot.forEach { lesson ->
                 /* If there is < 2 lessons, they are stretched to  */
                 var lessonModifier = Modifier.fillMaxWidth()
@@ -267,12 +289,20 @@ private fun Lesson(
 @Composable
 private fun DayLabel(
     day: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    inWork: Boolean
 )
 {
     Surface(
         modifier = modifier,
-        color = MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).manipulate(1.5f),
+        color = if (inWork)
+        {
+            MaterialTheme.colorScheme.tertiaryContainer
+        }
+        else
+        {
+            MaterialTheme.colorScheme.surfaceColorAtElevation(4.dp).manipulate(1.5f)
+        },
         shadowElevation = ElevationLevel.level1,
         shape = RoundedCornerShape(5.dp)
     ) {

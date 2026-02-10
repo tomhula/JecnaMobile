@@ -105,17 +105,6 @@ fun TimetableSubScreen(
                 )
                 
                 if (uiState.timetablePage != null) {
-                    val substitutionsMap: Map<DayOfWeek, List<String?>> = remember(uiState.substitutions) {
-                        runCatching {
-                            uiState.substitutions
-                                ?.data
-                                ?.associate { item ->
-                                    val date = LocalDate.parse(item.date)
-                                    date.dayOfWeek to item.changes.map { it?.text }
-                                }
-                                ?: emptyMap()
-                        }.getOrDefault(emptyMap())
-                    }
 
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         if (uiState.substitutions == null) {
@@ -195,7 +184,7 @@ fun TimetableSubScreen(
                         Timetable(
                             modifier = Modifier.fillMaxSize(),
                             timetable = uiState.timetablePage.timetable,
-                            substitutions = substitutionsMap,
+                            substitutions = uiState.substitutions,
                             hideClass = true,
                             onRoomClick = onRoomClick,
                             onTeacherClick = onTeacherClick
