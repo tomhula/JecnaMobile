@@ -12,6 +12,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.timetable.SubstitutionAllData
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.time.Clock
 
@@ -36,7 +37,10 @@ class SubstitutionViewModel @Inject constructor(
             uiState = uiState.copy(
                 data = data,
                 lastUpdateTimestamp = Clock.System.now(),
-                selectedDate = uiState.selectedDate ?: data.schedule.keys.minOrNull()
+                selectedDate = uiState.selectedDate
+                    ?: data.schedule.keys.minOrNull()?.let {
+                        SubstitutionDay(it, LocalDate.parse(it), data.schedule[it]?.info?.inWork ?: false)
+                    }
             )
         }
         else
@@ -55,7 +59,7 @@ class SubstitutionViewModel @Inject constructor(
         uiState = uiState.copy(snackBarMessageEvent = triggered(message))
     }
 
-    fun selectDate(date: String)
+    fun selectDate(date: SubstitutionDay)
     {
         uiState = uiState.copy(selectedDate = date)
     }

@@ -108,7 +108,9 @@ fun SubstitutionSubScreen(
                         style = MaterialTheme.typography.bodySmall
                     )
 
-                    val dates = remember(uiState.data) { uiState.data.schedule.keys.sorted() }
+                    val dates = remember(uiState.data) { uiState.data.schedule.keys.sorted().map {
+                        SubstitutionDay(it, LocalDate.parse(it), uiState.data.schedule[it]?.info?.inWork ?: false)
+                    } }
 
                     OutlinedDropDownSelector(
                         modifier = Modifier.fillMaxWidth(),
@@ -117,14 +119,18 @@ fun SubstitutionSubScreen(
                         options = dates,
                         optionStringMap = {
                             it?.let {
-                                LocalDate.parse(it).format(DATE_FORMATTER)
+                                if (it.inWork) {
+                                    it.date.format(DATE_FORMATTER) + " (příprava)"
+                                } else {
+                                    it.date.format(DATE_FORMATTER)
+                                }
                             } ?: ""
                         },
                         selectedValue = uiState.selectedDate,
                         onChange = { viewModel.selectDate(it) }
                     )
 
-                    val selectedDayData = uiState.data.schedule[uiState.selectedDate]
+                    val selectedDayData = uiState.data.schedule[uiState.selectedDate?.key]
                     if (selectedDayData != null)
                     {
                         Text(
