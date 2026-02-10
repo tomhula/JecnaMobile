@@ -367,4 +367,4 @@ private fun TableCell(
     }
 }
 
-private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M. yyyy")
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d.M.yyyy")
