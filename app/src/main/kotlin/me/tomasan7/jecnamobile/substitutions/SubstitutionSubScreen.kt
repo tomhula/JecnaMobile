@@ -32,7 +32,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.core.graphics.toColorInt
 import me.tomasan7.jecnamobile.timetable.AbsenceEntry
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
-import me.tomasan7.jecnamobile.timetable.TakesPlaceInfo
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,7 +115,11 @@ fun SubstitutionSubScreen(
                         textFieldModifier = Modifier.fillMaxWidth(),
                         label = stringResource(R.string.substitution_all_date_label),
                         options = dates,
-                        optionStringMap = { it ?: "" },
+                        optionStringMap = {
+                            it?.let {
+                                LocalDate.parse(it).format(DATE_FORMATTER)
+                            } ?: ""
+                        },
                         selectedValue = uiState.selectedDate,
                         onChange = { viewModel.selectDate(it) }
                     )
@@ -334,3 +339,5 @@ private fun TableCell(
         )
     }
 }
+
+private val DATE_FORMATTER = DateTimeFormatter.ofPattern("d. M. yyyy")
