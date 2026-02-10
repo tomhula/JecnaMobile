@@ -339,4 +339,19 @@
     <string name="substitution_all_load_error">Nepodařilo se načíst mimořádný rozvrh.</string>
     <string name="substitution_no_actions_take_place">Žádné akce se nekonají</string>
     <string name="substitution_no_teacher_absences">Žádní učitelé nemají absenci</string>
+
+    <!-- ##### Report ##### -->
+    <string name="report_title">Nahlášení chyby mimořádného rozvrhu</string>
+    <string name="report_cancel">Zrušit</string>
+    <string name="report_submit">Nahlásit</string>
+    <string name="report_content_label">Popis chyby</string>
+    <string name="report_type_label">Typ chyby:</string>
+    <string name="report_type_timetable">Rozvrh</string>
+    <string name="report_type_teacher_absence">Absence učitele</string>
+    <string name="report_type_takes_place">Konání akce</string>
+    <string name="report_success">Nahlášeno</string>
+    <string name="report_error">Chyba při nahlašování</string>
+    <string name="report_button_description">Nahlásit chybu</string>
+    <string name="report_disclaimer">Toto slouží pouze pro nahlášení chyb ve zpracování (parsování) mimořádného rozvrhu. Neslouží pro nahlášení chyb v aplikaci jako takové.</string>
+    <string name="report_class_name_warning">Součástí nahlášení bude i název vaší třídy.</string>
 </resources>

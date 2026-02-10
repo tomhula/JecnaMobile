@@ -17,19 +17,21 @@ import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
-import me.tomasan7.jecnamobile.timetable.TimetableData
+import cz.jzitnik.jecna_supl_client.ReportLocation
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-import android.util.Log
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<TimetableData, SchoolYearPeriodParams>
+    repository: CacheRepository<TimetableData, SchoolYearPeriodParams>,
+    private val timetableRepository: TimetableRepository
 ) : SubScreenCacheViewModel<TimetableData, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
@@ -102,5 +104,19 @@ class TimetableViewModel @Inject constructor(
             selectedPeriod = selectedPeriod,
             snackBarMessageEvent = snackBarMessageEvent
         )
+    }
+
+    fun reportError(content: String, location: ReportLocation, onFinished: () -> Unit)
+    {
+        viewModelScope.launch {
+            timetableRepository.reportSubstitutionError(content, location)
+                .onSuccess {
+                    showSnackBarMessage(appContext.getString(R.string.report_success))
+                }
+                .onFailure {
+                    showSnackBarMessage(appContext.getString(R.string.report_error))
+                }
+            onFinished()
+        }
     }
 }

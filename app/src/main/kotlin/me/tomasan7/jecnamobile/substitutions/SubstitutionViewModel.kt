@@ -16,6 +16,10 @@ import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.time.Clock
 
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
+import cz.jzitnik.jecna_supl_client.ReportLocation
+
 @HiltViewModel
 class SubstitutionViewModel @Inject constructor(
     @ApplicationContext context: Context,
@@ -67,5 +71,19 @@ class SubstitutionViewModel @Inject constructor(
     fun onSnackBarMessageEventConsumed()
     {
         uiState = uiState.copy(snackBarMessageEvent = consumed())
+    }
+
+    fun reportError(content: String, location: ReportLocation, onFinished: () -> Unit)
+    {
+        viewModelScope.launch {
+            repository.reportSubstitutionError(content, location)
+                .onSuccess {
+                    showSnackBarMessage(appContext.getString(R.string.report_success))
+                }
+                .onFailure {
+                    showSnackBarMessage(appContext.getString(R.string.report_error))
+                }
+            onFinished()
+        }
     }
 }

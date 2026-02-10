@@ -4,6 +4,8 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -52,6 +54,8 @@ fun SubstitutionSubScreen(
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
+    val showReportDialog = remember { mutableStateOf(false) }
+    val isReporting = remember { mutableStateOf(false) }
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -60,9 +64,27 @@ fun SubstitutionSubScreen(
         snackbarHostState.showSnackbar(it)
     }
 
+    if (showReportDialog.value) {
+        ReportDialog(
+            isLoading = isReporting.value,
+            onDismissRequest = { if (!isReporting.value) showReportDialog.value = false },
+            onReport = { content, location ->
+                isReporting.value = true
+                viewModel.reportError(content, location) {
+                    isReporting.value = false
+                    showReportDialog.value = false
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_link_substitution_timetable, navDrawerController) {}
+            SubScreenTopAppBar(R.string.sidebar_link_substitution_timetable, navDrawerController) {
+                IconButton(onClick = { showReportDialog.value = true }) {
+                    Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
+                }
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
@@ -230,7 +252,7 @@ private fun TeacherAbsenceItem(
                 is AbsenceEntry.Exkurze -> stringResource(R.string.substitution_all_absence_exkurze)
                 is AbsenceEntry.Zastoupen -> stringResource(
                     R.string.substitution_all_absence_zastoupen,
-                    entry.zastupuje.teacher
+                    entry.zastupuje.teacher ?: stringResource(R.string.substitution_all_teacher_unknown)
                 )
 
                 is AbsenceEntry.Invalid -> stringResource(R.string.substitution_all_absence_invalid, entry.original)

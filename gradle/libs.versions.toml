@@ -5,7 +5,7 @@ plugin-kotlin = "2.3.0"
 plugin-ksp = "2.3.5-SNAPSHOT"
 
 jecnaAPI = "9.1.0"
-jecnaSupl = "0.2.2"
+jecnaSupl = "0.2.3"
 
 compose-android-bom = "2026.01.00"
 

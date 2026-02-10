@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -29,8 +31,11 @@ import me.tomasan7.jecnamobile.ui.component.*
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
 import androidx.compose.foundation.clickable
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.core.net.toUri
@@ -60,6 +65,8 @@ fun TimetableSubScreen(
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current;
+    val showReportDialog = remember { mutableStateOf(false) }
+    val isReporting = remember { mutableStateOf(false) }
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -68,9 +75,26 @@ fun TimetableSubScreen(
         snackbarHostState.showSnackbar(it)
     }
 
+    if (showReportDialog.value) {
+        ReportDialog(
+            isLoading = isReporting.value,
+            onDismissRequest = { if (!isReporting.value) showReportDialog.value = false },
+            onReport = { content, location ->
+                isReporting.value = true
+                viewModel.reportError(content, location) {
+                    isReporting.value = false
+                    showReportDialog.value = false
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_timetable, navDrawerController) {
+                IconButton(onClick = { showReportDialog.value = true }) {
+                    Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
+                }
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
                     underlyingIcon = SubScreenDestination.Timetable.iconSelected,

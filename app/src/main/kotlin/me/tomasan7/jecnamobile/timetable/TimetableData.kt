@@ -58,14 +58,14 @@ sealed class AbsenceEntry {
     @Serializable
     @SerialName("wholeDay")
     data class WholeDay(
-        val teacher: String,
+        val teacher: String?,
         val teacherCode: String
     ) : AbsenceEntry()
 
     @Serializable
     @SerialName("single")
     data class Single(
-        val teacher: String,
+        val teacher: String?,
         val teacherCode: String,
         val hours: Int
     ) : AbsenceEntry()
@@ -73,7 +73,7 @@ sealed class AbsenceEntry {
     @Serializable
     @SerialName("range")
     data class Range(
-        val teacher: String,
+        val teacher: String?,
         val teacherCode: String,
         val hours: AbsenceRange
     ) : AbsenceEntry()
@@ -81,14 +81,14 @@ sealed class AbsenceEntry {
     @Serializable
     @SerialName("exkurze")
     data class Exkurze(
-        val teacher: String,
+        val teacher: String?,
         val teacherCode: String
     ) : AbsenceEntry()
 
     @Serializable
     @SerialName("zastoupen")
     data class Zastoupen(
-        val teacher: String,
+        val teacher: String?,
         val teacherCode: String,
         val zastupuje: SubstituteInfo
     ) : AbsenceEntry()
@@ -108,7 +108,7 @@ data class AbsenceRange(
 
 @Serializable
 data class SubstituteInfo(
-    val teacher: String,
+    val teacher: String?,
     val teacherCode: String
 )
 
