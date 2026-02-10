@@ -97,6 +97,7 @@ private fun Settings(viewModel: SettingsViewModel)
             title = stringResource(R.string.settings_substitution_server_title),
             description = stringResource(R.string.settings_substitution_server_description)
         ) {
+            // If we directly use settings.substitutionServerUrl the text field will be laggy and will reset users cursor
             var url by remember { mutableStateOf(settings.substitutionServerUrl) }
 
             Row(
