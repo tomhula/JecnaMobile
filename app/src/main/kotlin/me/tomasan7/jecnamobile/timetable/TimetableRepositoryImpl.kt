@@ -18,8 +18,8 @@ class TimetableRepositoryImpl @Inject constructor(
 {
     override suspend fun getTimetableData(): TimetableData = coroutineScope {
         val substitutionsDeferred = async { fetchSubstitutions() }
-        val page = jecnaClient.getTimetablePage()
-        TimetableData(page, substitutionsDeferred.await())
+        val page = async { jecnaClient.getTimetablePage() }
+        TimetableData(page.await(), substitutionsDeferred.await())
     }
 
     override suspend fun getTimetableData(
@@ -27,8 +27,8 @@ class TimetableRepositoryImpl @Inject constructor(
         periodId: Int?
     ): TimetableData = coroutineScope {
         val substitutionsDeferred = async { fetchSubstitutions() }
-        val page = jecnaClient.getTimetablePage(schoolYear, periodId)
-        TimetableData(page, substitutionsDeferred.await())
+        val page = async { jecnaClient.getTimetablePage(schoolYear, periodId) }
+        TimetableData(page.await(), substitutionsDeferred.await())
     }
 
     private var cachedClassName: String? = null
