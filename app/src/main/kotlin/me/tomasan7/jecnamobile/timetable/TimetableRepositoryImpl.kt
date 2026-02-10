@@ -4,21 +4,16 @@ import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import javax.inject.Inject
 
-import me.tomasan7.jecnamobile.util.settingsDataStore
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
-import android.content.Context
 import cz.jzitnik.jecna_supl_client.JecnaSuplClient
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 class TimetableRepositoryImpl @Inject constructor(
     private val jecnaClient: JecnaClient,
     private val substitutionClient: JecnaSuplClient,
-    @ApplicationContext private val appContext: Context
 ) : TimetableRepository
 {
     override suspend fun getTimetableData(): TimetableData = coroutineScope {
@@ -52,7 +47,9 @@ class TimetableRepositoryImpl @Inject constructor(
             val className = cachedClassName
 
             if (className != null) {
-                val subs = substitutionClient.getSchedule(className)
+                val subs = withContext(Dispatchers.IO) {
+                    substitutionClient.getSchedule(className)
+                }
                 SubstitutionData(subs.status.lastUpdated, subs.status.currentUpdateSchedule.toInt(), subs.schedule.map { (date, schedule) -> schedule.toSerializable(date) })
             } else {
                 null
