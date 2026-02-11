@@ -33,6 +33,7 @@ import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
+import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
 @Composable
 fun SettingsScreen(
@@ -66,7 +67,7 @@ private fun Settings(viewModel: SettingsViewModel)
         SubScreenDestination.Teachers to stringResource(R.string.sidebar_teachers),
     )
 
-    val settings by settingsAsState()
+    val settings by settingsAsStateAwaitFirst()
 
     Column(
         modifier = Modifier
