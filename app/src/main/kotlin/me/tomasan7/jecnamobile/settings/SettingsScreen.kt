@@ -26,8 +26,12 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.LaunchedEffect
-
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 
 @Composable
 fun SettingsScreen(
@@ -135,6 +139,33 @@ private fun Settings(viewModel: SettingsViewModel)
                         Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.settings_substitution_server_reset))
                     }
                 }
+            )
+
+            val baseText = stringResource(R.string.settings_substitution_server_info)
+
+            val annotated = buildAnnotatedString {
+                append("$baseText ")
+
+                withLink(
+                    LinkAnnotation.Url(
+                        url = "https://jecnarozvrh.jzitnik.dev",
+                        styles = TextLinkStyles(
+                            style = SpanStyle(
+                                color = jm_label,
+                                textDecoration = TextDecoration.Underline
+                            )
+                        )
+                    )
+                ) {
+                    append("jecnarozvrh.jzitnik.dev")
+                }
+                
+                append(".")
+            }
+
+            Text(
+                text = annotated,
+                style = MaterialTheme.typography.bodySmall
             )
 
             Text(

@@ -35,6 +35,7 @@
     <string name="settings_substitution_server_url">URL serveru</string>
     <string name="settings_substitution_server_reset">Obnovit výchozí URL</string>
     <string name="settings_substitution_server_enable">Povolit mimořádný rozvrh</string>
+    <string name="settings_substitution_server_info">Jedná se o hostovatelnou službu. Více informací na</string>
     <string name="settings_restart_required">Pro projevení změn je nutný restart aplikace</string>
 
     <string name="substitution_day_info">Koná se</string>
