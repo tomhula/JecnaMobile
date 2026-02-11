@@ -343,6 +343,7 @@
     <string name="substitution_all_load_error">Nepodařilo se načíst mimořádný rozvrh.</string>
     <string name="substitution_no_actions_take_place">Žádné akce se nekonají</string>
     <string name="substitution_no_teacher_absences">Žádní učitelé nemají absenci</string>
+    <string name="substitution_preparation_label">" (příprava)"</string>
 
     <!-- ##### Report ##### -->
     <string name="report_title">Nahlášení chyby mimořádného rozvrhu</string>

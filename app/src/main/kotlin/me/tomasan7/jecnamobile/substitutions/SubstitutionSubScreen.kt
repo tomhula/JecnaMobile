@@ -144,16 +144,12 @@ fun SubstitutionSubScreen(
                         label = stringResource(R.string.substitution_all_date_label),
                         options = dates,
                         optionStringMap = {
-                            it?.let {
+                            if (it != null) {
                                 if (it.inWork)
-                                {
-                                    it.date.format(DATE_FORMATTER) + " (příprava)"
-                                }
+                                    it.date.format(DATE_FORMATTER) + stringResource(R.string.substitution_preparation_label)
                                 else
-                                {
                                     it.date.format(DATE_FORMATTER)
-                                }
-                            } ?: ""
+                            } else ""
                         },
                         selectedValue = uiState.selectedDate,
                         onChange = { viewModel.selectDate(it) }
