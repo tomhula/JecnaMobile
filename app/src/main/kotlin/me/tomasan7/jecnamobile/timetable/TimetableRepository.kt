@@ -6,9 +6,9 @@ import cz.jzitnik.jecna_supl_client.ReportLocation
 
 interface TimetableRepository
 {
-    suspend fun getTimetableData(): TimetableData
-    suspend fun getTimetableData(schoolYear: SchoolYear, timetablePeriod: TimetablePage.PeriodOption?) = getTimetableData(schoolYear, timetablePeriod?.id)
-    suspend fun getTimetableData(schoolYear: SchoolYear, periodId: Int?): TimetableData
+    suspend fun getTimetableData(fetchSubstitutions: Boolean): TimetableData
+    suspend fun getTimetableData(schoolYear: SchoolYear, timetablePeriod: TimetablePage.PeriodOption?, fetchSubstitutions: Boolean) = getTimetableData(schoolYear, timetablePeriod?.id, fetchSubstitutions)
+    suspend fun getTimetableData(schoolYear: SchoolYear, periodId: Int?, fetchSubstitutions: Boolean): TimetableData
 
     suspend fun getAllSubstitutions(): SubstitutionAllData
 
