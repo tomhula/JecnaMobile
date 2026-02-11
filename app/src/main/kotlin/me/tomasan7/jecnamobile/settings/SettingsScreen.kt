@@ -23,6 +23,7 @@ import me.tomasan7.jecnamobile.ui.component.RadioGroup
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import me.tomasan7.jecnamobile.util.settingsAsState
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -103,6 +104,9 @@ private fun Settings(viewModel: SettingsViewModel)
         ) {
             // If we directly use settings.substitutionServerUrl the text field will be laggy and will reset users cursor
             var url by remember { mutableStateOf(settings.substitutionServerUrl) }
+            LaunchedEffect(url) { 
+                viewModel.setSubstitutionServerUrl(url) 
+            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -120,25 +124,30 @@ private fun Settings(viewModel: SettingsViewModel)
                     onCheckedChange = { viewModel.setSubstitutionTimetableEnabled(it) }
                 )
             }
+            
+            val defaultUrl = Settings.DEFAULT_SUBSTITUTION_SERVER_URL
+            val rollBackButton = if (url != defaultUrl)
+            {
+                @Composable {
+                    IconButton(onClick = {
+                        url = defaultUrl
+                    }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.settings_substitution_server_reset))
+                    } 
+                }
+            }
+            else 
+                null
 
             OutlinedTextField(
                 value = url,
                 onValueChange = { 
                     url = it
-                    viewModel.setSubstitutionServerUrl(it) 
                 },
                 singleLine = true,
                 label = { Text(stringResource(R.string.settings_substitution_server_url)) },
                 modifier = Modifier.fillMaxWidth(),
-                trailingIcon = {
-                    IconButton(onClick = {
-                        val defaultUrl = Settings.DEFAULT_SUBSTITUTION_SERVER_URL
-                        url = defaultUrl
-                        viewModel.setSubstitutionServerUrl(defaultUrl)
-                    }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = stringResource(R.string.settings_substitution_server_reset))
-                    }
-                }
+                trailingIcon = rollBackButton
             )
 
             val baseText = stringResource(R.string.settings_substitution_server_info)
