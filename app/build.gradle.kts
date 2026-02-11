@@ -68,7 +68,11 @@ dependencies {
         exclude(group = "net.java.dev.jna", module = "jna")
     }
     implementation(libs.jecnaSupl.android)
-    implementation("net.java.dev.jna:jna:5.16.0@aar")
+    implementation(libs.jna) {
+        artifact { 
+            type = "aar"
+        }
+    }
     implementation(libs.jecnaAPI)
 
     // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
