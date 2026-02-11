@@ -10,7 +10,7 @@ interface TimetableRepository
     suspend fun getTimetableData(schoolYear: SchoolYear, timetablePeriod: TimetablePage.PeriodOption?) = getTimetableData(schoolYear, timetablePeriod?.id)
     suspend fun getTimetableData(schoolYear: SchoolYear, periodId: Int?): TimetableData
 
-    suspend fun getAllSubstitutions(): SubstitutionAllData?
+    suspend fun getAllSubstitutions(): SubstitutionAllData
 
     suspend fun reportSubstitutionError(content: String, reportLocation: ReportLocation): Result<Unit>
 }

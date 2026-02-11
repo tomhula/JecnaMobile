@@ -68,13 +68,8 @@ class TimetableRepositoryImpl @Inject constructor(
     }
 
 
-    override suspend fun getAllSubstitutions(): SubstitutionAllData? = withContext(Dispatchers.IO) {
-        try {
-            substitutionClient.getAll().toSerializable()
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
-        }
+    override suspend fun getAllSubstitutions(): SubstitutionAllData = withContext(Dispatchers.IO) {
+        substitutionClient.getAll().toSerializable()
     }
 
     override suspend fun reportSubstitutionError(content: String, reportLocation: ReportLocation): Result<Unit> = withContext(Dispatchers.IO) {

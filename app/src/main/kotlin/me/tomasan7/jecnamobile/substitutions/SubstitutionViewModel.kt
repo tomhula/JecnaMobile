@@ -24,7 +24,7 @@ import cz.jzitnik.jecna_supl_client.ReportLocation
 class SubstitutionViewModel @Inject constructor(
     @ApplicationContext context: Context,
     private val repository: TimetableRepository
-) : SubScreenViewModel<SubstitutionAllData?>(context)
+) : SubScreenViewModel<SubstitutionAllData>(context)
 {
     override val parseErrorMessage = context.getString(R.string.substitution_all_load_error)
     override val loadErrorMessage = context.getString(R.string.substitution_all_load_error)
@@ -34,23 +34,16 @@ class SubstitutionViewModel @Inject constructor(
 
     override suspend fun fetchRealData() = repository.getAllSubstitutions()
 
-    override fun setDataUiState(data: SubstitutionAllData?)
+    override fun setDataUiState(data: SubstitutionAllData)
     {
-        if (data != null)
-        {
-            uiState = uiState.copy(
-                data = data,
-                lastUpdateTimestamp = Clock.System.now(),
-                selectedDate = uiState.selectedDate
-                    ?: data.schedule.keys.minOrNull()?.let {
-                        SubstitutionDay(it, LocalDate.parse(it), data.schedule[it]?.info?.inWork ?: false)
-                    }
-            )
-        }
-        else
-        {
-            showSnackBarMessage(appContext.getString(R.string.substitution_all_load_error))
-        }
+        uiState = uiState.copy(
+            data = data,
+            lastUpdateTimestamp = Clock.System.now(),
+            selectedDate = uiState.selectedDate
+                ?: data.schedule.keys.minOrNull()?.let {
+                    SubstitutionDay(it, LocalDate.parse(it), data.schedule[it]?.info?.inWork ?: false)
+                }
+        )
     }
 
     override fun setLoadingUiState(loading: Boolean)
