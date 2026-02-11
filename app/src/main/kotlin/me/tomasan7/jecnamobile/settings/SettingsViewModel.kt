@@ -29,4 +29,16 @@ class SettingsViewModel @Inject constructor(
             it.copy(defaultDestination = subScreenDestination)
         }
     }
+
+    fun setSubstitutionServerUrl(url: String) = viewModelScope.launch {
+        settingsDataStore.updateData {
+            it.copy(substitutionServerUrl = url)
+        }
+    }
+
+    fun setSubstitutionTimetableEnabled(enabled: Boolean) = viewModelScope.launch {
+        settingsDataStore.updateData {
+            it.copy(substitutionTimetableEnabled = enabled)
+        }
+    }
 }

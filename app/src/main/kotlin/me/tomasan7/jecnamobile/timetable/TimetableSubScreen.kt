@@ -1,8 +1,11 @@
 package me.tomasan7.jecnamobile.timetable
 
+import android.content.Intent
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -25,6 +28,25 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
 
+import kotlinx.datetime.DayOfWeek
+import androidx.compose.foundation.clickable
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
+import androidx.core.net.toUri
+import me.tomasan7.jecnamobile.mainscreen.SidebarLink
+import me.tomasan7.jecnamobile.util.settingsAsState
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimetableSubScreen(
@@ -43,6 +65,35 @@ fun TimetableSubScreen(
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current;
+    val showReportDialog = remember { mutableStateOf(false) }
+    val isReporting = remember { mutableStateOf(false) }
+    val settings by settingsAsState()
+    val showSubstitution = remember(
+        uiState.selectedSchoolYear,
+        uiState.selectedPeriod,
+        settings.substitutionTimetableEnabled
+    ) {
+        if (!settings.substitutionTimetableEnabled) return@remember false
+
+        val today = Clock.System.now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .date
+
+        val schoolYear = uiState.selectedSchoolYear
+        val period = uiState.selectedPeriod ?: return@remember false
+
+        val periodStart = period.from
+        val periodEnd = period.to
+
+        val inSchoolYear = today in schoolYear
+        val inPeriod = today >= periodStart &&
+                (periodEnd == null || today <= periodEnd)
+
+        val isShowingCurrentTimetable = inSchoolYear && inPeriod
+        
+        isShowingCurrentTimetable
+    }
 
     EventEffect(
         event = uiState.snackBarMessageEvent,
@@ -51,9 +102,28 @@ fun TimetableSubScreen(
         snackbarHostState.showSnackbar(it)
     }
 
+    if (showReportDialog.value) {
+        ReportDialog(
+            isLoading = isReporting.value,
+            onDismissRequest = { if (!isReporting.value) showReportDialog.value = false },
+            onReport = { content, location ->
+                isReporting.value = true
+                viewModel.reportError(content, location) {
+                    isReporting.value = false
+                    showReportDialog.value = false
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_timetable, navDrawerController) {
+                if (showSubstitution) {
+                    IconButton(onClick = { showReportDialog.value = true }) {
+                        Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
+                    }
+                }
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
                     underlyingIcon = SubScreenDestination.Timetable.iconSelected,
@@ -86,15 +156,96 @@ fun TimetableSubScreen(
                     onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
                     onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
                 )
+                
+                if (uiState.timetablePage != null) {
 
-                if (uiState.timetablePage != null)
-                    Timetable(
-                        modifier = Modifier.fillMaxSize(),
-                        timetable = uiState.timetablePage.timetable,
-                        hideClass = true,
-                        onRoomClick = onRoomClick,
-                        onTeacherClick = onTeacherClick
-                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        if (showSubstitution) {
+                            if (uiState.substitutions == null) {
+                                val sidebarLink = SidebarLink.SubstitutionTimetable
+
+                                Text(
+                                    text = stringResource(R.string.substitution_load_error),
+                                    modifier = Modifier.clickable(onClick = {
+                                        val intent = Intent(Intent.ACTION_VIEW)
+                                        intent.data = sidebarLink.link.toUri()
+                                        context.startActivity(intent)
+                                    })
+                                )
+                            } else {
+                                val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
+                                    pluralStringResource(
+                                        id = R.plurals.substitution_update_interval_minutes,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        uiState.substitutions.currentUpdateSchedule
+                                    )
+                                } else {
+                                    val hours = uiState.substitutions.currentUpdateSchedule / 60
+                                    pluralStringResource(
+                                        id = R.plurals.subtitution_update_interval_hours,
+                                        count = uiState.substitutions.currentUpdateSchedule,
+                                        hours
+                                    )
+                                }
+                                Text(
+                                    text = stringResource(
+                                        R.string.subtitution_info,
+                                        uiState.substitutions.lastUpdated,
+                                        intervalText
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall
+                                )
+
+                                val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
+                                val today = now.date
+
+                                val (targetDate, labelRes) = remember(today, now.hour, now.minute, uiState.timetablePage) {
+                                    val currentTime = now.time
+                                    val timetable = uiState.timetablePage.timetable
+                                    val todayLessons = timetable.getLessonSpotsForDay(today.dayOfWeek)
+
+                                    val lastLessonEndTime = todayLessons
+                                        ?.mapIndexedNotNull { index, spot -> if (spot.isNotEmpty()) index else null }
+                                        ?.lastOrNull()
+                                        ?.let { lastIndex -> timetable.lessonPeriods.getOrNull(lastIndex)?.to }
+
+                                    val dayFinished = lastLessonEndTime?.let { currentTime >= it } ?: (now.hour >= 16)
+
+                                    when {
+                                        now.dayOfWeek == DayOfWeek.SATURDAY -> {
+                                            today.plus(DatePeriod(days = 2)) to R.string.substitution_day_info_monday
+                                        }
+                                        now.dayOfWeek == DayOfWeek.SUNDAY -> {
+                                            today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_monday
+                                        }
+                                        dayFinished -> {
+                                            if (now.dayOfWeek == DayOfWeek.FRIDAY) {
+                                                today.plus(DatePeriod(days = 3)) to R.string.substitution_day_info_monday
+                                            } else {
+                                                today.plus(DatePeriod(days = 1)) to R.string.substitution_day_info_tomorrow
+                                            }
+                                        }
+                                        else -> today to R.string.substitution_day_info
+                                    }
+                                }
+
+                                val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                if (targetInfo != null && targetInfo.takesPlace.isNotBlank()) {
+                                    TakesPlaceInfo(stringResource(labelRes), targetInfo.takesPlace)
+                                }
+                            }
+                        }
+
+                        Timetable(
+                            modifier = Modifier.fillMaxSize(),
+                            timetable = uiState.timetablePage.timetable,
+                            substitutions = if (showSubstitution) uiState.substitutions else null,
+                            hideClass = true,
+                            onRoomClick = onRoomClick,
+                            onTeacherClick = onTeacherClick
+                        )
+                    }
+                }
             }
         }
     }

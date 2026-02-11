@@ -30,6 +30,18 @@
     <string name="settings_open_subscreen_description">Obrazovka, která se otevře po spuštění aplikace.</string>
     <string name="settings_canteen_image_tolerance_title">Tolerance fotek v jídelně</string>
     <string name="settings_canteen_image_tolerance_description">Minimální shoda, kterou fotka musí mít, aby se zobrazila.</string>
+    <string name="settings_substitution_server_title">Mimořádný rozvrh</string>
+    <string name="settings_substitution_server_description">URL serveru poskytujícího data pro mimořádný rozvrh.</string>
+    <string name="settings_substitution_server_url">URL serveru</string>
+    <string name="settings_substitution_server_reset">Obnovit výchozí URL</string>
+    <string name="settings_substitution_server_enable">Povolit mimořádný rozvrh</string>
+    <string name="settings_substitution_server_info">Jedná se o hostovatelnou službu. Více informací na</string>
+    <string name="settings_restart_required">Pro projevení změn je nutný restart aplikace</string>
+
+    <string name="substitution_day_info">Koná se</string>
+    <string name="substitution_day_info_tomorrow">Koná se zítra</string>
+    <string name="substitution_day_info_monday">Koná se v pondělí</string>
+    <string name="substitution_will_be_specified">(bude upřesněno)</string>
 
     <!-- ##### Main Screen ##### -->
 
@@ -102,6 +114,21 @@
 
     <string name="timetable_period">Období</string>
     <string name="timetable_load_error">Při načítání rozvrhu došlo k chybě.</string>
+    <string name="substitution_load_error">Chyba mimořádného rozvrhu, kliknutím otevřete.</string>
+
+    <string name="subtitution_info">Mimořádný rozvrh: poslední aktualizace: %1$s, aktualizováno %2$s.</string>
+    <plurals name="substitution_update_interval_minutes">
+        <item quantity="one">každou minutu</item>
+        <item quantity="few">každé %d minuty</item>
+        <item quantity="many">každých %d minut</item>
+        <item quantity="other">každých %d minut</item>
+    </plurals>
+    <plurals name="subtitution_update_interval_hours">
+        <item quantity="one">každou hodinu</item>
+        <item quantity="few">každé %d hodiny</item>
+        <item quantity="many">každých %d hodin</item>
+        <item quantity="other">každých %d hodin</item>
+    </plurals>
 
     <!-- ##### Canteen SubScreen ##### -->
 
@@ -297,4 +324,39 @@
     <string name="room_title_timetable">Rozvrh hodin</string>
     <string name="rooms_search_placeholder">Název učebny/číslo</string>
 
+    <string name="substitution_dialog_title">Suplování</string>
+    <string name="substitution_show_original">Zobrazit původní</string>
+    <string name="substitution_dialog_text_label">Text mimořádné změny</string>
+
+    <!-- ##### Substitutions ##### -->
+
+    <string name="substitution_all_date_label">Datum</string>
+    <string name="substitution_all_changes_title">Změny v rozvrhu</string>
+    <string name="substitution_all_absences_title">Absence učitelů</string>
+    <string name="substitution_all_absence_whole_day">Celý den</string>
+    <string name="substitution_all_absence_single">%1$d. hodinu</string>
+    <string name="substitution_all_absence_range">%1$d-%2$d hodinu</string>
+    <string name="substitution_all_absence_exkurze">Na exkurzi</string>
+    <string name="substitution_all_absence_zastoupen">Zastoupen (%1$s)</string>
+    <string name="substitution_all_absence_invalid">Neplatný záznam: %1$s</string>
+    <string name="substitution_all_teacher_unknown">Neznámý</string>
+    <string name="substitution_all_load_error">Nepodařilo se načíst mimořádný rozvrh.</string>
+    <string name="substitution_no_actions_take_place">Žádné akce se nekonají</string>
+    <string name="substitution_no_teacher_absences">Žádní učitelé nemají absenci</string>
+    <string name="substitution_preparation_label">" (příprava)"</string>
+
+    <!-- ##### Report ##### -->
+    <string name="report_title">Nahlášení chyby mimořádného rozvrhu</string>
+    <string name="report_cancel">Zrušit</string>
+    <string name="report_submit">Nahlásit</string>
+    <string name="report_content_label">Popis chyby</string>
+    <string name="report_type_label">Typ chyby:</string>
+    <string name="report_type_timetable">Rozvrh</string>
+    <string name="report_type_teacher_absence">Absence učitele</string>
+    <string name="report_type_takes_place">Konání akce</string>
+    <string name="report_success">Nahlášeno</string>
+    <string name="report_error">Chyba při nahlašování</string>
+    <string name="report_button_description">Nahlásit chybu</string>
+    <string name="report_disclaimer">Toto slouží pouze pro nahlášení chyb ve zpracování (parsování) mimořádného rozvrhu. Neslouží pro nahlášení chyb v aplikaci jako takové.</string>
+    <string name="report_class_name_warning">Součástí nahlášení bude i název vaší třídy.</string>
 </resources>

@@ -64,6 +64,15 @@ ksp {
 }*/
 
 dependencies {
+    implementation(libs.jecnaSupl.client) {
+        exclude(group = "net.java.dev.jna", module = "jna")
+    }
+    implementation(libs.jecnaSupl.android)
+    implementation(libs.jna) {
+        artifact { 
+            type = "aar"
+        }
+    }
     implementation(libs.jecnaAPI)
 
     // https://github.com/google/dagger/issues/4693#issuecomment-2823736143

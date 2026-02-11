@@ -5,6 +5,8 @@ plugin-kotlin = "2.3.0"
 plugin-ksp = "2.3.5-SNAPSHOT"
 
 jecnaAPI = "9.1.0"
+jecnaSupl = "0.2.3"
+jna = "5.16.0"
 
 compose-android-bom = "2026.01.00"
 
@@ -24,6 +26,8 @@ serialization = "1.10.0"
 
 [libraries]
 jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
+jecnaSupl-client = { module = "cz.jzitnik:jecna-supl-client", version.ref = "jecnaSupl" }
+jecnaSupl-android = { module = "cz.jzitnik:jecna-supl-client-android", version.ref = "jecnaSupl" }
 
 compose-android-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-android-bom" }
 compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
@@ -37,6 +41,7 @@ composeStateEvents = { module = "com.github.leonard-palm:compose-state-events", 
 composeHtml = { module = "com.github.ireward:compose-html", version.ref = "composeHtml" }
 composeCoil = { module = "io.coil-kt:coil-compose", version.ref = "composeCoil" }
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
+jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
 

@@ -17,17 +17,22 @@ import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import cz.jzitnik.jecna_supl_client.ReportLocation
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
+
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class TimetableViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<TimetablePage, SchoolYearPeriodParams>
-) : SubScreenCacheViewModel<TimetablePage, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
+    repository: CacheRepository<TimetableData, SchoolYearPeriodParams>,
+    private val timetableRepository: TimetableRepository
+) : SubScreenCacheViewModel<TimetableData, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
     override val loadErrorMessage = appContext.getString(R.string.timetable_load_error)
@@ -49,21 +54,27 @@ class TimetableViewModel @Inject constructor(
     
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    override fun setDataUiState(data: TimetablePage) = changeUiState(
-        timetablePage = data,
-        lastUpdateTimestamp = Clock.System.now(),
-        selectedSchoolYear = data.selectedSchoolYear,
-        selectedPeriod = data.periodOptions.find { it.selected },
-        isCache = false
-    )
+    override fun setDataUiState(data: TimetableData) {
+        changeUiState(
+            timetablePage = data.page,
+            substitutions = data.substitutions,
+            lastUpdateTimestamp = Clock.System.now(),
+            selectedSchoolYear = data.page.selectedSchoolYear,
+            selectedPeriod = data.page.periodOptions.find { it.selected },
+            isCache = false
+        )
+    }
 
-    override fun setCacheDataUiState(data: CachedDataNew<TimetablePage, SchoolYearPeriodParams>) = changeUiState(
-        timetablePage = data.data,
-        lastUpdateTimestamp = data.timestamp,
-        selectedSchoolYear = data.data.selectedSchoolYear,
-        selectedPeriod = data.data.periodOptions.find { it.selected },
-        isCache = true
-    )
+    override fun setCacheDataUiState(data: CachedDataNew<TimetableData, SchoolYearPeriodParams>) {
+        changeUiState(
+            timetablePage = data.data.page,
+            substitutions = data.data.substitutions,
+            lastUpdateTimestamp = data.timestamp,
+            selectedSchoolYear = data.data.page.selectedSchoolYear,
+            selectedPeriod = data.data.page.periodOptions.find { it.selected },
+            isCache = true
+        )
+    }
     
     override fun getParams() = SchoolYearPeriodParams(uiState.selectedSchoolYear, uiState.selectedPeriod?.id ?: SchoolYearPeriodParams.CURRENT_PERIOD_ID)
     
@@ -75,6 +86,7 @@ class TimetableViewModel @Inject constructor(
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         timetablePage: TimetablePage? = uiState.timetablePage,
+        substitutions: SubstitutionData? = uiState.substitutions,
         lastUpdateTimestamp: Instant? = uiState.lastUpdateTimestamp,
         isCache: Boolean = uiState.isCache,
         selectedSchoolYear: SchoolYear = uiState.selectedSchoolYear,
@@ -85,11 +97,26 @@ class TimetableViewModel @Inject constructor(
         uiState = uiState.copy(
             loading = loading,
             timetablePage = timetablePage,
+            substitutions = substitutions,
             lastUpdateTimestamp = lastUpdateTimestamp,
             isCache = isCache,
             selectedSchoolYear = selectedSchoolYear,
             selectedPeriod = selectedPeriod,
             snackBarMessageEvent = snackBarMessageEvent
         )
+    }
+
+    fun reportError(content: String, location: ReportLocation, onFinished: () -> Unit)
+    {
+        viewModelScope.launch {
+            timetableRepository.reportSubstitutionError(content, location)
+                .onSuccess {
+                    showSnackBarMessage(appContext.getString(R.string.report_success))
+                }
+                .onFailure {
+                    showSnackBarMessage(appContext.getString(R.string.report_error))
+                }
+            onFinished()
+        }
     }
 }

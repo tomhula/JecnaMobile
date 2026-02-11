@@ -9,8 +9,8 @@ import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
-import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.absence.AbsencesRepository
 import me.tomasan7.jecnamobile.attendances.AttendancesRepository
@@ -19,6 +19,8 @@ import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
+import me.tomasan7.jecnamobile.timetable.TimetableData
+import me.tomasan7.jecnamobile.util.settingsDataStore
 import javax.inject.Singleton
 
 @DisableInstallInCheck
@@ -76,14 +78,15 @@ internal object CacheRepositoriesModule
         @ApplicationContext
         appContext: Context,
         repository: TimetableRepository
-    ): CacheRepository<TimetablePage, SchoolYearPeriodParams> = TimetableCacheRepository(
+    ): CacheRepository<TimetableData, SchoolYearPeriodParams> = TimetableCacheRepository(
         key = "timetable",
         appContext = appContext,
-        fetcher = { 
+        fetcher = {
+            val settings = appContext.settingsDataStore.data.first()
             if (it.periodId == SchoolYearPeriodParams.CURRENT_PERIOD_ID)
-                repository.getTimetablePage(it.schoolYear, null as Int?)
+                repository.getTimetableData(it.schoolYear, null as Int?, settings.substitutionTimetableEnabled)
             else
-                repository.getTimetablePage(it.schoolYear, it.periodId)
+                repository.getTimetableData(it.schoolYear, it.periodId, settings.substitutionTimetableEnabled)
         }
     )
 
