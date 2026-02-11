@@ -30,7 +30,7 @@
     <string name="settings_open_subscreen_description">Obrazovka, která se otevře po spuštění aplikace.</string>
     <string name="settings_canteen_image_tolerance_title">Tolerance fotek v jídelně</string>
     <string name="settings_canteen_image_tolerance_description">Minimální shoda, kterou fotka musí mít, aby se zobrazila.</string>
-    <string name="settings_substitution_server_title">Server mimořádného rozvrhu</string>
+    <string name="settings_substitution_server_title">Mimořádný rozvrh</string>
     <string name="settings_substitution_server_description">URL serveru poskytujícího data pro mimořádný rozvrh.</string>
     <string name="settings_substitution_server_url">URL serveru</string>
     <string name="settings_substitution_server_reset">Obnovit výchozí URL</string>
