@@ -90,7 +90,9 @@ fun TimetableSubScreen(
         val inPeriod = today >= periodStart &&
                 (periodEnd == null || today <= periodEnd)
 
-        inSchoolYear && inPeriod
+        val isShowingCurrentTimetable = inSchoolYear && inPeriod
+        
+        isShowingCurrentTimetable
     }
 
     EventEffect(
