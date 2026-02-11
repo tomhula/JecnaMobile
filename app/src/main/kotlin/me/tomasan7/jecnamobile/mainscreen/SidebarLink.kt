@@ -27,7 +27,8 @@ enum class SidebarLink(
         Icons.Moodle
     ),
     JecnaWeb(
-        WebJecnaClient.ENDPOINT,
+        // Probably should use the JecnaWebClient's endpoint property
+        "https://spsejecna.cz",
         R.string.sidebar_link_jecna_web,
         Icons.Jecna
     )

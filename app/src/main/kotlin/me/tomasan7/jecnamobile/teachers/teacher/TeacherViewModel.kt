@@ -53,11 +53,11 @@ class TeacherViewModel @Inject constructor(
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     fun createImageRequest(path: String) = ImageRequest.Builder(appContext).apply {
-        data(WebJecnaClient.getUrlForPath(path))
+        data((jecnaClient as WebJecnaClient).getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader(HttpHeaders.Cookie, sessionCookie.toHeaderString())
-        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
+        jecnaClient.userAgent?.let { setHeader(HttpHeaders.UserAgent, it) }
     }.build()
 
     private fun getSessionCookieBlocking() = runBlocking { (jecnaClient as WebJecnaClient).getSessionCookie() }

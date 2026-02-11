@@ -95,7 +95,7 @@ class NewsViewModel @Inject constructor(
     }
 
     fun downloadAndOpenArticleFile(articleFile: ArticleFile) = viewModelScope.launch {
-        val url = WebJecnaClient.getUrlForPath(articleFile.downloadPath)
+        val url = (jecnaClient as WebJecnaClient).getUrlForPath(articleFile.downloadPath)
         val request = DownloadManager.Request(url.toUri()).apply {
             setTitle(articleFile.label)
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
@@ -160,11 +160,11 @@ class NewsViewModel @Inject constructor(
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "*/*"
 
     fun createImageRequest(path: String) = ImageRequest.Builder(appContext).apply {
-        data(WebJecnaClient.getUrlForPath(path))
+        data((jecnaClient as WebJecnaClient).getUrlForPath(path))
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader("Cookie", sessionCookie.toHeaderString())
-        (jecnaClient as WebJecnaClient).userAgent?.let { setHeader("User-Agent", it) }
+        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
     }.build()
     
     private fun changeUiState(
