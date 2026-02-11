@@ -71,12 +71,12 @@ class TimetableRepositoryImpl @Inject constructor(
         return SubstitutionData(
             subs.status.lastUpdated,
             subs.status.currentUpdateSchedule.toInt(),
-            subs.schedule.map { (date, schedule) -> schedule.toSerializable(date) }
+            subs.schedule.map { (date, schedule) -> schedule.toDailySchedule(date) }
         )
     }
 
     override suspend fun getAllSubstitutions(): SubstitutionAllData = withContext(Dispatchers.IO) {
-        substitutionClient.getAll().toSerializable()
+        substitutionClient.getAll().toSubstitutionAllData()
     }
 
     override suspend fun reportSubstitutionError(content: String, reportLocation: ReportLocation): Result<Unit> =

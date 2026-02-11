@@ -112,35 +112,35 @@ data class SubstituteInfo(
     val teacherCode: String
 )
 
-fun JecnaApiResponse.toSerializable() = SubstitutionAllData(
+fun JecnaApiResponse.toSubstitutionAllData() = SubstitutionAllData(
     lastUpdated = status.lastUpdated,
     currentUpdateSchedule = status.currentUpdateSchedule.toInt(),
-    schedule = schedule.mapValues { it.value.toSerializable() }
+    schedule = schedule.mapValues { it.value.toGlobalDailyData() }
 )
 
-fun JecnaDailyData.toSerializable() = GlobalDailyData(
+fun JecnaDailyData.toGlobalDailyData() = GlobalDailyData(
     info = DayInfo(info.inWork),
-    changes = changes.mapValues { it.value.map { entry -> entry?.toSerializable() } },
-    absence = absence.map { it.toSerializable() },
+    changes = changes.mapValues { it.value.map { entry -> entry?.toChangeEntry() } },
+    absence = absence.map { it.toAbsenceEntry() },
     takesPlace = takesPlace
 )
 
-fun JecnaDailySchedule.toSerializable(date: String) = DailySchedule(
+fun JecnaDailySchedule.toDailySchedule(date: String) = DailySchedule(
     date = date,
     info = DayInfo(info.inWork),
-    changes = changes.map { it?.toSerializable() },
-    absence = absence.map { it.toSerializable() },
+    changes = changes.map { it?.toChangeEntry() },
+    absence = absence.map { it.toAbsenceEntry() },
     takesPlace = takesPlace
 )
 
-fun JecnaChangeEntry.toSerializable() = ChangeEntry(
+fun JecnaChangeEntry.toChangeEntry() = ChangeEntry(
     text = text,
     backgroundColor = backgroundColor,
     foregroundColor = foregroundColor,
     willBeSpecified = willBeSpecified
 )
 
-fun JecnaAbsenceEntry.toSerializable(): AbsenceEntry = when (this) {
+fun JecnaAbsenceEntry.toAbsenceEntry(): AbsenceEntry = when (this) {
     is JecnaAbsenceEntry.WholeDay -> AbsenceEntry.WholeDay(teacher, teacherCode)
     is JecnaAbsenceEntry.Single -> AbsenceEntry.Single(teacher, teacherCode, hours.toInt())
     is JecnaAbsenceEntry.Range -> AbsenceEntry.Range(teacher, teacherCode, AbsenceRange(hours.from.toInt(), hours.to.toInt()))
