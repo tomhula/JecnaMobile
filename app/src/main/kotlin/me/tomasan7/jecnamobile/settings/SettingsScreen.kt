@@ -149,27 +149,31 @@ private fun Settings(viewModel: SettingsViewModel)
                 modifier = Modifier.fillMaxWidth(),
                 trailingIcon = rollBackButton
             )
-
+            
             val baseText = stringResource(R.string.settings_substitution_server_info)
+            val labelColor = jm_label
+            
+            val annotated = remember(baseText, labelColor) { 
+                buildAnnotatedString {
+                    append(baseText)
+                    append(" ")
 
-            val annotated = buildAnnotatedString {
-                append("$baseText ")
-
-                withLink(
-                    LinkAnnotation.Url(
-                        url = "https://jecnarozvrh.jzitnik.dev",
-                        styles = TextLinkStyles(
-                            style = SpanStyle(
-                                color = jm_label,
-                                textDecoration = TextDecoration.Underline
+                    withLink(
+                        LinkAnnotation.Url(
+                            url = "https://jecnarozvrh.jzitnik.dev",
+                            styles = TextLinkStyles(
+                                style = SpanStyle(
+                                    color = labelColor,
+                                    textDecoration = TextDecoration.Underline
+                                )
                             )
                         )
-                    )
-                ) {
-                    append("jecnarozvrh.jzitnik.dev")
+                    ) {
+                        append("jecnarozvrh.jzitnik.dev")
+                    }
+
+                    append(".")
                 }
-                
-                append(".")
             }
 
             Text(
