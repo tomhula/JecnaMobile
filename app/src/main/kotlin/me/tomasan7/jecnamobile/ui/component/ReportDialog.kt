@@ -83,7 +83,7 @@ fun ReportDialog(
 
                 Text(stringResource(R.string.report_type_label), style = MaterialTheme.typography.labelLarge)
 
-                ReportLocation.values().forEach { loc ->
+                ReportLocation.entries.forEach { loc ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
