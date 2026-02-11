@@ -1,8 +1,8 @@
 package me.tomasan7.jecnamobile.timetable
 
+import cz.jzitnik.jecna_supl_client.ReportLocation
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import cz.jzitnik.jecna_supl_client.ReportLocation
 
 interface TimetableRepository
 {

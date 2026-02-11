@@ -4,10 +4,13 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
+import cz.jzitnik.jecna_supl_client.ReportLocation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.timetable.SubstitutionAllData
@@ -15,10 +18,6 @@ import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.time.Clock
-
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import cz.jzitnik.jecna_supl_client.ReportLocation
 
 @HiltViewModel
 class SubstitutionViewModel @Inject constructor(

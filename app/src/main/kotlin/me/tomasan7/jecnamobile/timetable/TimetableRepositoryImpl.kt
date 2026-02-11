@@ -1,16 +1,14 @@
 package me.tomasan7.jecnamobile.timetable
 
-import io.github.tomhula.jecnaapi.JecnaClient
-import io.github.tomhula.jecnaapi.util.SchoolYear
-import javax.inject.Inject
-
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
-
 import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import cz.jzitnik.jecna_supl_client.ReportLocation
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 class TimetableRepositoryImpl @Inject constructor(
     private val jecnaClient: JecnaClient,

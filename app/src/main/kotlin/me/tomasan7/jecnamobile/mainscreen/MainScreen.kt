@@ -42,9 +42,9 @@ import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
 import me.tomasan7.jecnamobile.settings.SettingsScreen
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
+import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
 import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
-import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 

@@ -18,8 +18,8 @@ import me.tomasan7.jecnamobile.caching.*
 import me.tomasan7.jecnamobile.grades.GradesRepository
 import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
-import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import me.tomasan7.jecnamobile.timetable.TimetableData
+import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import javax.inject.Singleton
 

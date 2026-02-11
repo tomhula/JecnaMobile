@@ -3,12 +3,11 @@ package me.tomasan7.jecnamobile.timetable
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import cz.jzitnik.jecna_supl_client.DailySchedule as JecnaDailySchedule
-import cz.jzitnik.jecna_supl_client.ChangeEntry as JecnaChangeEntry
 import cz.jzitnik.jecna_supl_client.AbsenceEntry as JecnaAbsenceEntry
-
 import cz.jzitnik.jecna_supl_client.ApiResponse as JecnaApiResponse
+import cz.jzitnik.jecna_supl_client.ChangeEntry as JecnaChangeEntry
 import cz.jzitnik.jecna_supl_client.DailyData as JecnaDailyData
+import cz.jzitnik.jecna_supl_client.DailySchedule as JecnaDailySchedule
 
 @Serializable
 data class TimetableData(

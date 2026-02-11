@@ -1,18 +1,17 @@
 package me.tomasan7.jecnamobile.ui.component
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import cz.jzitnik.jecna_supl_client.ReportLocation
-
-import androidx.compose.ui.res.stringResource
 import me.tomasan7.jecnamobile.R
 
 @Composable

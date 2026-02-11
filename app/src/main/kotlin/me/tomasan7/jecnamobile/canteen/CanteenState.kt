@@ -6,7 +6,6 @@ import de.palm.composestateevents.consumed
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
 
 @Immutable
 data class CanteenState(
