@@ -66,7 +66,7 @@ class GradesViewModel @Inject constructor(
     override fun getParams() = SchoolYearHalfParams(uiState.selectedSchoolYear, uiState.selectedSchoolYearHalf)
     
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun isCurrentlyShowingReal() = uiState.gradesPage != null && !uiState.loading
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
     

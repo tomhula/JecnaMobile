@@ -2,7 +2,6 @@ package me.tomasan7.jecnamobile
 
 import android.content.Context
 import android.util.Log
-import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -25,7 +24,7 @@ abstract class SubScreenCacheViewModel<T, P>(
 ) : SubScreenViewModel<T>(appContext)
 {
     override val noInternetConnectionMessage: String
-        get() = if (getLastUpdateTimestamp() != null && isCurrentlyShowingCache())
+        get() = if (getLastUpdateTimestamp() != null && isCurrentlyShowingReal())
             getOfflineMessage()!!
         else
             appContext.getString(R.string.no_internet_connection)
@@ -36,13 +35,13 @@ abstract class SubScreenCacheViewModel<T, P>(
         if (loadRealJob != null && loadRealJob!!.isActive)
             return@createBroadcastReceiver
         
-        if (isCurrentlyShowingCache())
+        if (!isCurrentlyShowingReal())
             loadReal()
     }
 
     abstract fun setCacheDataUiState(data: CachedDataNew<T, P>)
     abstract fun getLastUpdateTimestamp(): Instant?
-    abstract fun isCurrentlyShowingCache(): Boolean
+    abstract fun isCurrentlyShowingReal(): Boolean
     abstract fun getParams(): P
 
     override suspend fun fetchRealData() = cacheRepository.getRealAndCache(getParams())
@@ -57,7 +56,7 @@ abstract class SubScreenCacheViewModel<T, P>(
                 loadReal()
             loadCache()
         }
-        else if (isCurrentlyShowingCache() && loginStateProvider.afterFirstLogin)
+        else if (!isCurrentlyShowingReal() && loginStateProvider.afterFirstLogin)
             loadReal()
         
         enteredCompositionCounter++

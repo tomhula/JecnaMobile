@@ -60,7 +60,7 @@ class AbsencesViewModel @Inject constructor(
     override fun getParams() = uiState.selectedSchoolYear
 
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingCache() = uiState.isCache
+    override fun isCurrentlyShowingReal() = uiState.absencesPage != null && !uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
