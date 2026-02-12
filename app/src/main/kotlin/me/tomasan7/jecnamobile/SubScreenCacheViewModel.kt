@@ -1,6 +1,8 @@
 package me.tomasan7.jecnamobile
 
 import android.content.Context
+import android.util.Log
+import androidx.core.content.PackageManagerCompat.LOG_TAG
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
@@ -12,6 +14,8 @@ import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.now
 import kotlin.time.Instant
+
+private const val SSCVM_LOG_TAG = "SubScreenCacheViewModel"
 
 abstract class SubScreenCacheViewModel<T, P>(
     @ApplicationContext
@@ -45,6 +49,7 @@ abstract class SubScreenCacheViewModel<T, P>(
     
     override fun enteredComposition()
     {
+        Log.d(SSCVM_LOG_TAG, "${this::class.simpleName}: Entered composition")
         registerLoginBroadcastReceiver()
         if (enteredCompositionCounter == 0)
         {
@@ -58,6 +63,13 @@ abstract class SubScreenCacheViewModel<T, P>(
         enteredCompositionCounter++
     }
 
+    override fun leftComposition()
+    {
+        Log.d(SSCVM_LOG_TAG, "${this::class.simpleName}: Left composition")
+        loadRealJob?.cancel()
+        unregisterLoginBroadcastReceiver()
+    }
+    
     fun loadCache()
     {
         if (!cacheRepository.isCacheAvailable())

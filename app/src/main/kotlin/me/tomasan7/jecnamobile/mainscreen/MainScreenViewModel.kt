@@ -115,6 +115,7 @@ class MainScreenViewModel @Inject constructor(
 
     private fun broadcastSuccessfulLogin(first: Boolean = false)
     {
+        Log.d(LOG_TAG, "Broadcasting successful login, first = $first")
         val intent = Intent(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION)
         intent.putExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, first)
         intent.`package` = appContext.packageName
