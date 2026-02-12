@@ -78,7 +78,7 @@ class TimetableViewModel @Inject constructor(
     override fun getParams() = SchoolYearPeriodParams(uiState.selectedSchoolYear, uiState.selectedPeriod?.id ?: SchoolYearPeriodParams.CURRENT_PERIOD_ID)
     
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingReal() = uiState.timetablePage == null && !uiState.loading
+    override fun isCurrentlyShowingReal() = uiState.timetablePage == null && !uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
