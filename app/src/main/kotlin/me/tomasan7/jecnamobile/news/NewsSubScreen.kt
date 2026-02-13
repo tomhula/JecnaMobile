@@ -39,6 +39,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import java.time.format.DateTimeFormatter
 
@@ -53,10 +54,7 @@ fun NewsSubScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val dialogState = rememberObjectDialogState<List<String>>()
 
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose { viewModel.leftComposition() }
-    }
+    SubScreenViewModelHook(viewModel)
 
     EventEffect(
         event = uiState.snackBarMessageEvent,

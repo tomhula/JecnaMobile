@@ -40,6 +40,7 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.ui.theme.grade_absence_warning
 import me.tomasan7.jecnamobile.ui.theme.grade_excused
 import me.tomasan7.jecnamobile.ui.theme.grade_grades_warning
@@ -60,12 +61,7 @@ fun GradesSubScreen(
     viewModel: GradesViewModel = hiltViewModel()
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(viewModel)
 
     val uiState = viewModel.uiState
     val objectDialogState = rememberObjectDialogState<Grade>()

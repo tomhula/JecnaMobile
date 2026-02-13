@@ -11,7 +11,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,12 +40,7 @@ fun StudentProfileScreen(
     viewModel: StudentProfileViewModel = hiltViewModel()
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(viewModel)
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }

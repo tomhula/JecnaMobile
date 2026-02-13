@@ -9,7 +9,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +25,7 @@ import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,13 +36,14 @@ fun TeacherScreen(
     viewModel: TeacherViewModel = hiltViewModel(),
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.setTeacherReference(teacherReference)
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(
+        key = teacherReference,
+        onEnter = {
+            viewModel.setTeacherReference(teacherReference)
+            viewModel.enteredComposition()
+        },
+        onLeave = viewModel::leftComposition
+    )
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }

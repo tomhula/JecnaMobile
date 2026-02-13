@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -34,6 +33,7 @@ import me.tomasan7.jecnamobile.ui.component.ReportDialog
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,12 +43,7 @@ fun SubstitutionSubScreen(
     viewModel: SubstitutionViewModel = hiltViewModel()
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(viewModel)
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }

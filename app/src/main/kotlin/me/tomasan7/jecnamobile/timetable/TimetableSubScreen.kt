@@ -28,6 +28,7 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.ui.component.*
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.util.settingsAsState
 import kotlin.time.Clock
 
@@ -40,12 +41,7 @@ fun TimetableSubScreen(
     viewModel: TimetableViewModel = hiltViewModel()
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(viewModel)
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }

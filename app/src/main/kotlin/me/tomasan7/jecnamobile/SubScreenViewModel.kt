@@ -3,6 +3,8 @@ package me.tomasan7.jecnamobile
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -112,3 +114,15 @@ abstract class SubScreenViewModel<T>(
         }
     }
 }
+
+@Composable
+fun SubScreenViewModelHook(key: Any?, onEnter: () -> Unit, onLeave: () -> Unit) {
+    DisposableEffect(key) {
+        onEnter()
+        onDispose { onLeave() }
+    }
+}
+
+@Composable
+fun SubScreenViewModelHook(viewModel: SubScreenViewModel<*>) =
+    SubScreenViewModelHook(viewModel, viewModel::enteredComposition, viewModel::leftComposition)
