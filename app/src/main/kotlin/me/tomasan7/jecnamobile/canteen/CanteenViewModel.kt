@@ -391,7 +391,7 @@ class CanteenViewModel @Inject constructor(
                 canteenLegendDismissed = true
             )
         }
-        Toast.makeText(appContext, R.string.canteen_legend_dismissed, Toast.LENGTH_SHORT).show()
+        showMessage(R.string.canteen_legend_dismissed)
     }
 
     private fun updateMenu(newDayMenu: DayMenu)
