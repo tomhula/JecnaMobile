@@ -144,6 +144,8 @@
     <string name="canteen_legend_disabled">Nelze objednat</string>
     <string name="canteen_legend_ordered_disabled">Objednáno &amp; nelze změnit (příliš pozdě)</string>
     <string name="canteen_legend_in_exchange">V burze</string>
+    <string name="canteen_legend_show">Zobrazit vysvětlivky v jídelně</string>
+    <string name="dismiss">Skrýt</string>
 
     <!-- ##### Attendances SubScreen ##### -->
 
@@ -365,4 +367,5 @@
     <string name="report_disclaimer">Toto slouží pouze pro nahlášení chyb ve zpracování (parsování) mimořádného rozvrhu. Neslouží pro nahlášení chyb v aplikaci jako takové.</string>
     <string name="report_class_name_warning">Součástí nahlášení bude i název vaší třídy.</string>
     <string name="controls">Ovládání: klikněte pro objednání/zrušení\nPokud již nejde zrušit, kliknutí přesune oběd do burzy</string>
+    <string name="canteen_legend_dismissed">Zavřeno. Lze znovu zapnout v nastavení.</string>
 </resources>

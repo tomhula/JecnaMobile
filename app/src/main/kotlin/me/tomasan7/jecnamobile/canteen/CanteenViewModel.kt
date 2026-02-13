@@ -3,6 +3,7 @@ package me.tomasan7.jecnamobile.canteen
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -384,12 +385,13 @@ class CanteenViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    fun onHelpDialogShownAutomatically() = viewModelScope.launch {
+    fun onCanteenLegendDismissed() = viewModelScope.launch {
         appContext.settingsDataStore.updateData {
             it.copy(
-                canteenHelpSeen = true
+                canteenLegendDismissed = true
             )
         }
+        Toast.makeText(appContext, R.string.canteen_legend_dismissed, Toast.LENGTH_SHORT).show()
     }
 
     private fun updateMenu(newDayMenu: DayMenu)

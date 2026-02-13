@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -33,7 +32,6 @@ import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
@@ -46,7 +44,7 @@ import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered_disabled
 import me.tomasan7.jecnamobile.util.getWeekDayName
-import me.tomasan7.jecnamobile.util.settingsDataStore
+import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,8 +54,8 @@ fun CanteenSubScreen(
 )
 {
     val uiState = viewModel.uiState
+    val settings by settingsAsStateAwaitFirst()
     val allergensDialogState = rememberObjectDialogState<DayMenu>()
-    val helpDialogState = rememberObjectDialogState<Unit>()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(selectedTabIndex) }
@@ -76,20 +74,8 @@ fun CanteenSubScreen(
 
     // Pull-to-refresh handled by PullToRefreshBox in the content
 
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
-        coroutineScope.launch {
-            context.settingsDataStore.data.collect {
-                if (!it.canteenHelpSeen)
-                {
-                    helpDialogState.show(Unit)
-                    viewModel.onHelpDialogShownAutomatically()
-                }
-            }
-        }
         onDispose {
             viewModel.leftComposition()
         }
@@ -170,21 +156,23 @@ fun CanteenSubScreen(
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
                                 modifier = Modifier.padding(16.dp)
                             ) {
-                                item {
-                                    Surface(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        shape = RoundedCornerShape(8.dp),
-                                        tonalElevation = ElevationLevel.level5,
-                                        color = MaterialTheme.colorScheme.surface,
-                                    ) {
-                                        Column(
-                                            modifier = Modifier.padding(16.dp),
-                                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                                if (!settings.canteenLegendDismissed)
+                                {
+                                    item {
+                                        Card(
+                                            title = {
+                                                Row(
+                                                    modifier = Modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(
+                                                        text = stringResource(R.string.canteen_legend_title),
+                                                        style = MaterialTheme.typography.titleMedium
+                                                    )
+                                                }
+                                            }
                                         ) {
-                                            Text(
-                                                text = stringResource(R.string.canteen_legend_title),
-                                                style = MaterialTheme.typography.titleSmall
-                                            )
                                             Column(
                                                 modifier = Modifier.fillMaxWidth(),
                                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -236,6 +224,22 @@ fun CanteenSubScreen(
                                                         color = MaterialTheme.colorScheme.tertiary,
                                                         text = stringResource(R.string.controls)
                                                     )
+                                                }
+                                                Row(
+                                                    verticalAlignment = Alignment.CenterVertically,
+                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+
+                                                ) {
+                                                    TextButton(
+                                                        onClick = viewModel::onCanteenLegendDismissed,
+                                                        contentPadding = PaddingValues(
+                                                            horizontal = 8.dp,
+                                                            vertical = 2.dp
+                                                        ),
+                                                        modifier = Modifier.heightIn(max = 32.dp)
+                                                    ) {
+                                                        Text(stringResource(R.string.dismiss))
+                                                    }
                                                 }
                                             }
                                         }
