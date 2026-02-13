@@ -202,7 +202,7 @@ fun CanteenSubScreen(
                                                     )
                                                     Row(
                                                         verticalAlignment = Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
                                                     ) {
                                                         Icon(
                                                             imageVector = Icons.AutoMirrored.Filled.TrendingUp,
