@@ -9,7 +9,6 @@ import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,6 +23,7 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.theme.teacher_search_query_highlight
+import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.util.removeAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -34,12 +34,7 @@ fun RoomsSubScreen(
     viewModel: RoomsViewModel = hiltViewModel()
 )
 {
-    DisposableEffect(Unit) {
-        viewModel.enteredComposition()
-        onDispose {
-            viewModel.leftComposition()
-        }
-    }
+    SubScreenViewModelHook(viewModel)
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
@@ -178,4 +173,3 @@ private fun buildHighlightedAnnotatedString(
 
     return annotatedString.toAnnotatedString()
 }
-

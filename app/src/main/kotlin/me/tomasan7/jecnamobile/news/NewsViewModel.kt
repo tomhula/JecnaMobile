@@ -78,7 +78,7 @@ class NewsViewModel @Inject constructor(
     override fun getParams() = NoParams
     
     override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingReal() = uiState.newsPage == null && !uiState.loading
+    override fun isCurrentlyShowingReal() = uiState.newsPage != null && !uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 

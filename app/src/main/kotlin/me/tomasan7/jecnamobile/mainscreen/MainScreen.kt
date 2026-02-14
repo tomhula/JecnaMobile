@@ -147,90 +147,101 @@ fun MainScreen(
                     )
                 }
             }
-        },
-        content = {
-            NavDisplay(
-                backStack = navBackStack,
-                onBack = { navBackStack.pop() },
-                entryProvider = { key ->
-                    when (key)
+        }) {
+        NavDisplay(
+            backStack = navBackStack,
+            onBack = { navBackStack.pop() },
+            entryProvider = { key ->
+                when (key)
+                {
+                    is SubScreenDestination -> when (key)
                     {
-                        is SubScreenDestination -> when (key)
-                        {
-                            SubScreenDestination.News -> NavEntry(key) {
-                                NewsSubScreen(navDrawerController)
-                            }
-                            SubScreenDestination.Grades -> NavEntry(key) {
-                                GradesSubScreen(
-                                    navDrawerController = navDrawerController,
-                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
-                                )
-                            }
-                            SubScreenDestination.Timetable -> NavEntry(key) {
-                                TimetableSubScreen(
-                                    navDrawerController = navDrawerController,
-                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) },
-                                    onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
-                                )
-                            }
-                            SubScreenDestination.Canteen -> NavEntry(key) {
-                                CanteenSubScreen(navDrawerController)
-                            }
-                            SubScreenDestination.Attendances -> NavEntry(key) {
-                                AttendancesSubScreen(navDrawerController)
-                            }
-                            SubScreenDestination.Absences -> NavEntry(key) {
-                                AbsencesSubScreen(navDrawerController)
-                            }
-                            SubScreenDestination.Teachers -> NavEntry(key) {
-                                TeachersSubScreen(
-                                    navDrawerController = navDrawerController,
-                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
-                                )
-                            }
-                            SubScreenDestination.Rooms -> NavEntry(key) {
-                                RoomsSubScreen(
-                                    navDrawerController = navDrawerController,
-                                    onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
-                                )
-                            }
-                            SubScreenDestination.Substitution -> NavEntry(key) {
-                                SubstitutionSubScreen(
-                                    navDrawerController = navDrawerController,
-                                    onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
-                                )
-                            }
+                        SubScreenDestination.News -> NavEntry(key) {
+                            NewsSubScreen(navDrawerController)
                         }
-                        is TeacherScreenDestination -> NavEntry(key) {
-                            TeacherScreen(
-                                teacherReference = key.reference,
-                                onBackClick = { navBackStack.pop() },
-                                onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
-                            )
-                        }
-                        is RoomScreenDestination -> NavEntry(key) {
-                            RoomScreen(
-                                roomReference = key.reference,
-                                onBackClick = { navBackStack.pop() },
+
+                        SubScreenDestination.Grades -> NavEntry(key) {
+                            GradesSubScreen(
+                                navDrawerController = navDrawerController,
                                 onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                             )
                         }
-                        is StudentProfileDestination -> NavEntry(key) {
-                            StudentProfileScreen(
-                                onBackClick = { navBackStack.pop() }
+
+                        SubScreenDestination.Timetable -> NavEntry(key) {
+                            TimetableSubScreen(
+                                navDrawerController = navDrawerController,
+                                onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) },
+                                onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
                             )
                         }
-                        is SettingsScreenDestination -> NavEntry(key) {
-                            SettingsScreen(
-                                onBackClick = { navBackStack.pop() }
+
+                        SubScreenDestination.Canteen -> NavEntry(key) {
+                            CanteenSubScreen(navDrawerController)
+                        }
+
+                        SubScreenDestination.Attendances -> NavEntry(key) {
+                            AttendancesSubScreen(navDrawerController)
+                        }
+
+                        SubScreenDestination.Absences -> NavEntry(key) {
+                            AbsencesSubScreen(navDrawerController)
+                        }
+
+                        SubScreenDestination.Teachers -> NavEntry(key) {
+                            TeachersSubScreen(
+                                navDrawerController = navDrawerController,
+                                onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
                             )
                         }
-                        else -> NavEntry(key) { Text("Unknown route") }
+
+                        SubScreenDestination.Rooms -> NavEntry(key) {
+                            RoomsSubScreen(
+                                navDrawerController = navDrawerController,
+                                onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
+                            )
+                        }
+
+                        SubScreenDestination.Substitution -> NavEntry(key) {
+                            SubstitutionSubScreen(
+                                navDrawerController = navDrawerController,
+                                onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
+                            )
+                        }
                     }
+
+                    is TeacherScreenDestination -> NavEntry(key) {
+                        TeacherScreen(
+                            teacherReference = key.reference,
+                            onBackClick = { navBackStack.pop() },
+                            onRoomClick = { navBackStack.add(RoomScreenDestination(it)) }
+                        )
+                    }
+
+                    is RoomScreenDestination -> NavEntry(key) {
+                        RoomScreen(
+                            roomReference = key.reference,
+                            onBackClick = { navBackStack.pop() },
+                            onTeacherClick = { navBackStack.add(TeacherScreenDestination(it)) }
+                        )
+                    }
+
+                    is StudentProfileDestination -> NavEntry(key) {
+                        StudentProfileScreen(
+                            onBackClick = { navBackStack.pop() }
+                        )
+                    }
+
+                    is SettingsScreenDestination -> NavEntry(key) {
+                        SettingsScreen(
+                            onBackClick = { navBackStack.pop() }
+                        )
+                    }
+
+                    else -> NavEntry(key) { Text("Unknown route") }
                 }
-            )
-        }
-    )
+            }
+        )
+    }
 }
 
 private fun <T> MutableList<T>.pop() = if (size > 1) removeAt(lastIndex) else Unit
