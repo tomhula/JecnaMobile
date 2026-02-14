@@ -177,6 +177,27 @@ private fun Settings(viewModel: SettingsViewModel)
                 color = MaterialTheme.colorScheme.error,
             )
         }
+
+        Option(
+            title = stringResource(R.string.sidebar_canteen)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { viewModel.setCanteenLegendDismissed(!settings.canteenLegendDismissed) }
+            ) {
+                Text(
+                    text = stringResource(R.string.canteen_legend_show),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.weight(1f)
+                )
+                Switch(
+                    checked = !settings.canteenLegendDismissed,
+                    onCheckedChange = { viewModel.setCanteenLegendDismissed(!it) }
+                )
+            }
+        }
     }
 }
 
