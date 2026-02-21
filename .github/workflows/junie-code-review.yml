@@ -1,7 +1,8 @@
 name: Junie Code Review
 
 on:
-    pull_request:
+    # Use pull_request_target to allow access to secrets from fork PRs
+    pull_request_target:
         types: [opened, synchronize]
 
 jobs:
@@ -14,13 +15,14 @@ jobs:
         steps:
             - uses: actions/checkout@v4
               with:
+                  # Point to the fork's branch instead of the base branch
+                  ref: ${{ github.event.pull_request.head.sha }}
+                  # Ensure the checkout happens from the contributor's repo
+                  repository: ${{ github.event.pull_request.head.repo.full_name }}
                   fetch-depth: 1
 
             - uses: JetBrains/junie-github-action@v0
               with:
                   junie_api_key: ${{ secrets.JUNIE_API_KEY }}
-                  # Update the same comment on subsequent Junie runs instead of adding new comments
                   use_single_comment: true
-                  # Alternatively, write your custom review instructions in the prompt field
-                  # instead of using the built-in "code-review" value
                   prompt: "code-review"
