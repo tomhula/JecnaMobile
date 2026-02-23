@@ -161,16 +161,10 @@ fun CanteenSubScreen(
                                     item {
                                         Card(
                                             title = {
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Text(
-                                                        text = stringResource(R.string.canteen_legend_title),
-                                                        style = MaterialTheme.typography.titleMedium
-                                                    )
-                                                }
+                                                Text(
+                                                    text = stringResource(R.string.canteen_legend_title),
+                                                    style = MaterialTheme.typography.titleMedium
+                                                )
                                             }
                                         ) {
                                             Column(
