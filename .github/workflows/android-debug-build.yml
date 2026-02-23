@@ -2,7 +2,8 @@ name: Android Debug Build
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - "**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
