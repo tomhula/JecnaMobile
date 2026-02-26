@@ -47,6 +47,7 @@ import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
 import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
 import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
+import me.tomasan7.jecnamobile.util.settingsDataStore
 
 @Composable
 fun MainScreen(
@@ -261,10 +262,15 @@ private fun RequestNotificationsPermission()
 {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     {
+        val context = LocalContext.current
+        val settings by settingsAsStateAwaitFirst()
+
         val permissionState = rememberPermissionState(android.Manifest.permission.POST_NOTIFICATIONS)
-        LaunchedEffect(permissionState.status.isGranted) {
-            if (!permissionState.status.isGranted)
+        LaunchedEffect(Unit) {
+            if (!settings.notificationPermissionRequested && !permissionState.status.isGranted) {
                 permissionState.launchPermissionRequest()
+                context.settingsDataStore.updateData { it.copy(notificationPermissionRequested = true) }
+            }
         }
     }
 }
