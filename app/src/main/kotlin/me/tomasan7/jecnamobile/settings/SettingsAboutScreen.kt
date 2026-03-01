@@ -26,6 +26,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.R
+import androidx.core.net.toUri
+
+private const val DEVELOPER_GITHUB_URL = "https://github.com/tomhula"
+private const val PROJECT_GITHUB_URL = "https://github.com/tomhula/JecnaMobile"
+private const val PROJECT_ISSUES_URL = "https://github.com/tomhula/JecnaMobile/issues"
+private const val GITHUB_BASE_URL = "https://github.com/"
 
 private val CONTRIBUTORS = listOf(
     "Jakub Žitník" to "jzitnik-dev",
@@ -104,7 +110,7 @@ fun SettingsAboutScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/tomhula"))
+                            val intent = Intent(Intent.ACTION_VIEW, DEVELOPER_GITHUB_URL.toUri())
                             context.startActivity(intent)
                         }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -136,7 +142,7 @@ fun SettingsAboutScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/tomhula/JecnaMobile"))
+                            val intent = Intent(Intent.ACTION_VIEW, PROJECT_GITHUB_URL.toUri())
                             context.startActivity(intent)
                         }
                         .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -161,7 +167,7 @@ fun SettingsAboutScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/tomhula/JecnaMobile/issues"))
+                            val intent = Intent(Intent.ACTION_VIEW, PROJECT_ISSUES_URL.toUri())
                             context.startActivity(intent)
                         }
                         .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -187,7 +193,7 @@ fun SettingsAboutScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/$username"))
+                                val intent = Intent(Intent.ACTION_VIEW, "$GITHUB_BASE_URL$username".toUri())
                                 context.startActivity(intent)
                             }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
