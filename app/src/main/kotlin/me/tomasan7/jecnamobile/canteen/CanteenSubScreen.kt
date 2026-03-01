@@ -210,30 +210,19 @@ fun CanteenSubScreen(
                                                         )
                                                     }
                                                 }
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                                                LegendItem(
+                                                    color = MaterialTheme.colorScheme.tertiary,
+                                                    text = stringResource(R.string.controls)
+                                                )
+                                                TextButton(
+                                                    onClick = viewModel::onCanteenLegendDismissed,
+                                                    contentPadding = PaddingValues(
+                                                        horizontal = 8.dp,
+                                                        vertical = 2.dp
+                                                    ),
+                                                    modifier = Modifier.heightIn(max = 32.dp)
                                                 ) {
-                                                    LegendItem(
-                                                        color = MaterialTheme.colorScheme.tertiary,
-                                                        text = stringResource(R.string.controls)
-                                                    )
-                                                }
-                                                Row(
-                                                    verticalAlignment = Alignment.CenterVertically,
-                                                    horizontalArrangement = Arrangement.spacedBy(4.dp)
-
-                                                ) {
-                                                    TextButton(
-                                                        onClick = viewModel::onCanteenLegendDismissed,
-                                                        contentPadding = PaddingValues(
-                                                            horizontal = 8.dp,
-                                                            vertical = 2.dp
-                                                        ),
-                                                        modifier = Modifier.heightIn(max = 32.dp)
-                                                    ) {
-                                                        Text(stringResource(R.string.dismiss))
-                                                    }
+                                                    Text(stringResource(R.string.dismiss))
                                                 }
                                             }
                                         }
