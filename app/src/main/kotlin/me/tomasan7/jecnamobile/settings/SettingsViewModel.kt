@@ -41,4 +41,10 @@ class SettingsViewModel @Inject constructor(
             it.copy(substitutionTimetableEnabled = enabled)
         }
     }
+
+    fun setCanteenLegendDismissed(dismissed: Boolean) = viewModelScope.launch {
+        settingsDataStore.updateData {
+            it.copy(canteenLegendDismissed = dismissed)
+        }
+    }
 }

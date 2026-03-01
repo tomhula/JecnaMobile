@@ -1,6 +1,7 @@
 package me.tomasan7.jecnamobile.canteen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -18,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -32,7 +32,6 @@ import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
@@ -45,7 +44,7 @@ import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_ordered_disabled
 import me.tomasan7.jecnamobile.util.getWeekDayName
-import me.tomasan7.jecnamobile.util.settingsDataStore
+import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,8 +54,8 @@ fun CanteenSubScreen(
 )
 {
     val uiState = viewModel.uiState
+    val settings by settingsAsStateAwaitFirst()
     val allergensDialogState = rememberObjectDialogState<DayMenu>()
-    val helpDialogState = rememberObjectDialogState<Unit>()
     val snackbarHostState = remember { SnackbarHostState() }
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     var previousTabIndex by remember { mutableIntStateOf(selectedTabIndex) }
@@ -75,20 +74,8 @@ fun CanteenSubScreen(
 
     // Pull-to-refresh handled by PullToRefreshBox in the content
 
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
-        coroutineScope.launch {
-            context.settingsDataStore.data.collect {
-                if (!it.canteenHelpSeen)
-                {
-                    helpDialogState.show(Unit)
-                    viewModel.onHelpDialogShownAutomatically()
-                }
-            }
-        }
         onDispose {
             viewModel.leftComposition()
         }
@@ -117,7 +104,8 @@ fun CanteenSubScreen(
         PullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = {
-                when (selectedTabIndex) {
+                when (selectedTabIndex)
+                {
                     0 -> viewModel.reloadMenu()
                     1 -> viewModel.reloadExchange()
                 }
@@ -130,96 +118,105 @@ fun CanteenSubScreen(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-            PrimaryTabRow(
-                selectedTabIndex = selectedTabIndex,
-                modifier = Modifier.zIndex(1f),
-                contentColor = MaterialTheme.colorScheme.onBackground,
-                indicator = {
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                        color = MaterialTheme.colorScheme.onBackground
+                PrimaryTabRow(
+                    selectedTabIndex = selectedTabIndex,
+                    modifier = Modifier.zIndex(1f),
+                    contentColor = MaterialTheme.colorScheme.onBackground,
+                    indicator = {
+                        TabRowDefaults.SecondaryIndicator(
+                            modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+                    }
+                ) {
+                    Tab(
+                        selected = selectedTabIndex == 0,
+                        onClick = { selectedTabIndex = 0 },
+                        text = { Text(stringResource(R.string.canteen_menu)) },
+                    )
+                    Tab(
+                        selected = selectedTabIndex == 1,
+                        onClick = { selectedTabIndex = 1 },
+                        text = { Text(stringResource(R.string.canteen_exchange)) },
                     )
                 }
-            ) {
-                Tab(
-                    selected = selectedTabIndex == 0,
-                    onClick = { selectedTabIndex = 0 },
-                    text = { Text(stringResource(R.string.canteen_menu)) },
-                )
-                Tab(
-                    selected = selectedTabIndex == 1,
-                    onClick = { selectedTabIndex = 1 },
-                    text = { Text(stringResource(R.string.canteen_exchange)) },
-                )
-            }
 
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                when (selectedTabIndex)
-                {
-                    0 ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    when (selectedTabIndex)
                     {
-                        val columnState = remember { LazyListState() }
+                        0 ->
+                        {
+                            val columnState = remember { LazyListState() }
 
-                        LazyColumn(
-                            state = columnState,
-                            verticalArrangement = Arrangement.spacedBy(16.dp),
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            items(uiState.menuSorted, key = { it.day.hashCode() }) { dayMenu ->
-                                // TODO: Add animated appearance using AnimatedVisibility
-                                DayMenu(
-                                    dayMenu = dayMenu,
-                                    onMenuItemClick = {
-                                        if (it.isOrdered && !it.isEnabled)
-                                            viewModel.putMenuItemOnExchange(it, dayMenu.day)
-                                        else
-                                            viewModel.orderMenuItem(it, dayMenu.day)
-                                    },
-                                    onInfoClick = { allergensDialogState.show(dayMenu) }
-                                )
-                            }
-                        }
-
-                        InfiniteListHandler(listState = columnState, buffer = 1) {
-                            viewModel.loadMoreDayMenus(1)
-                        }
-                    }
-                    1 ->
-                    {
-                        if (uiState.exchange.isEmpty() && !uiState.loading)
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = stringResource(R.string.canteen_exchange_empty),
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    textAlign = TextAlign.Center,
-                                    modifier = Modifier.padding(16.dp)
-                                )
-                            }
-                        else
                             LazyColumn(
+                                state = columnState,
                                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                                modifier = Modifier
-                                    .padding(16.dp)
-                                    .fillMaxSize()
+                                modifier = Modifier.padding(16.dp)
                             ) {
-                                items(uiState.exchange, key = { it.day }) { exchangeDay ->
-                                    ExchangeDay(
-                                        exchangeDay = exchangeDay,
-                                        onItemClick = { viewModel.orderExchangeItem(it) }
+                                if (!settings.canteenLegendDismissed)
+                                {
+                                    item {
+                                        CanteenLegendCard(
+                                            onDismiss = viewModel::onCanteenLegendDismissed
+                                        )
+                                    }
+                                }
+                                items(uiState.menuSorted, key = { it.day.hashCode() }) { dayMenu ->
+                                    // TODO: Add animated appearance using AnimatedVisibility
+                                    DayMenu(
+                                        dayMenu = dayMenu,
+                                        onMenuItemClick = {
+                                            if (it.isOrdered && !it.isEnabled)
+                                                viewModel.putMenuItemOnExchange(it, dayMenu.day)
+                                            else
+                                                viewModel.orderMenuItem(it, dayMenu.day)
+                                        },
+                                        onInfoClick = { allergensDialogState.show(dayMenu) }
                                     )
                                 }
                             }
-                    }
-                }
 
-                // Indicator handled by PullToRefreshBox
-            }
+                            InfiniteListHandler(listState = columnState, buffer = 1) {
+                                viewModel.loadMoreDayMenus(1)
+                            }
+                        }
+
+                        1 ->
+                        {
+                            if (uiState.exchange.isEmpty() && !uiState.loading)
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = stringResource(R.string.canteen_exchange_empty),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        textAlign = TextAlign.Center,
+                                        modifier = Modifier.padding(16.dp)
+                                    )
+                                }
+                            else
+                                LazyColumn(
+                                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxSize()
+                                ) {
+                                    items(uiState.exchange, key = { it.day }) { exchangeDay ->
+                                        ExchangeDay(
+                                            exchangeDay = exchangeDay,
+                                            onItemClick = { viewModel.orderExchangeItem(it) }
+                                        )
+                                    }
+                                }
+                        }
+                    }
+
+                    // Indicator handled by PullToRefreshBox
+                }
             }
         }
 
@@ -460,9 +457,9 @@ private fun MenuItem(
     val color = when
     {
         menuItem.isOrdered && !menuItem.isEnabled -> jm_canteen_ordered_disabled
-        menuItem.isOrdered                        -> jm_canteen_ordered
-        !menuItem.isEnabled                       -> jm_canteen_disabled
-        else                                      -> MaterialTheme.colorScheme.surface
+        menuItem.isOrdered -> jm_canteen_ordered
+        !menuItem.isEnabled -> jm_canteen_disabled
+        else -> MaterialTheme.colorScheme.surface
     }
 
     val lunchString = stringResource(R.string.canteen_lunch, menuItem.number)
@@ -583,6 +580,103 @@ private fun ElevatedTextRectangle(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CanteenLegendCard(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+)
+{
+    Card(
+        title = {
+            Text(
+                text = stringResource(R.string.canteen_legend_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LegendItem(
+                    color = jm_canteen_ordered,
+                    text = stringResource(R.string.canteen_legend_ordered)
+                )
+                LegendItem(
+                    color = jm_canteen_disabled,
+                    text = stringResource(R.string.canteen_legend_disabled)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LegendItem(
+                    color = jm_canteen_ordered_disabled,
+                    text = stringResource(R.string.canteen_legend_ordered_disabled)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                        tint = Color.Gray.copy(alpha = 0.5f),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.canteen_legend_in_exchange),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            LegendItem(
+                color = MaterialTheme.colorScheme.tertiary,
+                text = stringResource(R.string.controls)
+            )
+            TextButton(
+                onClick = onDismiss,
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                modifier = Modifier.heightIn(max = 32.dp)
+            ) {
+                Text(stringResource(R.string.dismiss))
+            }
+        }
+    }
+}
+
+@Composable
+private fun LegendItem(
+    color: Color,
+    text: String,
+    modifier: Modifier = Modifier
+)
+{
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Box(
+            modifier = Modifier
+                .size(16.dp)
+                .background(color, RoundedCornerShape(4.dp))
+        )
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
 

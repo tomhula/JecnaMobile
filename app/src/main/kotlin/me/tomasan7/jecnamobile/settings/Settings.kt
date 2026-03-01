@@ -6,8 +6,7 @@ import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 @Serializable
 data class Settings(
     val theme: Theme = Theme.SYSTEM,
-    var canteenImageTolerance: Float = 0.5f,
-    var canteenHelpSeen: Boolean = false,
+    var canteenLegendDismissed: Boolean = false,
     var gradesViewMode: GradesViewMode = GradesViewMode.GRID,
     val openSubScreenRoute: String? = null,
     val defaultDestination: SubScreenDestination = openSubScreenRoute?.let { legacySubScreenRouteToDefaultDestination(it) } ?: SubScreenDestination.Timetable,
