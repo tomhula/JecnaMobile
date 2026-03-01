@@ -46,6 +46,7 @@ fun <T> DropDownSelector(
 @Composable
 fun <T> FilledDropDownSelector(
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     label: String? = null,
     options: List<T>,
     selectedValue: T?,
@@ -61,7 +62,7 @@ fun <T> FilledDropDownSelector(
         onChange = onChange,
         textField = { value, expanded ->
             TextField(
-                modifier = Modifier.menuAnchor(),
+                modifier = textFieldModifier.menuAnchor(),
                 label = label?.let { { Text(label) } },
                 value = value,
                 readOnly = true,
