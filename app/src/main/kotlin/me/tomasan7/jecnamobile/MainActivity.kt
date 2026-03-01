@@ -22,6 +22,7 @@ import me.tomasan7.jecnamobile.settings.isAppInDarkTheme
 import me.tomasan7.jecnamobile.ui.theme.JecnaMobileTheme
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
+import me.tomasan7.jecnamobile.welcome.WelcomeScreen
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -56,7 +57,14 @@ class MainActivity : ComponentActivity()
                         when (key)
                         {
                             AppDestination.Login -> NavEntry(key) { 
-                                LoginScreen(onLoginSuccess = { currentDestination = AppDestination.Main }) 
+                                LoginScreen(onLoginSuccess = { 
+                                    currentDestination = if (settings.hasSeenWelcomeScreen) AppDestination.Main else AppDestination.Welcome 
+                                }) 
+                            }
+                            AppDestination.Welcome -> NavEntry(key) {
+                                WelcomeScreen(onWelcomeComplete = {
+                                    currentDestination = AppDestination.Main
+                                })
                             }
                             AppDestination.Main -> NavEntry(key) { 
                                 MainScreen(onNavigateToLogin = { currentDestination = AppDestination.Login })
@@ -73,5 +81,6 @@ class MainActivity : ComponentActivity()
 private enum class AppDestination: NavKey
 {
     Login,
+    Welcome,
     Main
 }
