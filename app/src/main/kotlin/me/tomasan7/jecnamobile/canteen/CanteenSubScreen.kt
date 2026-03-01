@@ -159,73 +159,9 @@ fun CanteenSubScreen(
                                 if (!settings.canteenLegendDismissed)
                                 {
                                     item {
-                                        Card(
-                                            title = {
-                                                Text(
-                                                    text = stringResource(R.string.canteen_legend_title),
-                                                    style = MaterialTheme.typography.titleMedium
-                                                )
-                                            }
-                                        ) {
-                                            Column(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                                            ) {
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    LegendItem(
-                                                        color = jm_canteen_ordered,
-                                                        text = stringResource(R.string.canteen_legend_ordered)
-                                                    )
-                                                    LegendItem(
-                                                        color = jm_canteen_disabled,
-                                                        text = stringResource(R.string.canteen_legend_disabled)
-                                                    )
-                                                }
-                                                Row(
-                                                    modifier = Modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    LegendItem(
-                                                        color = jm_canteen_ordered_disabled,
-                                                        text = stringResource(R.string.canteen_legend_ordered_disabled)
-                                                    )
-                                                    Row(
-                                                        verticalAlignment = Alignment.CenterVertically,
-                                                        horizontalArrangement = Arrangement.spacedBy(2.dp)
-                                                    ) {
-                                                        Icon(
-                                                            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
-                                                            tint = Color.Gray.copy(alpha = 0.5f),
-                                                            contentDescription = null,
-                                                            modifier = Modifier.size(16.dp)
-                                                        )
-                                                        Text(
-                                                            text = stringResource(R.string.canteen_legend_in_exchange),
-                                                            style = MaterialTheme.typography.bodySmall
-                                                        )
-                                                    }
-                                                }
-                                                LegendItem(
-                                                    color = MaterialTheme.colorScheme.tertiary,
-                                                    text = stringResource(R.string.controls)
-                                                )
-                                                TextButton(
-                                                    onClick = viewModel::onCanteenLegendDismissed,
-                                                    contentPadding = PaddingValues(
-                                                        horizontal = 8.dp,
-                                                        vertical = 2.dp
-                                                    ),
-                                                    modifier = Modifier.heightIn(max = 32.dp)
-                                                ) {
-                                                    Text(stringResource(R.string.dismiss))
-                                                }
-                                            }
-                                        }
+                                        CanteenLegendCard(
+                                            onDismiss = viewModel::onCanteenLegendDismissed
+                                        )
                                     }
                                 }
                                 items(uiState.menuSorted, key = { it.day.hashCode() }) { dayMenu ->
@@ -642,6 +578,79 @@ private fun ElevatedTextRectangle(
                     HorizontalSpacer(10.dp)
                     trailingIcon()
                 }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CanteenLegendCard(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier
+)
+{
+    Card(
+        title = {
+            Text(
+                text = stringResource(R.string.canteen_legend_title),
+                style = MaterialTheme.typography.titleMedium
+            )
+        },
+        modifier = modifier
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LegendItem(
+                    color = jm_canteen_ordered,
+                    text = stringResource(R.string.canteen_legend_ordered)
+                )
+                LegendItem(
+                    color = jm_canteen_disabled,
+                    text = stringResource(R.string.canteen_legend_disabled)
+                )
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                LegendItem(
+                    color = jm_canteen_ordered_disabled,
+                    text = stringResource(R.string.canteen_legend_ordered_disabled)
+                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                        tint = Color.Gray.copy(alpha = 0.5f),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = stringResource(R.string.canteen_legend_in_exchange),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            LegendItem(
+                color = MaterialTheme.colorScheme.tertiary,
+                text = stringResource(R.string.controls)
+            )
+            TextButton(
+                onClick = onDismiss,
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
+                modifier = Modifier.heightIn(max = 32.dp)
+            ) {
+                Text(stringResource(R.string.dismiss))
             }
         }
     }
