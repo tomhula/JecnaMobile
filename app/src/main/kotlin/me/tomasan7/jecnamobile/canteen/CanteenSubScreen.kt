@@ -622,22 +622,18 @@ private fun CanteenLegendCard(
                     color = jm_canteen_ordered_disabled,
                     text = stringResource(R.string.canteen_legend_ordered_disabled)
                 )
-                Row(
+                LegendItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                            tint = Color.Gray.copy(alpha = 0.5f),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
-                        tint = Color.Gray.copy(alpha = 0.5f),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.canteen_legend_in_exchange),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                    text = stringResource(R.string.canteen_legend_in_exchange)
+                )
                 LegendItem(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     color = MaterialTheme.colorScheme.tertiary,
@@ -657,21 +653,36 @@ private fun CanteenLegendCard(
 
 @Composable
 private fun LegendItem(
+    modifier: Modifier = Modifier,
     color: Color,
     text: String,
-    modifier: Modifier = Modifier
 )
 {
+    LegendItem(
+        text = text,
+        modifier = modifier,
+        icon = {
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .background(color, RoundedCornerShape(4.dp))
+            )
+        }
+    )
+}
+
+@Composable
+private fun LegendItem(
+    text: String,
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .background(color, RoundedCornerShape(4.dp))
-        )
+        icon()
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall
