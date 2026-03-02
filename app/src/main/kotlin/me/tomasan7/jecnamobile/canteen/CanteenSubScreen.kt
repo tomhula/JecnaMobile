@@ -602,49 +602,44 @@ private fun CanteenLegendCard(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalSpacing = 16.dp,
+                verticalSpacing = 8.dp
             ) {
                 LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_ordered,
                     text = stringResource(R.string.canteen_legend_ordered)
                 )
                 LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_disabled,
                     text = stringResource(R.string.canteen_legend_disabled)
                 )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_ordered_disabled,
                     text = stringResource(R.string.canteen_legend_ordered_disabled)
                 )
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.TrendingUp,
-                        tint = Color.Gray.copy(alpha = 0.5f),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Text(
-                        text = stringResource(R.string.canteen_legend_in_exchange),
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
+                LegendItem(
+                    icon = {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.TrendingUp,
+                            tint = Color.Gray.copy(alpha = 0.5f),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    },
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    text = stringResource(R.string.canteen_legend_in_exchange)
+                )
+                LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    color = MaterialTheme.colorScheme.tertiary,
+                    text = stringResource(R.string.controls)
+                )
             }
-            LegendItem(
-                color = MaterialTheme.colorScheme.tertiary,
-                text = stringResource(R.string.controls)
-            )
             TextButton(
                 onClick = onDismiss,
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
@@ -658,21 +653,36 @@ private fun CanteenLegendCard(
 
 @Composable
 private fun LegendItem(
+    modifier: Modifier = Modifier,
     color: Color,
     text: String,
-    modifier: Modifier = Modifier
 )
 {
+    LegendItem(
+        text = text,
+        modifier = modifier,
+        icon = {
+            Box(
+                modifier = Modifier
+                    .size(16.dp)
+                    .background(color, RoundedCornerShape(4.dp))
+            )
+        }
+    )
+}
+
+@Composable
+private fun LegendItem(
+    text: String,
+    modifier: Modifier = Modifier,
+    icon: @Composable () -> Unit,
+) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(16.dp)
-                .background(color, RoundedCornerShape(4.dp))
-        )
+        icon()
         Text(
             text = text,
             style = MaterialTheme.typography.bodySmall
