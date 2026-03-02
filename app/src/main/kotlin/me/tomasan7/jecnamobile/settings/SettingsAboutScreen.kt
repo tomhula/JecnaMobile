@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.settings
 
 import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -27,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.R
 import androidx.core.net.toUri
+import me.tomasan7.jecnamobile.ui.component.HorizontalDivider
 
 private const val DEVELOPER_GITHUB_URL = "https://github.com/tomhula"
 private const val PROJECT_GITHUB_URL = "https://github.com/tomhula/JecnaMobile"
@@ -135,8 +135,8 @@ fun SettingsAboutScreen(
                         tint = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
-                
-                Divider()
+
+                HorizontalDivider()
 
                 Row(
                     modifier = Modifier
@@ -161,7 +161,7 @@ fun SettingsAboutScreen(
                     )
                 }
 
-                Divider()
+                HorizontalDivider()
 
                 Row(
                     modifier = Modifier
@@ -219,7 +219,7 @@ fun SettingsAboutScreen(
                     }
 
                     if (index < CONTRIBUTORS.lastIndex) {
-                        Divider()
+                        HorizontalDivider()
                     }
                 }
             }

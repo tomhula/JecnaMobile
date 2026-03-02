@@ -88,11 +88,3 @@ fun SettingsSection(
         }
     }
 }
-
-@Composable
-fun Divider() {
-    HorizontalDivider(
-        modifier = Modifier.padding(horizontal = 16.dp),
-        color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
-    )
-}

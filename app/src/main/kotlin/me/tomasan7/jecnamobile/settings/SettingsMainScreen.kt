@@ -17,6 +17,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.R
+import me.tomasan7.jecnamobile.ui.component.HorizontalDivider
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -53,19 +54,19 @@ fun SettingsMainScreen(
                     icon = Icons.Default.Settings,
                     onClick = { onNavigate(SettingsDestination.General) }
                 )
-                Divider()
+                HorizontalDivider()
                 SettingsCategoryItem(
                     title = stringResource(R.string.settings_category_appearance),
                     icon = Icons.Default.Palette,
                     onClick = { onNavigate(SettingsDestination.Appearance) }
                 )
-                Divider()
+                HorizontalDivider()
                 SettingsCategoryItem(
                     title = stringResource(R.string.settings_substitution_server_title),
                     icon = Icons.Default.Warning,
                     onClick = { onNavigate(SettingsDestination.Substitution) }
                 )
-                Divider()
+                HorizontalDivider()
                 SettingsCategoryItem(
                     title = stringResource(R.string.sidebar_canteen),
                     icon = Icons.Default.Restaurant,
