@@ -18,6 +18,7 @@
 - Any composables that could be reused in multiple places must be placed in the `ui/component` package.
 - Prefer stateless composables by hoisting state to the caller.
 - For screen-level composables, obtain the ViewModel using `hiltViewModel()`.
+- Use the `MaterialTheme` object instead of hardcoding colors, styles tc.
 
 # Formatting
 - Opening braces are placed on new line except for lambdas.
