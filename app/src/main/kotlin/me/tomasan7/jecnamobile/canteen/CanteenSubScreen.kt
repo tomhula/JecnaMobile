@@ -602,31 +602,28 @@ private fun CanteenLegendCard(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            Row(
+            FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalSpacing = 16.dp,
+                verticalSpacing = 8.dp
             ) {
                 LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_ordered,
                     text = stringResource(R.string.canteen_legend_ordered)
                 )
                 LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_disabled,
                     text = stringResource(R.string.canteen_legend_disabled)
                 )
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 LegendItem(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     color = jm_canteen_ordered_disabled,
                     text = stringResource(R.string.canteen_legend_ordered_disabled)
                 )
                 Row(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(2.dp)
                 ) {
@@ -641,11 +638,12 @@ private fun CanteenLegendCard(
                         style = MaterialTheme.typography.bodySmall
                     )
                 }
+                LegendItem(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    color = MaterialTheme.colorScheme.tertiary,
+                    text = stringResource(R.string.controls)
+                )
             }
-            LegendItem(
-                color = MaterialTheme.colorScheme.tertiary,
-                text = stringResource(R.string.controls)
-            )
             TextButton(
                 onClick = onDismiss,
                 contentPadding = PaddingValues(horizontal = 8.dp, vertical = 2.dp),
