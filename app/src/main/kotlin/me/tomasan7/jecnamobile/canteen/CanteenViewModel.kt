@@ -3,6 +3,7 @@ package me.tomasan7.jecnamobile.canteen
 import android.content.Context
 import android.content.IntentFilter
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -15,7 +16,9 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.CanteenClient
+import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebCanteenClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
 import io.github.tomhula.jecnaapi.data.canteen.MenuItem
@@ -45,6 +48,7 @@ class CanteenViewModel @Inject constructor(
     @ApplicationContext
     private val appContext: Context,
     private val authRepository: AuthRepository,
+    private val jecnaClient: JecnaClient,
     private val canteenClient: CanteenClient,
 ) : ViewModel()
 {
@@ -76,7 +80,8 @@ class CanteenViewModel @Inject constructor(
         loginJob = viewModelScope.launch {
             changeUiState(loading = true)
 
-            val auth = authRepository.get()
+            // Auth repository is required because when user has Jidelna set as defualt page, the autoLoginAuth in jecnaClient isn't set yet.
+            val auth = (jecnaClient as WebJecnaClient).autoLoginAuth ?: authRepository.get()
 
             if (auth != null)
                 try
@@ -384,12 +389,13 @@ class CanteenViewModel @Inject constructor(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    fun onHelpDialogShownAutomatically() = viewModelScope.launch {
+    fun onCanteenLegendDismissed() = viewModelScope.launch {
         appContext.settingsDataStore.updateData {
             it.copy(
-                canteenHelpSeen = true
+                canteenLegendDismissed = true
             )
         }
+        showMessage(R.string.canteen_legend_dismissed)
     }
 
     private fun updateMenu(newDayMenu: DayMenu)
