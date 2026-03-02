@@ -40,7 +40,8 @@ import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
-import me.tomasan7.jecnamobile.settings.SettingsScreen
+import me.tomasan7.jecnamobile.settings.SettingsDestination
+import me.tomasan7.jecnamobile.settings.settingsNavEntry
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
 import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
@@ -138,7 +139,7 @@ fun MainScreen(
                         },
                         onSettingsClick = {
                             scope.launch { drawerState.close() }
-                            navBackStack.add(SettingsScreenDestination)
+                            navBackStack.add(SettingsDestination.Main)
                         },
                         onLogoutClick = {
                             viewModel.logout()
@@ -231,11 +232,11 @@ fun MainScreen(
                         )
                     }
 
-                    is SettingsScreenDestination -> NavEntry(key) {
-                        SettingsScreen(
-                            onBackClick = { navBackStack.pop() }
-                        )
-                    }
+                    is SettingsDestination -> settingsNavEntry(
+                        key = key,
+                        onNavigate = { navBackStack.add(it) },
+                        onBackClick = { navBackStack.pop() }
+                    )
 
                     else -> NavEntry(key) { Text("Unknown route") }
                 }
@@ -252,8 +253,6 @@ private data class TeacherScreenDestination(val reference: TeacherReference) : N
 private data class RoomScreenDestination(val reference: RoomReference) : NavKey
 @Serializable
 private data object StudentProfileDestination: NavKey
-@Serializable
-private data object SettingsScreenDestination: NavKey
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
