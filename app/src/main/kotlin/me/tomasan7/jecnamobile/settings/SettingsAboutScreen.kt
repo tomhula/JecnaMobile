@@ -28,16 +28,6 @@ import me.tomasan7.jecnamobile.R
 import androidx.core.net.toUri
 import me.tomasan7.jecnamobile.ui.component.HorizontalDivider
 
-private const val DEVELOPER_GITHUB_URL = "https://github.com/tomhula"
-private const val PROJECT_GITHUB_URL = "https://github.com/tomhula/JecnaMobile"
-private const val PROJECT_ISSUES_URL = "https://github.com/tomhula/JecnaMobile/issues"
-private const val GITHUB_BASE_URL = "https://github.com/"
-
-private val CONTRIBUTORS = listOf(
-    "Jakub Žitník" to "jzitnik-dev",
-    "Štěpán Végh" to "Stevekk11"
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsAboutScreen(
@@ -110,7 +100,7 @@ fun SettingsAboutScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
-                            val intent = Intent(Intent.ACTION_VIEW, DEVELOPER_GITHUB_URL.toUri())
+                            val intent = Intent(Intent.ACTION_VIEW, AUTHOR.githubUrl.toUri())
                             context.startActivity(intent)
                         }
                         .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -121,7 +111,7 @@ fun SettingsAboutScreen(
                         verticalArrangement = Arrangement.spacedBy(2.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.settings_developer_names),
+                            text = AUTHOR.name,
                             style = MaterialTheme.typography.bodyLarge,
                             color = MaterialTheme.colorScheme.onSurface
                         )
@@ -190,12 +180,12 @@ fun SettingsAboutScreen(
             }
 
             SettingsSection(title = stringResource(R.string.settings_contributors)) {
-                CONTRIBUTORS.forEachIndexed { index, (name, username) ->
+                CONTRIBUTORS.forEachIndexed { index, contributor ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
-                                val intent = Intent(Intent.ACTION_VIEW, "$GITHUB_BASE_URL$username".toUri())
+                                val intent = Intent(Intent.ACTION_VIEW, contributor.githubUrl.toUri())
                                 context.startActivity(intent)
                             }
                             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -203,12 +193,12 @@ fun SettingsAboutScreen(
                     ) {
                         Column(modifier = Modifier.weight(1f)) {
                             Text(
-                                text = name,
+                                text = contributor.name,
                                 style = MaterialTheme.typography.bodyLarge,
                                 color = MaterialTheme.colorScheme.onSurface
                             )
                             Text(
-                                text = username,
+                                text = contributor.githubUsername,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant
                             )
