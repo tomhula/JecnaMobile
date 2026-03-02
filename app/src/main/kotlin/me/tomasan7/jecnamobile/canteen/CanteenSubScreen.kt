@@ -622,6 +622,7 @@ private fun CanteenLegendCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 LegendItem(
+                    modifier = Modifier.weight(1f),
                     color = jm_canteen_ordered_disabled,
                     text = stringResource(R.string.canteen_legend_ordered_disabled)
                 )
