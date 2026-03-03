@@ -104,6 +104,7 @@ class NewsViewModel @Inject constructor(
 
             val sessionCookie = getSessionCookie() ?: return@launch
             addRequestHeader("Cookie", sessionCookie.toHeaderString())
+            addRequestHeader("Accept-Language", "en-US,en;q=0.9")
         }
 
         downloadManager.enqueue(request)
@@ -164,7 +165,10 @@ class NewsViewModel @Inject constructor(
         crossfade(true)
         val sessionCookie = getSessionCookieBlocking() ?: return@apply
         setHeader("Cookie", sessionCookie.toHeaderString())
-        jecnaClient.userAgent?.let { setHeader("User-Agent", it) }
+        
+        // News image requests require valid browser User-Agent and Accept-Language (see https://github.com/tomhula/JecnaMobile/issues/48)
+        setHeader("Accept-Language", "en-US,en;q=0.9")
+        setHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0")
     }.build()
     
     private fun changeUiState(
