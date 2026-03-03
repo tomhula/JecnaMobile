@@ -104,7 +104,6 @@ class NewsViewModel @Inject constructor(
 
             val sessionCookie = getSessionCookie() ?: return@launch
             addRequestHeader("Cookie", sessionCookie.toHeaderString())
-            addRequestHeader("Accept-Language", "en-US,en;q=0.9")
         }
 
         downloadManager.enqueue(request)
