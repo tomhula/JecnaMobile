@@ -29,22 +29,26 @@ import me.tomasan7.jecnamobile.util.settingsDataStore
 @Composable
 fun WelcomeScreen(
     onWelcomeComplete: () -> Unit
-) {
+)
+{
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    
-    fun markWelcomeSeenAndContinue() {
+
+    fun markWelcomeSeenAndContinue()
+    {
         coroutineScope.launch {
             context.settingsDataStore.updateData { it.copy(hasSeenWelcomeScreen = true) }
             onWelcomeComplete()
         }
     }
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+    {
         val notificationPermissionState = rememberPermissionState(
             Manifest.permission.POST_NOTIFICATIONS
         ) { isGranted ->
-            if (isGranted) {
+            if (isGranted)
+            {
                 GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
             }
             markWelcomeSeenAndContinue()
@@ -52,9 +56,12 @@ fun WelcomeScreen(
 
         WelcomeContent(
             onRequestPermission = {
-                if (!notificationPermissionState.status.isGranted) {
+                if (!notificationPermissionState.status.isGranted)
+                {
                     notificationPermissionState.launchPermissionRequest()
-                } else {
+                }
+                else
+                {
                     markWelcomeSeenAndContinue()
                 }
             },
@@ -62,7 +69,9 @@ fun WelcomeScreen(
                 markWelcomeSeenAndContinue()
             }
         )
-    } else {
+    }
+    else
+    {
         // For older Android versions, permission is granted at install time.
         WelcomeContent(
             onRequestPermission = {
@@ -80,81 +89,77 @@ fun WelcomeScreen(
 private fun WelcomeContent(
     onRequestPermission: () -> Unit,
     onSkip: () -> Unit
-) {
-    Surface(
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+)
+{
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        Column(
+        Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .size(120.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
+            contentAlignment = Alignment.Center
         ) {
-            Box(
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.primaryContainer),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.NotificationsActive,
-                    contentDescription = null,
-                    modifier = Modifier.size(64.dp),
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Text(
-                text = stringResource(R.string.welcome_notifications_title),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onBackground
+            Icon(
+                imageVector = Icons.Rounded.NotificationsActive,
+                contentDescription = null,
+                modifier = Modifier.size(64.dp),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer
             )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = stringResource(R.string.welcome_notifications_title),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = stringResource(R.string.welcome_notifications_description),
+            style = MaterialTheme.typography.bodyLarge,
+            textAlign = TextAlign.Center,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+
+        Spacer(modifier = Modifier.height(48.dp))
+
+        Button(
+            onClick = onRequestPermission,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.large
+        ) {
             Text(
-                text = stringResource(R.string.welcome_notifications_description),
-                style = MaterialTheme.typography.bodyLarge,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
+                text = stringResource(R.string.welcome_notifications_button_turn_on),
+                style = MaterialTheme.typography.titleMedium
             )
-            
-            Spacer(modifier = Modifier.height(48.dp))
-            
-            Button(
-                onClick = onRequestPermission,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Text(
-                    text = stringResource(R.string.welcome_notifications_button_turn_on),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            TextButton(
-                onClick = onSkip,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(56.dp),
-                shape = MaterialTheme.shapes.large
-            ) {
-                Text(
-                    text = stringResource(R.string.welcome_notifications_button_skip),
-                    style = MaterialTheme.typography.titleMedium
-                )
-            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        TextButton(
+            onClick = onSkip,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = MaterialTheme.shapes.large
+        ) {
+            Text(
+                text = stringResource(R.string.welcome_notifications_button_skip),
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }
