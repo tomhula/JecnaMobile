@@ -33,7 +33,7 @@ fun WelcomeScreen(
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     
-    val markWelcomeSeenAndContinue = {
+    fun markWelcomeSeenAndContinue() {
         coroutineScope.launch {
             context.settingsDataStore.updateData { it.copy(hasSeenWelcomeScreen = true) }
             onWelcomeComplete()
