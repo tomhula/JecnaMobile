@@ -12,6 +12,7 @@ data class Settings(
     val defaultDestination: SubScreenDestination = openSubScreenRoute?.let { legacySubScreenRouteToDefaultDestination(it) } ?: SubScreenDestination.Timetable,
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
+    var hasSeenWelcomeScreen: Boolean = false,
 )
 {
     companion object
