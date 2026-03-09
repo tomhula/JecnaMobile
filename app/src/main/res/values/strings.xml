@@ -44,7 +44,7 @@
     <string name="settings_developer">Vývojář</string>
     <string name="settings_github">GitHub repozitář</string>
     <string name="settings_report_bug">Nahlásit chybu</string>
-    <string name="settings_contributors">Přispěvatelé</string>
+    <string name="settings_contributors">Podíleli se na vývoji</string>
 
     <string name="substitution_day_info">Koná se</string>
     <string name="substitution_day_info_tomorrow">Koná se zítra</string>
