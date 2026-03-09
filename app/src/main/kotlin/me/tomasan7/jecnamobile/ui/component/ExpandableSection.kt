@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
-sealed interface ExpandableSectionPadding
+sealed interface ExpandableSectionPadding 
 {
     val start: Dp
     val top: Dp
@@ -43,13 +43,28 @@ sealed interface ExpandableSectionPadding
         override val end = 16.dp
         override val bottom = 8.dp
     }
+    
+    data class Custom(
+        override val start: Dp,
+        override val top: Dp,
+        override val end: Dp,
+        override val bottom: Dp
+    ) : ExpandableSectionPadding
 }
 
 @Composable
 fun ExpandableSection(
     title: String,
     modifier: Modifier = Modifier,
-    icon: ImageVector = Icons.Default.CalendarMonth,
+    icon: (@Composable () -> Unit)? = {
+        Icon(
+            imageVector = Icons.Default.CalendarMonth,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = MaterialTheme.colorScheme.primary
+        )
+    },
+    trailingHeaderContent: (@Composable RowScope.() -> Unit)? = null,
     initiallyExpanded: Boolean = false,
     expandable: Boolean = true,
     color: Color = MaterialTheme.colorScheme.surface,
@@ -85,19 +100,22 @@ fun ExpandableSection(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.weight(1f)
                 ) {
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = iconColor
-                    )
-                    Spacer(Modifier.width(12.dp))
+                    if (icon != null) {
+                        CompositionLocalProvider(LocalContentColor provides iconColor) {
+                            icon()
+                        }
+                        Spacer(Modifier.width(12.dp))
+                    }
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                         color = contentColor
                     )
+
+                    if (trailingHeaderContent != null) {
+                        trailingHeaderContent()
+                    }
                 }
 
                 if (expandable)
@@ -132,3 +150,37 @@ fun ExpandableSection(
         }
     }
 }
+
+@Composable
+fun ExpandableSection(
+    title: String,
+    modifier: Modifier = Modifier,
+    icon: ImageVector,
+    trailingHeaderContent: (@Composable RowScope.() -> Unit)? = null,
+    initiallyExpanded: Boolean = false,
+    expandable: Boolean = true,
+    color: Color = MaterialTheme.colorScheme.surface,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    iconColor: Color = MaterialTheme.colorScheme.primary,
+    contentPadding: ExpandableSectionPadding = ExpandableSectionPadding.Default,
+    content: @Composable ColumnScope.() -> Unit
+) = ExpandableSection(
+    title = title,
+    modifier = modifier,
+    icon = {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = LocalContentColor.current
+        )
+    },
+    trailingHeaderContent = trailingHeaderContent,
+    initiallyExpanded = initiallyExpanded,
+    expandable = expandable,
+    color = color,
+    contentColor = contentColor,
+    iconColor = iconColor,
+    contentPadding = contentPadding,
+    content = content
+)
