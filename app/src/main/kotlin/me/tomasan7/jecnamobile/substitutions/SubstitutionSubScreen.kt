@@ -28,9 +28,7 @@ import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.timetable.AbsenceEntry
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.TakesPlaceInfo
-import me.tomasan7.jecnamobile.ui.component.OutlinedDropDownSelector
-import me.tomasan7.jecnamobile.ui.component.ReportDialog
-import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
+import me.tomasan7.jecnamobile.ui.component.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
@@ -130,22 +128,24 @@ fun SubstitutionSubScreen(
                         }
                     }
 
-                    OutlinedDropDownSelector(
-                        modifier = Modifier.fillMaxWidth(),
-                        textFieldModifier = Modifier.fillMaxWidth(),
-                        label = stringResource(R.string.substitution_all_date_label),
-                        options = dates,
-                        optionStringMap = {
-                            if (it != null) {
-                                if (it.inWork)
-                                    it.date.format(DATE_FORMATTER) + stringResource(R.string.substitution_preparation_label)
-                                else
-                                    it.date.format(DATE_FORMATTER)
-                            } else ""
-                        },
-                        selectedValue = uiState.selectedDate,
-                        onChange = { viewModel.selectDate(it) }
-                    )
+                    ExpandableSection(title = stringResource(R.string.substitution_all_date_label)) {
+                        OutlinedDropDownSelector(
+                            modifier = Modifier.fillMaxWidth(),
+                            textFieldModifier = Modifier.fillMaxWidth(),
+                            label = stringResource(R.string.substitution_all_date_label),
+                            options = dates,
+                            optionStringMap = {
+                                if (it != null) {
+                                    if (it.inWork)
+                                        it.date.format(DATE_FORMATTER) + stringResource(R.string.substitution_preparation_label)
+                                    else
+                                        it.date.format(DATE_FORMATTER)
+                                } else ""
+                            },
+                            selectedValue = uiState.selectedDate,
+                            onChange = { viewModel.selectDate(it) }
+                        )
+                    }
 
                     val selectedDayData = uiState.data.schedule[uiState.selectedDate?.key]
                     if (selectedDayData != null)
