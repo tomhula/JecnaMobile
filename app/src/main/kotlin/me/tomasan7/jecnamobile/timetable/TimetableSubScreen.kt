@@ -231,6 +231,12 @@ fun TimetableSubScreen(
                                 val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
                                 val takesPlaceText = targetInfo?.takesPlace?.takeIf { it.isNotBlank() }
 
+                                val contentPadding = ExpandableSectionPadding.Custom(
+                                    start = 30.dp,
+                                    top = 0.dp,
+                                    end = 8.dp,
+                                    bottom = if (takesPlaceText != null) 8.dp else 0.dp
+                                )
                                 ExpandableSection(
                                     title = stringResource(R.string.sidebar_link_substitution_timetable),
                                     modifier = Modifier.fillMaxWidth(),
@@ -256,7 +262,7 @@ fun TimetableSubScreen(
                                         alpha = 0.4f
                                     ),
                                     contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                    contentPadding = ExpandableSectionPadding.Custom(start = 30.dp, bottom = 8.dp, end = 8.dp, top = 0.dp)
+                                    contentPadding = contentPadding
                                 ) {
                                     if (takesPlaceText != null)
                                     {
