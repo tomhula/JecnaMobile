@@ -102,4 +102,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.datastore)
     implementation(libs.serialization.json)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
 }

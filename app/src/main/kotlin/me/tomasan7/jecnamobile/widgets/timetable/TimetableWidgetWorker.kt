@@ -1,0 +1,110 @@
+package me.tomasan7.jecnamobile.widgets.timetable
+
+import android.content.Context
+import android.util.Log
+import androidx.glance.appwidget.GlanceAppWidgetManager
+import androidx.glance.appwidget.state.updateAppWidgetState
+import androidx.hilt.work.HiltWorker
+import androidx.work.CoroutineWorker
+import androidx.work.WorkerParameters
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import io.github.tomhula.jecnaapi.JecnaClient
+import io.github.tomhula.jecnaapi.WebJecnaClient
+import io.github.tomhula.jecnaapi.util.SchoolYear
+import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
+import me.tomasan7.jecnamobile.login.AuthRepository
+import me.tomasan7.jecnamobile.timetable.TimetableData
+
+private const val LOG_TAG = "TimetableWidgetWorker"
+
+@HiltWorker
+internal class TimetableWidgetWorker @AssistedInject constructor(
+    @Assisted private val context: Context,
+    @Assisted workerParams: WorkerParameters,
+    private val jecnaClient: JecnaClient,
+    private val authRepository: AuthRepository,
+    private val timetableCacheRepository: CacheRepository<TimetableData, SchoolYearPeriodParams>
+) : CoroutineWorker(context, workerParams) {
+
+    override suspend fun doWork(): Result {
+        return try {
+            if ((jecnaClient as WebJecnaClient).autoLoginAuth == null) {
+                jecnaClient.autoLoginAuth = authRepository.get()
+            }
+
+            val params = SchoolYearPeriodParams(SchoolYear.current(), SchoolYearPeriodParams.CURRENT_PERIOD_ID)
+            var isFromCache = false
+            var timestamp = System.currentTimeMillis()
+
+            val timetableData = try {
+                timetableCacheRepository.getRealAndCache(params)
+            } catch (networkException: Exception) {
+                Log.w(LOG_TAG, "Network fetch failed, attempting to read from cache.", networkException)
+
+                val cachedData = timetableCacheRepository.getCache(params)
+
+                if (cachedData != null) {
+                    isFromCache = true
+                    timestamp = cachedData.timestamp.toEpochMilliseconds()
+                    cachedData.data
+                } else {
+                    throw networkException
+                }
+            }
+
+            updateWidgetState { currentState ->
+                currentState.copy(
+                    timetablePage = timetableData.page,
+                    substitutions = timetableData.substitutions,
+                    lastUpdated = timestamp,
+                    isLoading = false,
+                    isManualRefresh = false,
+                    error = if (currentState.isManualRefresh && isFromCache) "Offline: Showing cached data" else null
+                )
+            }
+
+            Result.success()
+        } catch (e: Exception) {
+            e.printStackTrace()
+
+            updateWidgetState { currentState ->
+                if (currentState.isManualRefresh) {
+                    currentState.copy(
+                        isLoading = false,
+                        isManualRefresh = false,
+                        error = e.message
+                    )
+                } else {
+                    currentState.copy(
+                        isLoading = false,
+                        isManualRefresh = false
+                    )
+                }
+            }
+
+            Result.failure()
+        }
+    }
+
+    private suspend fun updateWidgetState(updateBlock: (TimetableWidgetState) -> TimetableWidgetState) {
+        try {
+            val manager = GlanceAppWidgetManager(context)
+            val glanceIds = manager.getGlanceIds(TimetableWidget::class.java)
+
+            glanceIds.forEach { glanceId ->
+                updateAppWidgetState(
+                    context = context,
+                    definition = TimetableWidgetStateDefinition,
+                    glanceId = glanceId
+                ) { currentState ->
+                    updateBlock(currentState)
+                }
+                TimetableWidget().update(context, glanceId)
+            }
+        } catch (e: Exception) {
+            Log.e(LOG_TAG, "updateWidgetState: error updating widgets", e)
+        }
+    }
+}

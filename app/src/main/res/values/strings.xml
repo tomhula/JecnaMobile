@@ -376,4 +376,22 @@
     <string name="report_class_name_warning">Součástí nahlášení bude i název vaší třídy.</string>
     <string name="controls">Ovládání: klikněte pro objednání/zrušení\nPokud již nejde zrušit, kliknutí přesune oběd do burzy</string>
     <string name="canteen_legend_dismissed">Zavřeno. Lze znovu zapnout v nastavení.</string>
+
+    <!-- ##### Timetable Widget ##### -->
+
+    <string name="widget_timetable_name">Rozvrh hodin</string>
+    <string name="widget_timetable_description">Zobrazuje celý týdenní rozvrh.</string>
+    <string name="widget_timetable_no_data">Žádná data</string>
+    <string name="widget_timetable_refresh">Obnovit</string>
+    <string name="widget_timetable_loading">Načítání…</string>
+    <string name="widget_timetable_today">Dnes (%1$s)</string>
+    <string name="widget_timetable_tomorrow">Zítra (%1$s)</string>
+    <string name="widget_timetable_on_monday">V pondělí</string>
+    <string name="widget_timetable_no_classes">Žádné vyučování</string>
+    <string name="widget_timetable_free_period">Volná hodina</string>
+    <string name="widget_timetable_error">Chyba připojení</string>
+    <string name="widget_timetable_tap_to_refresh">Klepnutím obnovíte</string>
+    <string name="widget_timetable_loading_timetable">Načítám rozvrh…</string>
+    <string name="widget_timetable_refresh_description">Obnovit rozvrh</string>
+    <string name="widget_timetable_last_updated">Aktualizováno: %1$s</string>
 </resources>
