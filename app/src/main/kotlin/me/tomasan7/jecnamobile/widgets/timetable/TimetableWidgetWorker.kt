@@ -69,12 +69,21 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
 
+            val errorMessage = when (e) {
+                is io.ktor.util.network.UnresolvedAddressException,
+                is java.net.UnknownHostException,
+                is java.net.ConnectException,
+                is java.net.SocketTimeoutException,
+                is io.ktor.client.plugins.HttpRequestTimeoutException -> context.getString(me.tomasan7.jecnamobile.R.string.no_internet_connection)
+                else -> e.message
+            }
+
             updateWidgetState { currentState ->
                 if (currentState.isManualRefresh) {
                     currentState.copy(
                         isLoading = false,
                         isManualRefresh = false,
-                        error = e.message
+                        error = errorMessage
                     )
                 } else {
                     currentState.copy(

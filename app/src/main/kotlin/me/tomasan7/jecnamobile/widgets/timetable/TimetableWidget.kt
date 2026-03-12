@@ -14,6 +14,7 @@ import androidx.glance.Image
 import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
+import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
@@ -129,6 +130,7 @@ private fun DailyTimetableContent(
         Header(
             context = context,
             title = displayInfo.title,
+            substitutions = substitutions,
             colors = colors
         )
 
@@ -159,24 +161,58 @@ private fun DailyTimetableContent(
 private fun Header(
     context: Context,
     title: String,
+    substitutions: SubstitutionData?,
     colors: ColorProviders
 ) {
-    Row(
+    Column(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .padding(bottom = 12.dp, start = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(bottom = 12.dp, start = 4.dp)
     ) {
-        Text(
-            text = title,
-            style = TextStyle(
-                color = colors.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp
+        Row(
+            modifier = GlanceModifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = title,
+                style = TextStyle(
+                    color = colors.onBackground,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
             )
-        )
-        Spacer(modifier = GlanceModifier.defaultWeight())
-        RefreshButton(context = context, colors = colors)
+            Spacer(modifier = GlanceModifier.defaultWeight())
+            RefreshButton(context = context, colors = colors)
+        }
+
+        if (substitutions != null) {
+            val intervalText = if (substitutions.currentUpdateSchedule < 60) {
+                context.resources.getQuantityString(
+                    R.plurals.substitution_update_interval_minutes,
+                    substitutions.currentUpdateSchedule,
+                    substitutions.currentUpdateSchedule
+                )
+            } else {
+                val hours = substitutions.currentUpdateSchedule / 60
+                context.resources.getQuantityString(
+                    R.plurals.subtitution_update_interval_hours,
+                    substitutions.currentUpdateSchedule,
+                    hours
+                )
+            }
+            Text(
+                text = context.getStringRes(
+                    R.string.subtitution_info,
+                    substitutions.lastUpdated,
+                    intervalText
+                ),
+                style = TextStyle(
+                    color = colors.onBackground,
+                    fontSize = 12.sp
+                ),
+                modifier = GlanceModifier.padding(top = 4.dp)
+            )
+        }
     }
 }
 
@@ -190,7 +226,7 @@ private fun RefreshButton(context: Context, colors: ColorProviders) {
         contentAlignment = Alignment.Center
     ) {
         Image(
-            provider = ImageProvider(android.R.drawable.ic_menu_rotate),
+            provider = ImageProvider(R.drawable.ic_refresh),
             contentDescription = context.getStringRes(R.string.widget_timetable_refresh_description),
             modifier = GlanceModifier.size(20.dp),
             colorFilter = ColorFilter.tint(colors.onBackground)
@@ -411,9 +447,8 @@ private fun LastUpdatedInfo(context: Context, lastUpdated: Long, colors: ColorPr
 @Composable
 private fun LoadingContent(context: Context, colors: ColorProviders) {
     Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(
-            text = context.getStringRes(R.string.widget_timetable_loading),
-            style = TextStyle(color = colors.onBackground)
+        CircularProgressIndicator(
+            color = colors.onBackground
         )
     }
 }
