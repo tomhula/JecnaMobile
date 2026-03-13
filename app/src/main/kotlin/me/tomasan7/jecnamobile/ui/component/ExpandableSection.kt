@@ -68,8 +68,7 @@ fun ExpandableSection(
     initiallyExpanded: Boolean = false,
     expandable: Boolean = true,
     color: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
-    iconColor: Color = MaterialTheme.colorScheme.primary,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     contentPadding: ExpandableSectionPadding = ExpandableSectionPadding.Default,
     content: @Composable ColumnScope.() -> Unit
 ) {
@@ -101,16 +100,14 @@ fun ExpandableSection(
                     modifier = Modifier.weight(1f)
                 ) {
                     if (icon != null) {
-                        CompositionLocalProvider(LocalContentColor provides iconColor) {
-                            icon()
-                        }
+                        icon()
                         Spacer(Modifier.width(12.dp))
                     }
                     Text(
                         text = title,
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
-                        color = contentColor
+                        color = titleColor
                     )
 
                     if (trailingHeaderContent != null) {
@@ -123,7 +120,7 @@ fun ExpandableSection(
                     Icon(
                         imageVector = if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
                         contentDescription = if (expanded) "Collapse" else "Expand",
-                        tint = contentColor.copy(alpha = 0.7f),
+                        tint = titleColor.copy(alpha = 0.7f),
                         modifier = Modifier.size(24.dp)
                     )
                 }
@@ -159,7 +156,7 @@ fun ExpandableSection(
     initiallyExpanded: Boolean = false,
     expandable: Boolean = true,
     color: Color = MaterialTheme.colorScheme.surface,
-    contentColor: Color = MaterialTheme.colorScheme.onSurface,
+    titleColor: Color = MaterialTheme.colorScheme.onSurface,
     iconColor: Color = MaterialTheme.colorScheme.primary,
     contentPadding: ExpandableSectionPadding = ExpandableSectionPadding.Default,
     content: @Composable ColumnScope.() -> Unit
@@ -171,15 +168,14 @@ fun ExpandableSection(
             imageVector = icon,
             contentDescription = null,
             modifier = Modifier.size(20.dp),
-            tint = LocalContentColor.current
+            tint = iconColor
         )
     },
     trailingHeaderContent = trailingHeaderContent,
     initiallyExpanded = initiallyExpanded,
     expandable = expandable,
     color = color,
-    contentColor = contentColor,
-    iconColor = iconColor,
+    titleColor = titleColor,
     contentPadding = contentPadding,
     content = content
 )

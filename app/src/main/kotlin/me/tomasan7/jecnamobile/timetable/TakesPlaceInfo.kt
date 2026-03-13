@@ -18,7 +18,7 @@ fun TakesPlaceInfo(label: String, text: String, expandable: Boolean = true) {
         icon = Icons.Default.Info,
         expandable = expandable,
         color = MaterialTheme.colorScheme.secondaryContainer,
-        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+        titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
         iconColor = MaterialTheme.colorScheme.onSecondaryContainer,
         contentPadding = ExpandableSectionPadding.Text
     ) {
