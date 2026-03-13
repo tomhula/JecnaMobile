@@ -1,7 +1,6 @@
 package me.tomasan7.jecnamobile.mainscreen
 
 import android.content.Intent
-import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -24,9 +23,6 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.google.accompanist.permissions.isGranted
-import com.google.accompanist.permissions.rememberPermissionState
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
@@ -55,8 +51,6 @@ fun MainScreen(
     viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
-    RequestNotificationsPermission()
-
     val settings by settingsAsStateAwaitFirst()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -253,20 +247,6 @@ private data class TeacherScreenDestination(val reference: TeacherReference) : N
 private data class RoomScreenDestination(val reference: RoomReference) : NavKey
 @Serializable
 private data object StudentProfileDestination: NavKey
-
-@OptIn(ExperimentalPermissionsApi::class)
-@Composable
-private fun RequestNotificationsPermission()
-{
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-    {
-        val permissionState = rememberPermissionState(android.Manifest.permission.POST_NOTIFICATIONS)
-        LaunchedEffect(permissionState.status.isGranted) {
-            if (!permissionState.status.isGranted)
-                permissionState.launchPermissionRequest()
-        }
-    }
-}
 
 @Composable
 private fun SidebarButtonsRow(
