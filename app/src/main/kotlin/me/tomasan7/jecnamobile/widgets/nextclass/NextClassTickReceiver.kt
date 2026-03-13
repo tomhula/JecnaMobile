@@ -4,18 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidgetManager
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NextClassTickReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action == ACTION_TICK) {
-            runBlocking {
+            CoroutineScope(Dispatchers.IO).launch {
                 val manager = GlanceAppWidgetManager(context)
                 val glanceIds = manager.getGlanceIds(NextClassWidget::class.java)
-                
                 glanceIds.forEach { glanceId ->
-                    NextClassWidget().update(context, glanceId)
-                }
+                NextClassWidget().update(context, glanceId)
+            }
             }
         }
     }

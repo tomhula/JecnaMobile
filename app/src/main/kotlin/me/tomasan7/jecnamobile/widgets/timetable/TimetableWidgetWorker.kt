@@ -104,28 +104,26 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
         try {
             val manager = GlanceAppWidgetManager(context)
             
-            val glanceIds = manager.getGlanceIds(TimetableWidget::class.java)
-            glanceIds.forEach { glanceId ->
-                updateAppWidgetState(
-                    context = context,
-                    definition = TimetableWidgetStateDefinition,
-                    glanceId = glanceId
-                ) { currentState ->
-                    updateBlock(currentState)
-                }
-                TimetableWidget().update(context, glanceId)
-            }
-            
+            val timetableGlanceIds = manager.getGlanceIds(TimetableWidget::class.java)
             val nextClassGlanceIds = manager.getGlanceIds(NextClassWidget::class.java)
-            nextClassGlanceIds.forEach { glanceId ->
+            val allGlanceIds = timetableGlanceIds.map { it to TimetableWidgetStateDefinition } +
+                              nextClassGlanceIds.map { it to NextClassWidgetStateDefinition }
+
+            allGlanceIds.forEach { (glanceId, stateDefinition) ->
                 updateAppWidgetState(
                     context = context,
-                    definition = NextClassWidgetStateDefinition,
+                    definition = stateDefinition,
                     glanceId = glanceId
                 ) { currentState ->
                     updateBlock(currentState)
                 }
-                NextClassWidget().update(context, glanceId)
+            }
+
+            TimetableWidget().run {
+                timetableGlanceIds.forEach { update(context, it) }
+            }
+            NextClassWidget().run {
+                nextClassGlanceIds.forEach { update(context, it) }
             }
         } catch (e: Exception) {
             Log.e(LOG_TAG, "updateWidgetState: error updating widgets", e)

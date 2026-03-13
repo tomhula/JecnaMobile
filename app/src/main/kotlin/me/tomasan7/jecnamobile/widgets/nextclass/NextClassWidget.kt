@@ -47,10 +47,8 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 import me.tomasan7.jecnamobile.R
@@ -166,13 +164,8 @@ internal class RefreshNextClassAction : ActionCallback {
 @Composable
 private fun NextClassWidgetContent(context: Context, state: SharedTimetableWidgetState) {
     val colors = GlanceTheme.colors
-    val debugOffsetHours = -9
 
-    val now = if (debugOffsetHours != 0) {
-        Clock.System.now().plus(debugOffsetHours, DateTimeUnit.HOUR, TimeZone.currentSystemDefault()).plus(25, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault())
-    } else {
-        Clock.System.now()
-    }
+    val now = Clock.System.now()
     val today = now.toLocalDateTime(TimeZone.currentSystemDefault())
 
     Box(
