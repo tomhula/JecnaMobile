@@ -13,11 +13,15 @@ data class Settings(
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
+    var drawerPages: List<DrawerPage> = getDefaultDrawerPages()
 )
 {
     companion object
     {
         const val DEFAULT_SUBSTITUTION_SERVER_URL = "https://jecnarozvrh.jzitnik.dev"
+
+        fun getDefaultDrawerPages(): List<DrawerPage> =
+            SubScreenDestination.entries.map { DrawerPage(it.name, true) }
     }
 
     enum class GradesViewMode
@@ -31,6 +35,12 @@ data class Settings(
         LIGHT,
         SYSTEM
     }
+
+    @Serializable
+    data class DrawerPage(
+        val destinationName: String,
+        val isVisible: Boolean
+    )
 }
 
 private fun legacySubScreenRouteToDefaultDestination(route: String?): SubScreenDestination? =

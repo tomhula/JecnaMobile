@@ -36,6 +36,7 @@ import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
+import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.settings.SettingsDestination
 import me.tomasan7.jecnamobile.settings.settingsNavEntry
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
@@ -54,9 +55,15 @@ fun MainScreen(
     val settings by settingsAsStateAwaitFirst()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val destinationItems = remember(settings.substitutionTimetableEnabled) {
-        SubScreenDestination.entries.filter {
-            it != SubScreenDestination.Substitution || settings.substitutionTimetableEnabled
+    val destinationItems = remember(settings.substitutionTimetableEnabled, settings.drawerPages) {
+        val visiblePages = settings.drawerPages
+            .filter { it.isVisible }
+            .mapNotNull { page -> SubScreenDestination.entries.find { it.name == page.destinationName } }
+        
+        if (settings.substitutionTimetableEnabled) {
+            visiblePages
+        } else {
+            visiblePages.filter { it != SubScreenDestination.Substitution }
         }
     }
     val linkItems = SidebarLink.entries
