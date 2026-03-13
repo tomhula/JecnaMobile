@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
 
 class NextClassTickReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {

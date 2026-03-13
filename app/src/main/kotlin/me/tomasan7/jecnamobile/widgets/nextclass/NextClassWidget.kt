@@ -40,10 +40,12 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Intent
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
-import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDateTime
@@ -96,7 +98,54 @@ internal class NextClassWidgetReceiver : GlanceAppWidgetReceiver() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
+        appWidgetIds.forEach { appWidgetId ->
+            scheduleTickUpdates(context, appWidgetId)
+        }
         WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+    }
+
+    override fun onDeleted(context: Context, appWidgetIds: IntArray) {
+        super.onDeleted(context, appWidgetIds)
+        appWidgetIds.forEach { appWidgetId ->
+            cancelTickUpdates(context, appWidgetId)
+        }
+    }
+
+    private fun scheduleTickUpdates(context: Context, appWidgetId: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, NextClassTickReceiver::class.java).apply {
+            action = NextClassTickReceiver.ACTION_TICK
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            appWidgetId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val intervalMillis = 60_000L // 1 minute
+        val triggerTime = System.currentTimeMillis() + intervalMillis
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            triggerTime,
+            intervalMillis,
+            pendingIntent
+        )
+    }
+
+    private fun cancelTickUpdates(context: Context, appWidgetId: Int) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, NextClassTickReceiver::class.java).apply {
+            action = NextClassTickReceiver.ACTION_TICK
+        }
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            appWidgetId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+        alarmManager.cancel(pendingIntent)
     }
 }
 
@@ -133,7 +182,7 @@ private fun NextClassWidgetContent(context: Context, state: SharedTimetableWidge
             .padding(8.dp)
     ) {
         when {
-            state.isLoading && state.timetablePage == null -> LoadingContent(context, colors)
+            state.isLoading && state.timetablePage == null -> LoadingContent(colors)
             state.error != null && state.timetablePage == null -> ErrorContent(context, colors)
             state.timetablePage?.timetable != null -> NextClassDisplayContent(
                 context = context,
@@ -427,7 +476,7 @@ private fun SubstitutionCard(
 }
 
 @Composable
-private fun LoadingContent(context: Context, colors: ColorProviders) {
+private fun LoadingContent(colors: ColorProviders) {
     Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(color = colors.onBackground, modifier = GlanceModifier.size(24.dp))
     }
