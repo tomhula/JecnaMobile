@@ -228,7 +228,9 @@ fun TimetableSubScreen(
                                     }
                                 }
 
-                                val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                val targetInfo = remember(targetDate, uiState.substitutions.data) {
+                                    uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                }
                                 val takesPlaceText = targetInfo?.takesPlace?.takeIf { it.isNotBlank() }
 
                                 val contentPadding = ExpandableSectionPadding.Custom(
