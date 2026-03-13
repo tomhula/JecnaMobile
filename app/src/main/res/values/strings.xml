@@ -380,7 +380,7 @@
     <!-- ##### Timetable Widget ##### -->
 
     <string name="widget_timetable_name">Rozvrh hodin</string>
-    <string name="widget_timetable_description">Zobrazuje celý týdenní rozvrh.</string>
+    <string name="widget_timetable_description">Zobrazuje celý rozvrh pro aktuální den.</string>
     <string name="widget_timetable_no_data">Žádná data</string>
     <string name="widget_timetable_refresh">Obnovit</string>
     <string name="widget_timetable_loading">Načítání…</string>

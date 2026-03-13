@@ -57,19 +57,20 @@ import me.tomasan7.jecnamobile.timetable.SubstitutionData
 
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
+import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
 
 private const val LOG_TAG = "TimetableWidget"
 
 private fun Context.getStringRes(@StringRes resId: Int, vararg formatArgs: Any): String = getString(resId, *formatArgs)
 
-object TimetableWidgetStateSerializer : BaseWidgetStateSerializer<TimetableWidgetState>(
-    kSerializer = TimetableWidgetState.serializer(),
+object TimetableWidgetStateSerializer : BaseWidgetStateSerializer<SharedTimetableWidgetState>(
+    kSerializer = SharedTimetableWidgetState.serializer(),
     logTag = LOG_TAG
 ) {
-    override val defaultValue = TimetableWidgetState()
+    override val defaultValue = SharedTimetableWidgetState()
 }
 
-object TimetableWidgetStateDefinition : BaseWidgetStateDefinition<TimetableWidgetState>(
+object TimetableWidgetStateDefinition : BaseWidgetStateDefinition<SharedTimetableWidgetState>(
     filePrefix = "timetable_widget_",
     serializer = TimetableWidgetStateSerializer
 )
@@ -79,14 +80,14 @@ internal class TimetableWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val state = currentState<TimetableWidgetState>()
+            val state = currentState<SharedTimetableWidgetState>()
             GlanceTheme { TimetableWidgetContent(context = context, state = state) }
         }
     }
 }
 
 @Composable
-private fun TimetableWidgetContent(context: Context, state: TimetableWidgetState) {
+private fun TimetableWidgetContent(context: Context, state: SharedTimetableWidgetState) {
     val colors = GlanceTheme.colors
     val now = Clock.System.now();
     val today = now.toLocalDateTime(TimeZone.currentSystemDefault())

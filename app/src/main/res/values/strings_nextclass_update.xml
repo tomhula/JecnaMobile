@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_nextclass_ends_in">Ends in %1$s</string>
+    <string name="widget_nextclass_starts_in">Starts in %1$s</string>
+</resources>

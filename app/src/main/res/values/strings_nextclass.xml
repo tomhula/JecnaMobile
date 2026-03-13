@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_nextclass_description">Shows the current and next class in real-time.</string>
+    <string name="widget_nextclass_now">Now</string>
+    <string name="widget_nextclass_next">Next</string>
+    <string name="widget_nextclass_break">Break</string>
+    <string name="widget_nextclass_schools_out">School\'s out!</string>
+    <string name="widget_nextclass_tomorrow">Tomorrow</string>
+    <string name="widget_nextclass_monday">Monday</string>
+</resources>

@@ -16,6 +16,9 @@ import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.timetable.TimetableData
+import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
+import me.tomasan7.jecnamobile.widgets.nextclass.NextClassWidget
+import me.tomasan7.jecnamobile.widgets.nextclass.NextClassWidgetStateDefinition
 
 private const val LOG_TAG = "TimetableWidgetWorker"
 
@@ -97,11 +100,11 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun updateWidgetState(updateBlock: (TimetableWidgetState) -> TimetableWidgetState) {
+    private suspend fun updateWidgetState(updateBlock: (SharedTimetableWidgetState) -> SharedTimetableWidgetState) {
         try {
             val manager = GlanceAppWidgetManager(context)
+            
             val glanceIds = manager.getGlanceIds(TimetableWidget::class.java)
-
             glanceIds.forEach { glanceId ->
                 updateAppWidgetState(
                     context = context,
@@ -111,6 +114,18 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
                     updateBlock(currentState)
                 }
                 TimetableWidget().update(context, glanceId)
+            }
+            
+            val nextClassGlanceIds = manager.getGlanceIds(NextClassWidget::class.java)
+            nextClassGlanceIds.forEach { glanceId ->
+                updateAppWidgetState(
+                    context = context,
+                    definition = NextClassWidgetStateDefinition,
+                    glanceId = glanceId
+                ) { currentState ->
+                    updateBlock(currentState)
+                }
+                NextClassWidget().update(context, glanceId)
             }
         } catch (e: Exception) {
             Log.e(LOG_TAG, "updateWidgetState: error updating widgets", e)
