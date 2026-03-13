@@ -13,6 +13,7 @@ data class Settings(
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
+    var notificationsEnabled: Boolean? = null,
 )
 {
     companion object

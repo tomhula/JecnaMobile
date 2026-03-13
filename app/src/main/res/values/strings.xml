@@ -382,4 +382,17 @@
     <string name="welcome_notifications_description">Ječná Mobile vám pošle oznámení, když dostanete novou známku.</string>
     <string name="welcome_notifications_button_turn_on">Zapnout upozornění</string>
     <string name="welcome_notifications_button_skip">Teď ne</string>
+    <string name="welcome_notifications_later_dialog_title">Upozornění vypnuta</string>
+    <string name="welcome_notifications_later_dialog_description">Upozornění můžete kdykoliv zapnout později v nastavení.</string>
+    <string name="welcome_notifications_later_dialog_confirm">Rozumím</string>
+
+    <!-- ##### Settings Notifications ##### -->
+    <string name="settings_category_notifications">Upozornění</string>
+    <string name="settings_notifications_title">Upozornění na známky</string>
+    <string name="settings_notifications_description">Získejte oznámení, když se objeví nová známka.</string>
+    <string name="settings_notifications_enabled">Zapnuto</string>
+    <string name="settings_notifications_disabled">Vypnuto</string>
+    <string name="settings_notifications_system_settings">Otevřít nastavení systému</string>
+    <string name="settings_notifications_system_settings_description">Pokud je oprávnění odepřeno, můžete jej změnit v nastavení systému.</string>
+    <string name="settings_notifications_permission_required">Oprávnění k upozorněním je vyžadováno</string>
 </resources>
