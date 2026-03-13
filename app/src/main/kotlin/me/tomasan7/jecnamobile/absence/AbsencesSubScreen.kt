@@ -78,11 +78,14 @@ fun AbsencesSubScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    SchoolYearSelector(
-                        modifier = Modifier.align(Alignment.CenterHorizontally).width(160.dp),
-                        selectedSchoolYear = uiState.selectedSchoolYear,
-                        onChange = { viewModel.selectSchoolYear(it) }
-                    )
+                    ExpandableSection(title = stringResource(R.string.timetable_period)) {
+                        SchoolYearSelector(
+                            modifier = Modifier.fillMaxWidth(),
+                            textFieldModifier = Modifier.fillMaxWidth(),
+                            selectedSchoolYear = uiState.selectedSchoolYear,
+                            onChange = { viewModel.selectSchoolYear(it) }
+                        )
+                    }
 
                     if (uiState.absencesPage != null)
                     {

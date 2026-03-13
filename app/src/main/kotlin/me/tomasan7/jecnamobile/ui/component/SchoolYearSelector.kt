@@ -13,6 +13,7 @@ import me.tomasan7.jecnamobile.util.now
 fun SchoolYearSelector(
     selectedSchoolYear: SchoolYear,
     modifier: Modifier = Modifier,
+    textFieldModifier: Modifier = Modifier,
     showYearAhead: Boolean = false,
     onChange: (SchoolYear) -> Unit
 )
@@ -29,6 +30,7 @@ fun SchoolYearSelector(
         options = past4SchoolYears,
         selectedValue = selectedSchoolYear,
         modifier = modifier,
+        textFieldModifier = textFieldModifier,
         onChange = onChange
     )
 }
