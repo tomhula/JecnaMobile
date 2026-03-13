@@ -34,6 +34,7 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
 import androidx.glance.layout.size
 import androidx.glance.layout.width
@@ -244,19 +245,33 @@ private fun LessonList(
     colors: ColorProviders
 ) {
     LazyColumn(modifier = GlanceModifier.fillMaxSize()) {
-        itemsIndexed(lessonSpots) { index, lessonSpot ->
-            val period = lessonPeriods.getOrNull(index)
-            val lesson = lessonSpot.firstOrNull()
-            val change = dailySchedule?.changes?.getOrNull(index)
 
-            LessonRow(
-                context = context,
-                index = index,
-                period = period,
-                lesson = lesson,
-                change = change,
-                colors = colors
-            )
+        lessonSpots.forEachIndexed { index, lessonSpot ->
+
+            item {
+                val period = lessonPeriods.getOrNull(index)
+                val change = dailySchedule?.changes?.getOrNull(index)
+
+                LessonRow(
+                    context = context,
+                    index = index,
+                    period = period,
+                    lessonSpot = lessonSpot,
+                    change = change,
+                    colors = colors
+                )
+            }
+
+            if (index < lessonSpots.lastIndex) {
+                item {
+                    Box(
+                        modifier = GlanceModifier
+                            .fillMaxWidth()
+                            .height(1.dp)
+                            .background(colors.outline)
+                    ) {}
+                }
+            }
         }
     }
 }
@@ -266,23 +281,35 @@ private fun LessonRow(
     context: Context,
     index: Int,
     period: LessonPeriod?,
-    lesson: Lesson?,
+    lessonSpot: List<Lesson>?,
     change: ChangeEntry?,
     colors: ColorProviders
 ) {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         PeriodColumn(index = index, period = period, colors = colors)
 
         Box(modifier = GlanceModifier.defaultWeight()) {
             when {
-                change != null -> SubstitutionCard(context, change, colors)
-                lesson != null -> LessonCard(lesson, colors)
-                else -> FreePeriodCard(context, colors)
+                change != null -> {
+                    SubstitutionCard(context, change, colors)
+                }
+
+                !lessonSpot.isNullOrEmpty() -> {
+                    Column {
+                        lessonSpot.forEach { lesson ->
+                            LessonCard(lesson, colors)
+                        }
+                    }
+                }
+
+                else -> {
+                    FreePeriodCard(context, colors)
+                }
             }
         }
     }
