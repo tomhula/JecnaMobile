@@ -121,7 +121,18 @@ internal class NextClassWidgetReceiver : GlanceAppWidgetReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val intervalMillis = 60_000L // 1 minute
+        val now = java.util.Calendar.getInstance()
+        val hour = now.get(java.util.Calendar.HOUR_OF_DAY)
+        val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
+
+        val isWeekend = dayOfWeek == java.util.Calendar.SATURDAY || dayOfWeek == java.util.Calendar.SUNDAY
+        val isAfterSchool = hour >= 17
+
+        val intervalMillis = when {
+            isWeekend || isAfterSchool -> 60 * 60 * 1000L  // 1 hour
+            else -> 5 * 60 * 1000L  // 5 minutes during classes
+        }
+
         val triggerTime = System.currentTimeMillis() + intervalMillis
 
         alarmManager.setRepeating(
