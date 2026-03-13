@@ -142,10 +142,9 @@ fun ExpandableSection(
                             top = contentPadding.top,
                             end = contentPadding.end,
                             bottom = contentPadding.bottom
-                        )
-                ) {
-                    content()
-                }
+                        ),
+                    content = content
+                )
             }
         }
     }
