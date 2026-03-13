@@ -6,9 +6,12 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
+import androidx.glance.Image
+import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
@@ -17,6 +20,7 @@ import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
+import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
@@ -29,7 +33,9 @@ import androidx.glance.layout.Row
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
+import androidx.glance.layout.height
 import androidx.glance.layout.padding
+import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -38,20 +44,25 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
+import io.github.tomhula.jecnaapi.data.timetable.Timetable
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
-import me.tomasan7.jecnamobile.util.getWeekDayNameKey
+import me.tomasan7.jecnamobile.timetable.SubstitutionData
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
 import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
-import kotlin.time.Clock
 
 private const val LOG_TAG = "NextClassWidget"
 
-private fun Context.getStringRes(@StringRes resId: Int, vararg formatArgs: Any): String = getString(resId, *formatArgs)
+private fun Context.getStringRes(@StringRes resId: Int, vararg formatArgs: Any): String =
+    getString(resId, *formatArgs)
 
 object NextClassWidgetStateSerializer : BaseWidgetStateSerializer<SharedTimetableWidgetState>(
     kSerializer = SharedTimetableWidgetState.serializer(),
@@ -73,275 +84,6 @@ internal class NextClassWidget : GlanceAppWidget() {
             val state = currentState<SharedTimetableWidgetState>()
             GlanceTheme { NextClassWidgetContent(context = context, state = state) }
         }
-    }
-}
-
-@Composable
-private fun NextClassWidgetContent(context: Context, state: SharedTimetableWidgetState) {
-    val colors = GlanceTheme.colors
-    val now = Clock.System.now()
-    val today = now.toLocalDateTime(TimeZone.currentSystemDefault())
-
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .background(colors.background)
-            .padding(12.dp)
-            .clickable(actionRunCallback<RefreshNextClassAction>())
-    ) {
-        when {
-            state.isLoading && state.timetablePage == null -> LoadingContent(context, colors)
-            state.error != null && state.timetablePage == null -> ErrorContent(context, colors)
-            state.timetablePage?.timetable != null -> {
-                val dailySchedule = state.substitutions?.data?.find { it.date == today.date.toString() }
-                
-                val (displayInfo, nextTickTime) = calculateNextClassInfo(
-                    timetable = state.timetablePage.timetable,
-                    today = today,
-                    dailySchedule = dailySchedule
-                )
-                
-                // Schedule next exact update
-                scheduleNextTick(context, nextTickTime)
-
-                NextClassDisplay(context, displayInfo, colors)
-            }
-            else -> EmptyContent(context, colors)
-        }
-    }
-}
-
-@Composable
-private fun NextClassDisplay(
-    context: Context,
-    info: NextClassDisplayInfo,
-    colors: ColorProviders
-) {
-    Column(modifier = GlanceModifier.fillMaxSize()) {
-        if (info.isSchoolOut) {
-            Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                Text(
-                    text = context.getStringRes(R.string.widget_nextclass_schools_out),
-                    style = TextStyle(
-                        color = colors.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 18.sp
-                    )
-                )
-            }
-        } else {
-            if (info.currentLessons.isNotEmpty()) {
-                val minutesText = info.minutesToNextState?.let { "$it min" } ?: ""
-                val header = "${context.getStringRes(R.string.widget_nextclass_now)} (ends in $minutesText)"
-                
-                LessonSection(
-                    context = context,
-                    header = header,
-                    lessonInfos = info.currentLessons,
-                    colors = colors
-                )
-                Spacer(modifier = GlanceModifier.padding(bottom = 8.dp))
-            } else if (info.isBreak) {
-                val minutesText = info.minutesToNextState?.let { "$it min" } ?: ""
-                
-                Text(
-                    text = "${context.getStringRes(R.string.widget_nextclass_break)} (ends in $minutesText)",
-                    style = TextStyle(
-                        color = colors.onBackground,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 14.sp
-                    ),
-                    modifier = GlanceModifier.padding(bottom = 4.dp)
-                )
-                Spacer(modifier = GlanceModifier.padding(bottom = 8.dp))
-            }
-            
-            if (info.nextLessons.isNotEmpty()) {
-                val isTomorrow = info.targetDate != Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-                val headerPrefix = if (isTomorrow) {
-                    val dayName = context.getStringRes(getWeekDayNameKey(info.targetDate?.dayOfWeek ?: Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date.dayOfWeek))
-                    dayName
-                } else {
-                    context.getStringRes(R.string.widget_nextclass_next)
-                }
-                
-                val header = if (info.currentLessons.isEmpty() && info.isBreak && info.minutesToNextState != null) {
-                    "$headerPrefix (starts in ${info.minutesToNextState} min)"
-                } else {
-                    headerPrefix
-                }
-
-                LessonSection(
-                    context = context,
-                    header = header,
-                    lessonInfos = info.nextLessons,
-                    colors = colors
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun LessonSection(
-    context: Context,
-    header: String,
-    lessonInfos: List<LessonWithPeriodAndChange>,
-    colors: ColorProviders
-) {
-    Column(modifier = GlanceModifier.fillMaxWidth()) {
-        Text(
-            text = header,
-            style = TextStyle(
-                color = colors.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
-            ),
-            modifier = GlanceModifier.padding(bottom = 4.dp)
-        )
-        
-        lessonInfos.forEachIndexed { index, lessonInfo ->
-            if (lessonInfo.change != null) {
-                 SubstitutionCard(context, lessonInfo.change, colors)
-            } else {
-                 LessonCard(lessonInfo.lesson, lessonInfo.period, colors)
-            }
-            if (index < lessonInfos.size - 1) {
-                Spacer(modifier = GlanceModifier.padding(bottom = 4.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun SubstitutionCard(context: Context, change: ChangeEntry, colors: ColorProviders) {
-    val text = if (change.willBeSpecified == true) {
-        change.text + "\n" + context.getStringRes(R.string.substitution_will_be_specified)
-    } else {
-        change.text
-    }
-
-    Box(
-        modifier = GlanceModifier
-            .fillMaxWidth()
-            .cornerRadius(10.dp)
-            .background(colors.tertiaryContainer)
-            .padding(12.dp),
-        contentAlignment = Alignment.CenterStart
-    ) {
-        Text(
-            text = text,
-            style = TextStyle(
-                color = colors.onTertiaryContainer,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
-            ),
-            maxLines = 3
-        )
-    }
-}
-
-@Composable
-private fun LessonCard(lesson: Lesson, period: LessonPeriod, colors: ColorProviders) {
-    val secondaryInfo = listOfNotNull(
-        lesson.teacherName?.short ?: lesson.teacherName?.full,
-        lesson.group,
-        lesson.clazz
-    ).joinToString(" • ")
-    
-    val timeString = "${period.from} - ${period.to}"
-
-    Row(
-        modifier = GlanceModifier
-            .fillMaxWidth()
-            .cornerRadius(10.dp)
-            .background(colors.surface)
-            .padding(12.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = GlanceModifier.defaultWeight()) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                 Text(
-                    text = lesson.subjectName.full,
-                    style = TextStyle(
-                        color = colors.onSurface,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 15.sp
-                    ),
-                    maxLines = 1
-                )
-                Spacer(modifier = GlanceModifier.width(8.dp))
-                Text(
-                    text = timeString,
-                    style = TextStyle(color = colors.onSurface, fontSize = 11.sp),
-                    maxLines = 1
-                )
-            }
-            if (secondaryInfo.isNotEmpty()) {
-                Spacer(modifier = GlanceModifier.padding(top = 4.dp))
-                Text(
-                    text = secondaryInfo,
-                    style = TextStyle(color = colors.onSurface, fontSize = 12.sp),
-                    maxLines = 1
-                )
-            }
-        }
-
-        if (lesson.classroom != null) {
-            Spacer(modifier = GlanceModifier.width(8.dp))
-            Box(
-                modifier = GlanceModifier
-                    .cornerRadius(6.dp)
-                    .background(colors.primaryContainer)
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = lesson.classroom!!,
-                    style = TextStyle(
-                        color = colors.onPrimaryContainer,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp
-                    ),
-                    maxLines = 1
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun LoadingContent(context: Context, colors: ColorProviders) {
-    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = colors.onBackground)
-    }
-}
-
-@Composable
-private fun ErrorContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier.fillMaxSize().padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = context.getStringRes(R.string.widget_timetable_error),
-                style = TextStyle(color = colors.error, fontWeight = FontWeight.Bold)
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = context.getStringRes(R.string.widget_timetable_loading_timetable),
-            style = TextStyle(color = colors.onBackground)
-        )
     }
 }
 
@@ -369,5 +111,361 @@ internal class RefreshNextClassAction : ActionCallback {
         }
         NextClassWidget().update(context, glanceId)
         WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+    }
+}
+
+@Composable
+private fun NextClassWidgetContent(context: Context, state: SharedTimetableWidgetState) {
+    val colors = GlanceTheme.colors
+    val debugOffsetHours = -9
+
+    val now = if (debugOffsetHours != 0) {
+        Clock.System.now().plus(debugOffsetHours, DateTimeUnit.HOUR, TimeZone.currentSystemDefault()).plus(25, DateTimeUnit.MINUTE, TimeZone.currentSystemDefault())
+    } else {
+        Clock.System.now()
+    }
+    val today = now.toLocalDateTime(TimeZone.currentSystemDefault())
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .background(colors.background)
+            .padding(8.dp)
+    ) {
+        when {
+            state.isLoading && state.timetablePage == null -> LoadingContent(context, colors)
+            state.error != null && state.timetablePage == null -> ErrorContent(context, colors)
+            state.timetablePage?.timetable != null -> NextClassDisplayContent(
+                context = context,
+                timetable = state.timetablePage.timetable,
+                substitutions = state.substitutions,
+                today = today,
+                colors = colors
+            )
+            else -> EmptyContent(context, colors)
+        }
+    }
+}
+
+@Composable
+private fun NextClassDisplayContent(
+    context: Context,
+    timetable: Timetable,
+    substitutions: SubstitutionData?,
+    today: LocalDateTime,
+    colors: ColorProviders
+) {
+    val displayInfo = getNextClassDisplayInfo(context, timetable, today)
+    val dailySchedule = substitutions?.data?.find { it.date == displayInfo.targetDate.toString() }
+
+    Column(modifier = GlanceModifier.fillMaxSize()) {
+        Header(context = context, title = displayInfo.title, colors = colors)
+
+        if (displayInfo.isSchoolOut) {
+            Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Text(
+                    text = context.getStringRes(R.string.widget_timetable_no_classes),
+                    style = TextStyle(color = colors.onBackground, fontSize = 14.sp)
+                )
+            }
+        } else {
+            LazyColumn(modifier = GlanceModifier.fillMaxSize().padding(top = 4.dp)) {
+
+                if (displayInfo.currentLessons.isNotEmpty()) {
+                    item {
+                        val endsInText = displayInfo.minutesToNextState?.let {
+                            context.getStringRes(R.string.widget_nextclass_ends_in, it.toString())
+                        }
+                        SectionHeader(
+                            title = context.getStringRes(R.string.widget_nextclass_now),
+                            timeText = endsInText,
+                            colors = colors,
+                            isCurrent = true
+                        )
+                    }
+
+                    displayInfo.currentLessons.forEachIndexed { index, lesson ->
+                        item {
+                            LessonCardSwitcher(
+                                context = context,
+                                lesson = lesson,
+                                change = dailySchedule?.changes?.getOrNull(displayInfo.currentLessonIndex),
+                                isCurrent = true,
+                                colors = colors
+                            )
+                        }
+                        if (index < displayInfo.currentLessons.lastIndex) {
+                            item { Spacer(modifier = GlanceModifier.height(4.dp)) }
+                        }
+                    }
+                }
+
+                if (displayInfo.currentLessons.isNotEmpty() && displayInfo.nextLessons.isNotEmpty() && !displayInfo.isBreak) {
+                    item { Spacer(modifier = GlanceModifier.height(12.dp)) }
+                }
+
+                if (displayInfo.isBreak || displayInfo.nextLessons.isNotEmpty()) {
+                    item {
+                        val nextMinutes = if (displayInfo.currentLessons.isEmpty()) {
+                            displayInfo.minutesToNextState
+                        } else {
+                            displayInfo.nextPeriod?.from?.let { nextStart ->
+                                ((nextStart.hour * 60 + nextStart.minute) - (today.time.hour * 60 + today.time.minute)).toLong()
+                            }
+                        }
+                        val startsInText = nextMinutes?.let {
+                            context.getStringRes(R.string.widget_nextclass_starts_in, it.toString())
+                        }
+
+                        SectionHeader(
+                            title = context.getStringRes(R.string.widget_nextclass_next),
+                            timeText = startsInText,
+                            colors = colors,
+                            isCurrent = false
+                        )
+                    }
+
+                    displayInfo.nextLessons.forEachIndexed { index, lesson ->
+                        item {
+                            LessonCardSwitcher(
+                                context = context,
+                                lesson = lesson,
+                                change = dailySchedule?.changes?.getOrNull(displayInfo.nextLessonIndex),
+                                isCurrent = false,
+                                colors = colors
+                            )
+                        }
+                        if (index < displayInfo.nextLessons.lastIndex) {
+                            item { Spacer(modifier = GlanceModifier.height(4.dp)) }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Header(context: Context, title: String, colors: ColorProviders) {
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .padding(bottom = 4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title,
+            style = TextStyle(
+                color = colors.onBackground,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp
+            )
+        )
+        Spacer(modifier = GlanceModifier.defaultWeight())
+        RefreshButton(context = context, colors = colors)
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String, timeText: String?, colors: ColorProviders, isCurrent: Boolean) {
+    val highlightColor = if (isCurrent) colors.primary else colors.onBackground
+
+    Row(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .padding(bottom = 6.dp, start = 4.dp, top = if (isCurrent) 0.dp else 8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(
+            text = title.uppercase(),
+            style = TextStyle(
+                color = highlightColor,
+                fontWeight = FontWeight.Bold,
+                fontSize = 11.sp
+            )
+        )
+        if (timeText != null) {
+            Spacer(modifier = GlanceModifier.width(6.dp))
+            Text(
+                text = "•  $timeText",
+                style = TextStyle(
+                    color = highlightColor,
+                    fontSize = 11.sp,
+                    fontWeight = FontWeight.Medium
+                )
+            )
+        }
+    }
+}
+
+@Composable
+private fun RefreshButton(context: Context, colors: ColorProviders) {
+    Box(
+        modifier = GlanceModifier
+            .size(28.dp)
+            .cornerRadius(6.dp)
+            .clickable(actionRunCallback<RefreshNextClassAction>()),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            provider = ImageProvider(R.drawable.ic_refresh),
+            contentDescription = context.getStringRes(R.string.widget_timetable_refresh_description),
+            modifier = GlanceModifier.size(16.dp),
+            colorFilter = ColorFilter.tint(colors.onBackground)
+        )
+    }
+}
+
+@Composable
+private fun LessonCardSwitcher(
+    context: Context,
+    lesson: Lesson,
+    change: ChangeEntry?,
+    isCurrent: Boolean,
+    colors: ColorProviders
+) {
+    if (change != null) {
+        SubstitutionCard(context, change, colors)
+    } else {
+        LessonCard(lesson, isCurrent, colors)
+    }
+}
+
+@Composable
+private fun LessonCard(
+    lesson: Lesson,
+    isCurrent: Boolean,
+    colors: ColorProviders
+) {
+    val containerBg = if (isCurrent) colors.primaryContainer else colors.surface
+    val contentColor = if (isCurrent) colors.onPrimaryContainer else colors.onSurface
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .cornerRadius(10.dp)
+            .background(containerBg)
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    ) {
+        Row(
+            modifier = GlanceModifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = GlanceModifier.defaultWeight()) {
+                Text(
+                    text = lesson.subjectName.full,
+                    style = TextStyle(color = contentColor, fontWeight = FontWeight.Bold, fontSize = 14.sp),
+                    maxLines = 1
+                )
+
+                Spacer(modifier = GlanceModifier.height(2.dp))
+
+                val secondaryInfo = listOfNotNull(
+                    lesson.teacherName?.short ?: lesson.teacherName?.full,
+                    lesson.group,
+                    lesson.clazz
+                ).joinToString(" • ")
+
+                if (secondaryInfo.isNotEmpty()) {
+                    Text(
+                        text = secondaryInfo,
+                        style = TextStyle(color = contentColor, fontSize = 12.sp),
+                        maxLines = 1
+                    )
+                }
+            }
+
+            if (lesson.classroom != null) {
+                Spacer(modifier = GlanceModifier.width(8.dp))
+                Box(
+                    modifier = GlanceModifier
+                        .cornerRadius(6.dp)
+                        .background(if (isCurrent) colors.onPrimaryContainer else colors.primaryContainer)
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = lesson.classroom!!,
+                        style = TextStyle(
+                            color = if (isCurrent) colors.primaryContainer else colors.onPrimaryContainer,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp
+                        ),
+                        maxLines = 1
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SubstitutionCard(
+    context: Context,
+    change: ChangeEntry,
+    colors: ColorProviders
+) {
+    val text = if (change.willBeSpecified == true) {
+        change.text + "\n" + context.getStringRes(R.string.substitution_will_be_specified)
+    } else {
+        change.text
+    }
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .cornerRadius(10.dp)
+            .background(colors.errorContainer)
+            .padding(horizontal = 12.dp, vertical = 10.dp)
+    ) {
+        Text(
+            text = text,
+            style = TextStyle(color = colors.onErrorContainer, fontWeight = FontWeight.Bold, fontSize = 13.sp),
+            maxLines = 3
+        )
+    }
+}
+
+@Composable
+private fun LoadingContent(context: Context, colors: ColorProviders) {
+    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator(color = colors.onBackground, modifier = GlanceModifier.size(24.dp))
+    }
+}
+
+@Composable
+private fun ErrorContent(context: Context, colors: ColorProviders) {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .clickable(actionRunCallback<RefreshNextClassAction>())
+            .padding(12.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = context.getStringRes(R.string.widget_timetable_error),
+                style = TextStyle(color = colors.error, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+            )
+            Text(
+                text = context.getStringRes(R.string.widget_timetable_tap_to_refresh),
+                style = TextStyle(color = colors.onBackground, fontSize = 10.sp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun EmptyContent(context: Context, colors: ColorProviders) {
+    Box(
+        modifier = GlanceModifier
+            .fillMaxSize()
+            .clickable(actionRunCallback<RefreshNextClassAction>()),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = context.getStringRes(R.string.widget_timetable_loading_timetable),
+            style = TextStyle(color = colors.onBackground, fontSize = 12.sp)
+        )
     }
 }

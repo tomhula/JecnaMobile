@@ -100,13 +100,12 @@ private fun TimetableWidgetContent(context: Context, state: SharedTimetableWidge
             .padding(12.dp)
     ) {
         when {
-            state.isLoading -> LoadingContent(context, colors)
+            state.isLoading -> LoadingContent(colors)
             state.error != null -> ErrorContent(context, colors)
             state.timetablePage?.timetable != null -> DailyTimetableContent(
                 context = context,
                 timetable = state.timetablePage.timetable,
                 substitutions = state.substitutions,
-                lastUpdated = state.lastUpdated,
                 today = today,
                 colors = colors
             )
@@ -121,7 +120,6 @@ private fun DailyTimetableContent(
     context: Context,
     timetable: Timetable,
     substitutions: SubstitutionData?,
-    lastUpdated: Long,
     today: LocalDateTime,
     colors: ColorProviders
 ) {
@@ -151,10 +149,6 @@ private fun DailyTimetableContent(
                 dailySchedule = dailySchedule,
                 colors = colors
             )
-        }
-
-        if (lastUpdated > 0) {
-            LastUpdatedInfo(context = context, lastUpdated = lastUpdated, colors = colors)
         }
     }
 }
@@ -455,25 +449,7 @@ private fun FreePeriodCard(context: Context, colors: ColorProviders) {
 }
 
 @Composable
-private fun LastUpdatedInfo(context: Context, lastUpdated: Long, colors: ColorProviders) {
-    val updatedDateTime = Instant.fromEpochMilliseconds(lastUpdated)
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-    val month = updatedDateTime.date.month
-    val dateStr = "${updatedDateTime.date.day}.$month " +
-            "${updatedDateTime.hour}:${updatedDateTime.minute.toString().padStart(2, '0')}"
-
-    Text(
-        text = context.getStringRes(R.string.widget_timetable_last_updated, dateStr),
-        style = TextStyle(color = colors.onBackground, fontSize = 10.sp),
-        modifier = GlanceModifier
-            .fillMaxWidth()
-            .padding(top = 8.dp)
-    )
-}
-
-
-@Composable
-private fun LoadingContent(context: Context, colors: ColorProviders) {
+private fun LoadingContent(colors: ColorProviders) {
     Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(
             color = colors.onBackground

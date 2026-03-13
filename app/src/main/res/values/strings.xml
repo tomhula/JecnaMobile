@@ -394,4 +394,13 @@
     <string name="widget_timetable_loading_timetable">Načítám rozvrh…</string>
     <string name="widget_timetable_refresh_description">Obnovit rozvrh</string>
     <string name="widget_timetable_last_updated">Aktualizováno: %1$s</string>
+
+    <!-- ##### Next Class Widget ##### -->
+
+    <string name="widget_nextclass_description">Zobrazuje aktuální a další hodinu.</string>
+    <string name="widget_nextclass_now">Právě probíhá</string>
+    <string name="widget_nextclass_next">Další hodina</string>
+    <string name="widget_nextclass_break">Přestávka</string>
+    <string name="widget_nextclass_ends_in">%1$s minut do konce</string>
+    <string name="widget_nextclass_starts_in">%1$s minut do začátku</string>
 </resources>
