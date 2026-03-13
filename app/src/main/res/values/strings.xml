@@ -46,6 +46,8 @@
     <string name="settings_drawer_move_up">Posunout nahoru</string>
     <string name="settings_drawer_move_down">Posunout dolů</string>
     <string name="settings_drawer_drag_handle">Přesunout</string>
+    <string name="settings_drawer_pages_section">Stránky</string>
+    <string name="settings_drawer_links_section">Odkazy</string>
     <string name="settings_app_version">Verze: </string>
     <string name="settings_developer">Vývojář</string>
     <string name="settings_github">GitHub repozitář</string>

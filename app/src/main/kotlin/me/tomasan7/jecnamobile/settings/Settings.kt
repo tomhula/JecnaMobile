@@ -1,6 +1,7 @@
 package me.tomasan7.jecnamobile.settings
 
 import kotlinx.serialization.Serializable
+import me.tomasan7.jecnamobile.mainscreen.SidebarLink
 import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 
 @Serializable
@@ -13,7 +14,8 @@ data class Settings(
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
-    var drawerPages: List<DrawerPage> = getDefaultDrawerPages()
+    var drawerPages: List<DrawerPage> = getDefaultDrawerPages(),
+    var drawerLinks: List<DrawerLink> = getDefaultDrawerLinks()
 )
 {
     companion object
@@ -22,6 +24,9 @@ data class Settings(
 
         fun getDefaultDrawerPages(): List<DrawerPage> =
             SubScreenDestination.entries.map { DrawerPage(it.name, true) }
+
+        fun getDefaultDrawerLinks(): List<DrawerLink> =
+            SidebarLink.entries.map { DrawerLink(it.name, true) }
     }
 
     enum class GradesViewMode
@@ -39,6 +44,12 @@ data class Settings(
     @Serializable
     data class DrawerPage(
         val destinationName: String,
+        val isVisible: Boolean
+    )
+
+    @Serializable
+    data class DrawerLink(
+        val linkName: String,
         val isVisible: Boolean
     )
 }

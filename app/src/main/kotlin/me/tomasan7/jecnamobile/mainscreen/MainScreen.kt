@@ -36,7 +36,6 @@ import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
-import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.settings.SettingsDestination
 import me.tomasan7.jecnamobile.settings.settingsNavEntry
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
@@ -66,7 +65,11 @@ fun MainScreen(
             visiblePages.filter { it != SubScreenDestination.Substitution }
         }
     }
-    val linkItems = SidebarLink.entries
+    val linkItems = remember(settings.drawerLinks) {
+        settings.drawerLinks
+            .filter { it.isVisible }
+            .mapNotNull { link -> SidebarLink.entries.find { it.name == link.linkName } }
+    }
     val navBackStack = rememberNavBackStack(settings.defaultDestination)
     // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)
