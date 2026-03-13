@@ -44,7 +44,7 @@
     <string name="settings_developer">Vývojář</string>
     <string name="settings_github">GitHub repozitář</string>
     <string name="settings_report_bug">Nahlásit chybu</string>
-    <string name="settings_contributors">Přispěvatelé</string>
+    <string name="settings_contributors">Podíleli se na vývoji</string>
 
     <string name="substitution_day_info">Koná se</string>
     <string name="substitution_day_info_tomorrow">Koná se zítra</string>
@@ -376,6 +376,12 @@
     <string name="report_class_name_warning">Součástí nahlášení bude i název vaší třídy.</string>
     <string name="controls">Ovládání: klikněte pro objednání/zrušení\nPokud již nejde zrušit, kliknutí přesune oběd do burzy</string>
     <string name="canteen_legend_dismissed">Zavřeno. Lze znovu zapnout v nastavení.</string>
+    
+    <!-- ##### Notifications Intro Screen ##### -->
+    <string name="welcome_notifications_title">Zapněte si upozornění</string>
+    <string name="welcome_notifications_description">Ječná Mobile vám pošle oznámení, když dostanete novou známku.</string>
+    <string name="welcome_notifications_button_turn_on">Zapnout upozornění</string>
+    <string name="welcome_notifications_button_skip">Teď ne</string>
 
     <!-- ##### Timetable Widget ##### -->
 
