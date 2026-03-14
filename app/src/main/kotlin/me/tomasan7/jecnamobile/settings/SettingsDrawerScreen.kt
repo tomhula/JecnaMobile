@@ -8,7 +8,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DragHandle
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -36,6 +35,12 @@ fun SettingsDrawerScreen(
     var pages by remember { mutableStateOf(settings.drawerPages) }
     var links by remember { mutableStateOf(settings.drawerLinks) }
 
+    LaunchedEffect(pages, links) {
+        viewModel.updateSettings {
+            it.copy(drawerPages = pages, drawerLinks = links)
+        }
+    }
+
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     val scrollState = rememberScrollState()
 
@@ -47,18 +52,6 @@ fun SettingsDrawerScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = {
-                            viewModel.updateSettings {
-                                it.copy(drawerPages = pages, drawerLinks = links)
-                            }
-                            onBackClick()
-                        }
-                    ) {
-                        Icon(Icons.Default.Save, contentDescription = "Save Changes")
                     }
                 },
                 scrollBehavior = scrollBehavior
