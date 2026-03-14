@@ -41,6 +41,14 @@ class MainActivity : ComponentActivity()
         else
             AppDestination.Login
 
+        val navigateTo = intent.getStringExtra(EXTRA_NAVIGATE_TO)?.let {
+            try {
+                NavigateDestination.valueOf(it)
+            } catch (_: IllegalArgumentException) {
+                null
+            }
+        }
+
         setContent {
             val settings by settingsAsStateAwaitFirst()
             val isAppInDarkTheme = isAppInDarkTheme(settings)
@@ -67,7 +75,10 @@ class MainActivity : ComponentActivity()
                                 })
                             }
                             AppDestination.Main -> NavEntry(key) { 
-                                MainScreen(onNavigateToLogin = { currentDestination = AppDestination.Login })
+                                MainScreen(
+                                    onNavigateToLogin = { currentDestination = AppDestination.Login },
+                                    initialNavigateTo = navigateTo
+                                )
                             }
                         }
                     },
@@ -84,3 +95,5 @@ private enum class AppDestination: NavKey
     Welcome,
     Main
 }
+
+const val EXTRA_NAVIGATE_TO = "navigate_to"

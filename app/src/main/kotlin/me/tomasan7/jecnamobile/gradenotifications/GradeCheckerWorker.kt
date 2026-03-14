@@ -23,6 +23,8 @@ import io.github.tomhula.jecnaapi.util.SchoolYear
 import io.github.tomhula.jecnaapi.util.SchoolYearHalf
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.MainActivity
+import me.tomasan7.jecnamobile.EXTRA_NAVIGATE_TO
+import me.tomasan7.jecnamobile.NavigateDestination
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
@@ -159,6 +161,7 @@ class GradeCheckerWorker @AssistedInject constructor(
     {
         val intent = Intent(appContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra(EXTRA_NAVIGATE_TO, NavigateDestination.Grades.name)
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
