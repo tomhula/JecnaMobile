@@ -48,11 +48,6 @@ The minimum supported Android version is `Android 8.0 (Oreo)`.
   </a>
 </p>
 
-## Known Issues
-
-- Several parts of the app do not work if the user does not check “Remember user”
-- Clicking on a notification only opens the app but does not navigate to a specific screen
-
 ## Contributing
 
 Every Ječná student with an Android device will appreciate your contribution, so feel free to get involved.
