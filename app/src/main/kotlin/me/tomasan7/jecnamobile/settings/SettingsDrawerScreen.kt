@@ -96,7 +96,7 @@ fun SettingsDrawerScreen(
                 },
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) { _, page, isDragging ->
-                key("page_${page.destinationName}") {
+                key(page.destinationName) {
                     ReorderableItem {
                         val destination = runCatching { SubScreenDestination.valueOf(page.destinationName) }.getOrNull()
 
@@ -138,7 +138,7 @@ fun SettingsDrawerScreen(
                 },
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) { _, link, isDragging ->
-                key("link_${link.linkName}") {
+                key(link.linkName) {
                     ReorderableItem {
                         val sidebarLink = runCatching { SidebarLink.valueOf(link.linkName) }.getOrNull()
 

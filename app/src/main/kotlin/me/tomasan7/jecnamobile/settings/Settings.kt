@@ -14,18 +14,18 @@ data class Settings(
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
-    var drawerPages: List<DrawerPage> = getDefaultDrawerPages(),
-    var drawerLinks: List<DrawerLink> = getDefaultDrawerLinks()
+    var drawerPages: List<DrawerPage> = DEFAULT_DRAWER_PAGES,
+    var drawerLinks: List<DrawerLink> = DEFAULT_DRAWER_LINKS
 )
 {
     companion object
     {
         const val DEFAULT_SUBSTITUTION_SERVER_URL = "https://jecnarozvrh.jzitnik.dev"
 
-        fun getDefaultDrawerPages(): List<DrawerPage> =
+        val DEFAULT_DRAWER_PAGES =
             SubScreenDestination.entries.map { DrawerPage(it.name, true) }
 
-        fun getDefaultDrawerLinks(): List<DrawerLink> =
+        val DEFAULT_DRAWER_LINKS =
             SidebarLink.entries.map { DrawerLink(it.name, true) }
     }
 
