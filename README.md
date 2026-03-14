@@ -50,11 +50,6 @@ Minimální podporovaný Android je `Android 8.0 (Oreo)`.
   </a>
 </p>
 
-## Známé chyby
-
-- Několik částí aplikace nefunguje, když uživatel nezaškrtne "Zapamatovat uživatele"
-- Při kliknutí na notifikaci se pouze otevře aplikace, ale nejde se na konkrétní stránku
-
 ## Kontribuce
 
 Za váš příspěvek bude rád každý Ječňák s Androidem, takže neváhej přispět.
