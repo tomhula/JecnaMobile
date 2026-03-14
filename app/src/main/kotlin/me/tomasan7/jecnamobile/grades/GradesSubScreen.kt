@@ -110,13 +110,15 @@ fun GradesSubScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                PeriodSelectors(
-                    modifier = Modifier.fillMaxWidth(),
-                    selectedSchoolYear = uiState.selectedSchoolYear,
-                    selectedSchoolYearHalf = uiState.selectedSchoolYearHalf,
-                    onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
-                    onChangeSchoolYearHalf = { viewModel.selectSchoolYearHalf(it) }
-                )
+                ExpandableSection(title = stringResource(R.string.timetable_period)) {
+                    PeriodSelectors(
+                        modifier = Modifier.fillMaxWidth(),
+                        selectedSchoolYear = uiState.selectedSchoolYear,
+                        selectedSchoolYearHalf = uiState.selectedSchoolYearHalf,
+                        onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
+                        onChangeSchoolYearHalf = { viewModel.selectSchoolYearHalf(it) }
+                    )
+                }
 
                 if (uiState.gradesPage != null)
                 {
@@ -231,17 +233,14 @@ private fun PeriodSelectors(
     modifier: Modifier = Modifier
 )
 {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
+    SelectionRow(modifier = modifier) {
         SchoolYearSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             selectedSchoolYear = selectedSchoolYear,
             onChange = onChangeSchoolYear
         )
         SchoolYearHalfSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             selectedSchoolYearHalf = selectedSchoolYearHalf,
             onChange = onChangeSchoolYearHalf
         )
