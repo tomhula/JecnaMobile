@@ -29,6 +29,9 @@ import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChange
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
 import me.tomasan7.jecnamobile.login.AuthRepository
+import me.tomasan7.jecnamobile.util.settingsDataStore
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
@@ -49,9 +52,9 @@ class GradeCheckerWorker @AssistedInject constructor(
     
     override suspend fun doWork(): Result
     {
-        if (!notificationsAllowed(appContext))
+        if (!notificationsEnabled(appContext))
         {
-            Log.i(LOG_TAG, "Notifications are not allowed. Exiting...")
+            Log.i(LOG_TAG, "Notifications are not enabled. Exiting...")
             return Result.success()
         }
 
@@ -169,7 +172,7 @@ class GradeCheckerWorker @AssistedInject constructor(
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
 
-        if (notificationsAllowed(appContext))
+        if (notificationsEnabled(appContext))
             notificationManagerCompat.notify(id, builder.build())
     }
 
@@ -178,13 +181,13 @@ class GradeCheckerWorker @AssistedInject constructor(
         private const val LOG_TAG = "GradeCheckerWorker"
 
         /**
-         * If notifications are enabled, schedules the grade checker worker, if not, cancels it.
+         * If notifications are enabled in settings and the app has permission, schedules the grade checker worker, if not, cancels it.
          */
         fun scheduleWorkerIfNotificationsEnabled(context: Context)
         {
-            if (!notificationsAllowed(context))
+            if (!notificationsEnabled(context))
             {
-                Log.i(LOG_TAG, "Notifications are not allowed. Cancelling grade checker worker...")
+                Log.i(LOG_TAG, "Notifications are not enabled. Cancelling grade checker worker...")
                 WorkManager.getInstance(context).cancelUniqueWork(JecnaMobileApplication.GRADE_CHECKER_WORKER_ID)
                 return
             }
@@ -203,10 +206,26 @@ class GradeCheckerWorker @AssistedInject constructor(
                 .enqueueUniquePeriodicWork(JecnaMobileApplication.GRADE_CHECKER_WORKER_ID, ExistingPeriodicWorkPolicy.UPDATE, workRequest)
         }
 
-        private fun notificationsAllowed(context: Context) = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-        else
-            /* All notifications are allowed on lower android versions */
-            true
+        /**
+         * Checks if notifications can be sent: requires both the Android permission AND the user-enabled setting.
+         * For existing users who haven't set this preference (null), defaults to enabled.
+         */
+        private fun notificationsEnabled(context: Context): Boolean
+        {
+            val hasPermission = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            else
+                true
+
+            val settingsEnabled = runCatching {
+                runBlocking {
+                    val settings = context.settingsDataStore.data.first()
+                    // Default to enabled for existing users who haven't set this preference
+                    settings.notificationsEnabled ?: settings.hasSeenWelcomeScreen
+                }
+            }.getOrElse { false }
+
+            return hasPermission && settingsEnabled
+        }
     }
 }

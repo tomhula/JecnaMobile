@@ -14,6 +14,7 @@ data class Settings(
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
+    var notificationsEnabled: Boolean? = null,
     var drawerPages: List<DrawerPage> = DEFAULT_DRAWER_PAGES,
     var drawerLinks: List<DrawerLink> = DEFAULT_DRAWER_LINKS
 )
