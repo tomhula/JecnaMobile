@@ -40,6 +40,14 @@
     <string name="settings_category_general">Obecné</string>
     <string name="settings_category_appearance">Vzhled</string>
     <string name="settings_category_about">O aplikaci</string>
+    <string name="settings_drawer_title">Postranní panel</string>
+    <string name="settings_drawer_description">Změňte pořadí a viditelnost položek v postranním panelu.</string>
+    <string name="settings_drawer_save">Uložit změny</string>
+    <string name="settings_drawer_move_up">Posunout nahoru</string>
+    <string name="settings_drawer_move_down">Posunout dolů</string>
+    <string name="settings_drawer_drag_handle">Přesunout</string>
+    <string name="settings_drawer_pages_section">Stránky</string>
+    <string name="settings_drawer_links_section">Odkazy</string>
     <string name="settings_app_version">Verze: </string>
     <string name="settings_developer">Vývojář</string>
     <string name="settings_github">GitHub repozitář</string>

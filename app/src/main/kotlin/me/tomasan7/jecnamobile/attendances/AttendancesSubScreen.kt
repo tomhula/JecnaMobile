@@ -81,6 +81,7 @@ fun AttendancesSubScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
+                ExpandableSection(title = stringResource(R.string.timetable_period)) {
                     PeriodSelectors(
                         modifier = Modifier.fillMaxWidth(),
                         selectedSchoolYear = uiState.selectedSchoolYear,
@@ -88,6 +89,7 @@ fun AttendancesSubScreen(
                         onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
                         onChangeMonth = { viewModel.selectMonth(it) }
                     )
+                }
 
                     if (uiState.attendancesPage != null)
                     {
@@ -123,17 +125,14 @@ private fun PeriodSelectors(
     modifier: Modifier = Modifier
 )
 {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
+    SelectionRow(modifier = modifier) {
         SchoolYearSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             selectedSchoolYear = selectedSchoolYear,
             onChange = onChangeSchoolYear
         )
         MonthSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             selectedMonth = selectedMonth,
             onChange = onChangeMonth
         )

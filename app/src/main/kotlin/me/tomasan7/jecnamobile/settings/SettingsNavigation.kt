@@ -13,6 +13,7 @@ sealed interface SettingsDestination : NavKey {
     @Serializable data object Substitution : SettingsDestination
     @Serializable data object Canteen : SettingsDestination
     @Serializable data object About : SettingsDestination
+    @Serializable data object Drawer : SettingsDestination
 }
 
 fun <T : Any> settingsNavEntry(
@@ -59,6 +60,12 @@ fun <T : Any> settingsNavEntry(
         }
         is SettingsDestination.About -> NavEntry(key) {
             SettingsAboutScreen(
+                onBackClick = onBackClick
+            )
+        }
+        is SettingsDestination.Drawer -> NavEntry(key) {
+            SettingsDrawerScreen(
+                viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }

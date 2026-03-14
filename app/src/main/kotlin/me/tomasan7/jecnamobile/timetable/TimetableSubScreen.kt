@@ -4,16 +4,19 @@ import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -128,14 +131,16 @@ fun TimetableSubScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(20.dp)
             ) {
-                PeriodSelectors(
-                    modifier = Modifier.fillMaxWidth(),
-                    timetablePeriodOptions = uiState.timetablePage?.periodOptions ?: emptyList(),
-                    selectedSchoolYear = uiState.selectedSchoolYear,
-                    selectedTimetablePeriod = uiState.selectedPeriod,
-                    onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
-                    onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
-                )
+                ExpandableSection(title = stringResource(R.string.timetable_period)) {
+                    PeriodSelectors(
+                        modifier = Modifier.fillMaxWidth(),
+                        timetablePeriodOptions = uiState.timetablePage?.periodOptions ?: emptyList(),
+                        selectedSchoolYear = uiState.selectedSchoolYear,
+                        selectedTimetablePeriod = uiState.selectedPeriod,
+                        onChangeSchoolYear = { viewModel.selectSchoolYear(it) },
+                        onChangeTimetablePeriod = { viewModel.selectTimetablePeriod(it) }
+                    )
+                }
                 
                 if (uiState.timetablePage != null) {
 
@@ -144,14 +149,35 @@ fun TimetableSubScreen(
                             if (uiState.substitutions == null) {
                                 val sidebarLink = SidebarLink.SubstitutionTimetable
 
-                                Text(
-                                    text = stringResource(R.string.substitution_load_error),
-                                    modifier = Modifier.clickable(onClick = {
-                                        val intent = Intent(Intent.ACTION_VIEW)
-                                        intent.data = sidebarLink.link.toUri()
-                                        context.startActivity(intent)
-                                    })
-                                )
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            val intent = Intent(Intent.ACTION_VIEW)
+                                            intent.data = sidebarLink.link.toUri()
+                                            context.startActivity(intent)
+                                        },
+                                    color = MaterialTheme.colorScheme.errorContainer.copy(alpha = 0.4f),
+                                    shape = MaterialTheme.shapes.medium
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(12.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Surface(
+                                            modifier = Modifier.size(6.dp),
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.error
+                                        ) {}
+                                        Spacer(Modifier.width(8.dp))
+                                        Text(
+                                            text = stringResource(R.string.substitution_load_error),
+                                            style = MaterialTheme.typography.labelMedium,
+                                            fontWeight = FontWeight.Bold,
+                                            color = MaterialTheme.colorScheme.onErrorContainer
+                                        )
+                                    }
+                                }
                             } else {
                                 val intervalText = if (uiState.substitutions.currentUpdateSchedule < 60) {
                                     pluralStringResource(
@@ -167,14 +193,6 @@ fun TimetableSubScreen(
                                         hours
                                     )
                                 }
-                                Text(
-                                    text = stringResource(
-                                        R.string.subtitution_info,
-                                        uiState.substitutions.lastUpdated,
-                                        intervalText
-                                    ),
-                                    style = MaterialTheme.typography.bodySmall
-                                )
 
                                 val now = remember { Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()) }
                                 val today = now.date
@@ -209,9 +227,59 @@ fun TimetableSubScreen(
                                     }
                                 }
 
-                                val targetInfo = uiState.substitutions.data.find { it.date == targetDate.toString() }
-                                if (targetInfo != null && targetInfo.takesPlace.isNotBlank()) {
-                                    TakesPlaceInfo(stringResource(labelRes), targetInfo.takesPlace)
+                                val targetInfo = remember(targetDate, uiState.substitutions.data) {
+                                    uiState.substitutions.data.find { it.date == targetDate.toString() }
+                                }
+                                val takesPlaceText = targetInfo?.takesPlace?.takeIf { it.isNotBlank() }
+
+                                val contentPadding = ExpandableSectionPadding.Custom(
+                                    start = 30.dp,
+                                    top = 0.dp,
+                                    end = 8.dp,
+                                    bottom = if (takesPlaceText != null) 8.dp else 0.dp
+                                )
+                                ExpandableSection(
+                                    title = stringResource(R.string.sidebar_link_substitution_timetable),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    icon = {
+                                        Surface(
+                                            modifier = Modifier.size(6.dp),
+                                            shape = CircleShape,
+                                            color = MaterialTheme.colorScheme.primary
+                                        ) {}
+                                    },
+                                    trailingHeaderContent = {
+                                        Spacer(Modifier.weight(1f))
+                                        Text(
+                                            text = "${uiState.substitutions.lastUpdated} ($intervalText)",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.6f)
+                                        )
+                                        Spacer(Modifier.width(8.dp))
+                                    },
+                                    expandable = takesPlaceText != null,
+                                    color = if (takesPlaceText != null) MaterialTheme.colorScheme.secondaryContainer
+                                    else MaterialTheme.colorScheme.secondaryContainer.copy(
+                                        alpha = 0.4f
+                                    ),
+                                    titleColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    contentPadding = contentPadding
+                                ) {
+                                    if (takesPlaceText != null)
+                                    {
+                                        Text(
+                                            text = stringResource(labelRes),
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.7f),
+                                            modifier = Modifier.padding(bottom = 2.dp)
+                                        )
+                                        Text(
+                                            text = takesPlaceText,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.Medium,
+                                            color = MaterialTheme.colorScheme.onSecondaryContainer
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -241,18 +309,15 @@ private fun PeriodSelectors(
     modifier: Modifier = Modifier
 )
 {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.SpaceEvenly
-    ) {
+    SelectionRow(modifier = modifier) {
         SchoolYearSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             showYearAhead = true,
             selectedSchoolYear = selectedSchoolYear,
             onChange = onChangeSchoolYear
         )
         TimetablePeriodSelector(
-            modifier = Modifier.width(160.dp),
+            modifier = Modifier.weight(1f),
             periodOptions = timetablePeriodOptions,
             selectedOption = selectedTimetablePeriod,
             onChange = onChangeTimetablePeriod
