@@ -5,7 +5,12 @@ import android.util.Log
 import androidx.glance.appwidget.GlanceAppWidgetManager
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.hilt.work.HiltWorker
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.OutOfQuotaPolicy
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -39,35 +44,48 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
             }
 
             val params = SchoolYearPeriodParams(SchoolYear.current(), SchoolYearPeriodParams.CURRENT_PERIOD_ID)
-            var isFromCache = false
-            var timestamp = System.currentTimeMillis()
+
+            val cachedData = timetableCacheRepository.getCache(params)
+
+            if (cachedData != null) {
+                updateWidgetState(
+                    timetablePage = cachedData.data.page,
+                    substitutions = cachedData.data.substitutions,
+                    lastUpdated = cachedData.timestamp.toEpochMilliseconds(),
+                    isLoading = true,
+                    isManualRefresh = false,
+                    error = null
+                )
+            }
 
             val timetableData = try {
                 timetableCacheRepository.getRealAndCache(params)
             } catch (networkException: Exception) {
-                Log.w(LOG_TAG, "Network fetch failed, attempting to read from cache.", networkException)
-
-                val cachedData = timetableCacheRepository.getCache(params)
+                Log.w(LOG_TAG, "Network fetch failed.", networkException)
 
                 if (cachedData != null) {
-                    isFromCache = true
-                    timestamp = cachedData.timestamp.toEpochMilliseconds()
-                    cachedData.data
+                    updateWidgetState(
+                        timetablePage = cachedData.data.page,
+                        substitutions = cachedData.data.substitutions,
+                        lastUpdated = cachedData.timestamp.toEpochMilliseconds(),
+                        isLoading = false,
+                        isManualRefresh = false,
+                        error = null
+                    )
+                    return Result.success()
                 } else {
                     throw networkException
                 }
             }
 
-            updateWidgetState { currentState ->
-                currentState.copy(
-                    timetablePage = timetableData.page,
-                    substitutions = timetableData.substitutions,
-                    lastUpdated = timestamp,
-                    isLoading = false,
-                    isManualRefresh = false,
-                    error = if (currentState.isManualRefresh && isFromCache) "Offline: Showing cached data" else null
-                )
-            }
+            updateWidgetState(
+                timetablePage = timetableData.page,
+                substitutions = timetableData.substitutions,
+                lastUpdated = System.currentTimeMillis(),
+                isLoading = false,
+                isManualRefresh = false,
+                error = null
+            )
 
             Result.success()
         } catch (e: Exception) {
@@ -82,41 +100,64 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
                 else -> e.message
             }
 
-            updateWidgetState { currentState ->
-                if (currentState.isManualRefresh) {
-                    currentState.copy(
-                        isLoading = false,
-                        isManualRefresh = false,
-                        error = errorMessage
-                    )
-                } else {
-                    currentState.copy(
-                        isLoading = false,
-                        isManualRefresh = false
-                    )
-                }
-            }
+            updateWidgetState(
+                timetablePage = null,
+                substitutions = null,
+                lastUpdated = 0L,
+                isLoading = false,
+                isManualRefresh = false,
+                error = errorMessage
+            )
 
             Result.failure()
         }
     }
 
-    private suspend fun updateWidgetState(updateBlock: (TimetableWidgetState) -> TimetableWidgetState) {
+    private suspend fun updateWidgetState(
+        timetablePage: io.github.tomhula.jecnaapi.data.timetable.TimetablePage?,
+        substitutions: me.tomasan7.jecnamobile.timetable.SubstitutionData?,
+        lastUpdated: Long,
+        isLoading: Boolean,
+        isManualRefresh: Boolean,
+        error: String?
+    ) {
         try {
             val manager = GlanceAppWidgetManager(context)
             
             val timetableGlanceIds = manager.getGlanceIds(TimetableWidget::class.java)
             val nextClassGlanceIds = manager.getGlanceIds(NextClassWidget::class.java)
-            val allGlanceIds = timetableGlanceIds.map { it to TimetableWidgetStateDefinition } +
-                              nextClassGlanceIds.map { it to NextClassWidgetStateDefinition }
 
-            allGlanceIds.forEach { (glanceId, stateDefinition) ->
+            timetableGlanceIds.forEach { glanceId ->
                 updateAppWidgetState(
                     context = context,
-                    definition = stateDefinition,
+                    definition = TimetableWidgetStateDefinition,
                     glanceId = glanceId
-                ) { currentState ->
-                    updateBlock(currentState)
+                ) {
+                    TimetableWidgetState(
+                        timetablePage = timetablePage,
+                        substitutions = substitutions,
+                        lastUpdated = lastUpdated,
+                        isLoading = isLoading,
+                        isManualRefresh = isManualRefresh,
+                        error = error
+                    )
+                }
+            }
+
+            nextClassGlanceIds.forEach { glanceId ->
+                updateAppWidgetState(
+                    context = context,
+                    definition = NextClassWidgetStateDefinition,
+                    glanceId = glanceId
+                ) {
+                    TimetableWidgetState(
+                        timetablePage = timetablePage,
+                        substitutions = substitutions,
+                        lastUpdated = lastUpdated,
+                        isLoading = isLoading,
+                        isManualRefresh = isManualRefresh,
+                        error = error
+                    )
                 }
             }
 
@@ -128,6 +169,21 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
             }
         } catch (e: Exception) {
             Log.e(LOG_TAG, "updateWidgetState: error updating widgets", e)
+        }
+    }
+
+    companion object {
+        fun schedule(context: Context) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            WorkManager.getInstance(context).enqueue(
+                OneTimeWorkRequestBuilder<TimetableWidgetWorker>()
+                    .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
+                    .setConstraints(constraints)
+                    .build()
+            )
         }
     }
 }

@@ -40,8 +40,6 @@ import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.LessonPeriod
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
@@ -49,6 +47,7 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
+import kotlin.time.Instant
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.DailySchedule
@@ -99,15 +98,16 @@ private fun TimetableWidgetContent(context: Context, state: TimetableWidgetState
             .padding(12.dp)
     ) {
         when {
-            state.isLoading -> LoadingContent(colors)
-            state.error != null -> ErrorContent(context, colors)
             state.timetablePage?.timetable != null -> DailyTimetableContent(
                 context = context,
+                state = state,
                 timetable = state.timetablePage.timetable,
                 substitutions = state.substitutions,
                 today = today,
                 colors = colors
             )
+            state.isLoading -> LoadingContent(colors)
+            state.error != null -> ErrorContent(context, colors)
             else -> EmptyContent(context, colors)
         }
     }
@@ -117,6 +117,7 @@ private fun TimetableWidgetContent(context: Context, state: TimetableWidgetState
 @Composable
 private fun DailyTimetableContent(
     context: Context,
+    state: TimetableWidgetState,
     timetable: Timetable,
     substitutions: SubstitutionData?,
     today: LocalDateTime,
@@ -129,7 +130,9 @@ private fun DailyTimetableContent(
         Header(
             context = context,
             title = displayInfo.title,
+            lastUpdated = state.lastUpdated,
             substitutions = substitutions,
+            isLoading = state.isLoading,
             colors = colors
         )
 
@@ -156,7 +159,9 @@ private fun DailyTimetableContent(
 private fun Header(
     context: Context,
     title: String,
+    lastUpdated: Long,
     substitutions: SubstitutionData?,
+    isLoading: Boolean,
     colors: ColorProviders
 ) {
     Column(
@@ -177,7 +182,20 @@ private fun Header(
                 )
             )
             Spacer(modifier = GlanceModifier.defaultWeight())
-            RefreshButton(context = context, colors = colors)
+
+            if (isLoading) {
+                Box(
+                    modifier = GlanceModifier.size(32.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(
+                        modifier = GlanceModifier.size(20.dp),
+                        color = colors.onBackground
+                    )
+                }
+            } else {
+                RefreshButton(context = context, colors = colors)
+            }
         }
 
         if (substitutions != null) {
@@ -208,7 +226,26 @@ private fun Header(
                 modifier = GlanceModifier.padding(top = 4.dp)
             )
         }
+
+        if (lastUpdated != 0L) {
+            Text(
+                text = formatLastUpdated(context, lastUpdated),
+                style = TextStyle(
+                    color = colors.onBackground,
+                    fontSize = 11.sp
+                ),
+                modifier = GlanceModifier.padding(top = 4.dp)
+            )
+        }
     }
+}
+
+private fun formatLastUpdated(context: Context, timestamp: Long): String {
+    if (timestamp == 0L) return ""
+    val instant = Instant.fromEpochMilliseconds(timestamp)
+    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+    val timeString = String.format("%02d:%02d", localDateTime.hour, localDateTime.minute)
+    return context.getStringRes(R.string.widget_timetable_last_updated, timeString)
 }
 
 @Composable
@@ -502,7 +539,7 @@ internal class TimetableWidgetReceiver : GlanceAppWidgetReceiver() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+        TimetableWidgetWorker.schedule(context)
     }
 }
 
@@ -516,6 +553,6 @@ internal class RefreshTimetableAction : ActionCallback {
             state.copy(isLoading = true, isManualRefresh = true)
         }
         TimetableWidget().update(context, glanceId)
-        WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+        TimetableWidgetWorker.schedule(context)
     }
 }

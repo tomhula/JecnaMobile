@@ -43,8 +43,6 @@ import androidx.glance.text.TextStyle
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Intent
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.LocalDateTime
@@ -100,7 +98,7 @@ internal class NextClassWidgetReceiver : GlanceAppWidgetReceiver() {
         appWidgetIds.forEach { appWidgetId ->
             scheduleTickUpdates(context, appWidgetId)
         }
-        WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+        TimetableWidgetWorker.schedule(context)
     }
 
     override fun onDeleted(context: Context, appWidgetIds: IntArray) {
@@ -169,7 +167,7 @@ internal class RefreshNextClassAction : ActionCallback {
             state.copy(isLoading = true, isManualRefresh = true)
         }
         NextClassWidget().update(context, glanceId)
-        WorkManager.getInstance(context).enqueue(OneTimeWorkRequestBuilder<TimetableWidgetWorker>().build())
+        TimetableWidgetWorker.schedule(context)
     }
 }
 
@@ -187,15 +185,16 @@ private fun NextClassWidgetContent(context: Context, state: TimetableWidgetState
             .padding(8.dp)
     ) {
         when {
-            state.isLoading && state.timetablePage == null -> LoadingContent(colors)
-            state.error != null && state.timetablePage == null -> ErrorContent(context, colors)
             state.timetablePage?.timetable != null -> NextClassDisplayContent(
                 context = context,
+                state = state,
                 timetable = state.timetablePage.timetable,
                 substitutions = state.substitutions,
                 today = today,
                 colors = colors
             )
+            state.isLoading -> LoadingContent(colors)
+            state.error != null -> ErrorContent(context, colors)
             else -> EmptyContent(context, colors)
         }
     }
@@ -204,6 +203,7 @@ private fun NextClassWidgetContent(context: Context, state: TimetableWidgetState
 @Composable
 private fun NextClassDisplayContent(
     context: Context,
+    state: TimetableWidgetState,
     timetable: Timetable,
     substitutions: SubstitutionData?,
     today: LocalDateTime,
@@ -213,7 +213,7 @@ private fun NextClassDisplayContent(
     val dailySchedule = substitutions?.data?.find { it.date == displayInfo.targetDate.toString() }
 
     Column(modifier = GlanceModifier.fillMaxSize()) {
-        Header(context = context, title = displayInfo.title, colors = colors)
+        Header(context = context, title = displayInfo.title, isLoading = state.isLoading, colors = colors)
 
         if (displayInfo.isSchoolOut) {
             Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -300,7 +300,7 @@ private fun NextClassDisplayContent(
 }
 
 @Composable
-private fun Header(context: Context, title: String, colors: ColorProviders) {
+private fun Header(context: Context, title: String, isLoading: Boolean, colors: ColorProviders) {
     Row(
         modifier = GlanceModifier
             .fillMaxWidth()
@@ -316,7 +316,20 @@ private fun Header(context: Context, title: String, colors: ColorProviders) {
             )
         )
         Spacer(modifier = GlanceModifier.defaultWeight())
-        RefreshButton(context = context, colors = colors)
+
+        if (isLoading) {
+            Box(
+                modifier = GlanceModifier.size(28.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(
+                    modifier = GlanceModifier.size(16.dp),
+                    color = colors.onBackground
+                )
+            }
+        } else {
+            RefreshButton(context = context, colors = colors)
+        }
     }
 }
 
