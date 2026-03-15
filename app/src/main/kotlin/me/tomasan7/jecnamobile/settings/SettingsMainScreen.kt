@@ -6,6 +6,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
@@ -56,9 +58,21 @@ fun SettingsMainScreen(
                 )
                 HorizontalDivider()
                 SettingsCategoryItem(
+                    title = stringResource(R.string.settings_category_notifications),
+                    icon = Icons.Default.Notifications,
+                    onClick = { onNavigate(SettingsDestination.Notifications) }
+                )
+                HorizontalDivider()
+                SettingsCategoryItem(
                     title = stringResource(R.string.settings_category_appearance),
                     icon = Icons.Default.Palette,
                     onClick = { onNavigate(SettingsDestination.Appearance) }
+                )
+                HorizontalDivider()
+                SettingsCategoryItem(
+                    title = stringResource(R.string.settings_drawer_title),
+                    icon = Icons.Default.Menu,
+                    onClick = { onNavigate(SettingsDestination.Drawer) }
                 )
                 HorizontalDivider()
                 SettingsCategoryItem(

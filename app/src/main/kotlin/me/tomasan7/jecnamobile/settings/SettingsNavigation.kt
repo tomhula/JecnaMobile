@@ -8,10 +8,12 @@ import kotlinx.serialization.Serializable
 sealed interface SettingsDestination : NavKey {
     @Serializable data object Main : SettingsDestination
     @Serializable data object General : SettingsDestination
+    @Serializable data object Notifications : SettingsDestination
     @Serializable data object Appearance : SettingsDestination
     @Serializable data object Substitution : SettingsDestination
     @Serializable data object Canteen : SettingsDestination
     @Serializable data object About : SettingsDestination
+    @Serializable data object Drawer : SettingsDestination
 }
 
 fun <T : Any> settingsNavEntry(
@@ -28,6 +30,12 @@ fun <T : Any> settingsNavEntry(
         }
         is SettingsDestination.General -> NavEntry(key) {
             SettingsGeneralScreen(
+                viewModel = hiltViewModel(),
+                onBackClick = onBackClick
+            )
+        }
+        is SettingsDestination.Notifications -> NavEntry(key) {
+            SettingsNotificationsScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
@@ -52,6 +60,12 @@ fun <T : Any> settingsNavEntry(
         }
         is SettingsDestination.About -> NavEntry(key) {
             SettingsAboutScreen(
+                onBackClick = onBackClick
+            )
+        }
+        is SettingsDestination.Drawer -> NavEntry(key) {
+            SettingsDrawerScreen(
+                viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }

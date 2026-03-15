@@ -54,12 +54,22 @@ fun MainScreen(
     val settings by settingsAsStateAwaitFirst()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
-    val destinationItems = remember(settings.substitutionTimetableEnabled) {
-        SubScreenDestination.entries.filter {
-            it != SubScreenDestination.Substitution || settings.substitutionTimetableEnabled
+    val destinationItems = remember(settings.substitutionTimetableEnabled, settings.drawerPages) {
+        val visiblePages = settings.drawerPages
+            .filter { it.isVisible }
+            .mapNotNull { page -> SubScreenDestination.entries.find { it.name == page.destinationName } }
+        
+        if (settings.substitutionTimetableEnabled) {
+            visiblePages
+        } else {
+            visiblePages.filter { it != SubScreenDestination.Substitution }
         }
     }
-    val linkItems = SidebarLink.entries
+    val linkItems = remember(settings.drawerLinks) {
+        settings.drawerLinks
+            .filter { it.isVisible }
+            .mapNotNull { link -> SidebarLink.entries.find { it.name == link.linkName } }
+    }
     val navBackStack = rememberNavBackStack(settings.defaultDestination)
     // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
     val navDrawerController = rememberNavDrawerController(drawerState, scope)

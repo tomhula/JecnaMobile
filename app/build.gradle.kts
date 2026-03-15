@@ -91,6 +91,7 @@ dependencies {
     implementation(libs.accompanist.permissions)
     implementation(libs.navigation3.ui)
     implementation(libs.navigation3.runtime)
+    implementation(libs.composeReorderable)
 
     implementation(libs.activity.ktx)
 

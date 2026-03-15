@@ -15,6 +15,7 @@ composeHtml = "1.0.2"
 composeCoil = "2.7.0"
 accompanist = "0.37.3"
 nav3Core = "1.0.0"
+composeReorderable = "3.0.0"
 
 activity = "1.12.3"
 
@@ -45,6 +46,7 @@ accompanist-permissions = { module = "com.google.accompanist:accompanist-permiss
 jna = { module = "net.java.dev.jna:jna", version.ref = "jna" }
 navigation3-runtime = { module = "androidx.navigation3:navigation3-runtime", version.ref = "nav3Core" }
 navigation3-ui = { module = "androidx.navigation3:navigation3-ui", version.ref = "nav3Core" }
+composeReorderable = { module = "sh.calvin.reorderable:reorderable", version.ref = "composeReorderable" }
 
 activity-ktx = { module = "androidx.activity:activity-ktx", version.ref = "activity" }
 
