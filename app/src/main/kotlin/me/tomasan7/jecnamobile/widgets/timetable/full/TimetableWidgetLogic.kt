@@ -1,7 +1,6 @@
-package me.tomasan7.jecnamobile.widgets.timetable
+package me.tomasan7.jecnamobile.widgets.timetable.full
 
 import android.content.Context
-import androidx.annotation.StringRes
 import io.github.tomhula.jecnaapi.data.timetable.Lesson
 import io.github.tomhula.jecnaapi.data.timetable.Timetable
 import kotlinx.datetime.DatePeriod

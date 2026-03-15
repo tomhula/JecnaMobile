@@ -51,7 +51,7 @@
         </activity>
 
         <receiver
-                android:name=".widgets.timetable.TimetableWidgetReceiver"
+                android:name=".widgets.timetable.full.TimetableWidgetReceiver"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -62,7 +62,7 @@
         </receiver>
 
         <receiver
-                android:name=".widgets.nextclass.NextClassWidgetReceiver"
+                android:name=".widgets.timetable.nextclass.NextClassWidgetReceiver"
                 android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -73,11 +73,33 @@
         </receiver>
 
         <receiver
-                android:name=".widgets.nextclass.NextClassTickReceiver"
+                android:name=".widgets.timetable.nextclass.NextClassTickReceiver"
                 android:exported="false">
             <intent-filter>
                 <action android:name="me.tomasan7.jecnamobile.widgets.nextclass.ACTION_TICK" />
             </intent-filter>
+        </receiver>
+
+        <receiver
+                android:name=".widgets.grades.average.GradesWidgetReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/grades_widget_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widgets.grades.recent.RecentGradesWidgetReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/recent_grades_widget_info" />
         </receiver>
     </application>
 

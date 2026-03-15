@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.widgets.timetable
+package me.tomasan7.jecnamobile.widgets.timetable.full
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -21,7 +21,6 @@ import androidx.glance.appwidget.action.ActionCallback
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
-import androidx.glance.appwidget.lazy.itemsIndexed
 import androidx.glance.appwidget.provideContent
 import androidx.glance.appwidget.state.updateAppWidgetState
 import androidx.glance.background
@@ -50,7 +49,6 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
-import kotlin.time.Instant
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.DailySchedule
@@ -58,20 +56,21 @@ import me.tomasan7.jecnamobile.timetable.SubstitutionData
 
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
-import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
+import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetState
+import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
 
 private const val LOG_TAG = "TimetableWidget"
 
 private fun Context.getStringRes(@StringRes resId: Int, vararg formatArgs: Any): String = getString(resId, *formatArgs)
 
-object TimetableWidgetStateSerializer : BaseWidgetStateSerializer<SharedTimetableWidgetState>(
-    kSerializer = SharedTimetableWidgetState.serializer(),
+object TimetableWidgetStateSerializer : BaseWidgetStateSerializer<TimetableWidgetState>(
+    kSerializer = TimetableWidgetState.serializer(),
     logTag = LOG_TAG
 ) {
-    override val defaultValue = SharedTimetableWidgetState()
+    override val defaultValue = TimetableWidgetState()
 }
 
-object TimetableWidgetStateDefinition : BaseWidgetStateDefinition<SharedTimetableWidgetState>(
+object TimetableWidgetStateDefinition : BaseWidgetStateDefinition<TimetableWidgetState>(
     filePrefix = "timetable_widget_",
     serializer = TimetableWidgetStateSerializer
 )
@@ -81,14 +80,14 @@ internal class TimetableWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val state = currentState<SharedTimetableWidgetState>()
+            val state = currentState<TimetableWidgetState>()
             GlanceTheme { TimetableWidgetContent(context = context, state = state) }
         }
     }
 }
 
 @Composable
-private fun TimetableWidgetContent(context: Context, state: SharedTimetableWidgetState) {
+private fun TimetableWidgetContent(context: Context, state: TimetableWidgetState) {
     val colors = GlanceTheme.colors
     val now = Clock.System.now();
     val today = now.toLocalDateTime(TimeZone.currentSystemDefault())

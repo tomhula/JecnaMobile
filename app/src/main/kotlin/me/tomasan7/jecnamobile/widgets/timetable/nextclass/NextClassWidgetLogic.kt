@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.widgets.nextclass
+package me.tomasan7.jecnamobile.widgets.timetable.nextclass
 
 import android.content.Context
 import io.github.tomhula.jecnaapi.data.timetable.Lesson

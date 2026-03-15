@@ -16,9 +16,10 @@ import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.timetable.TimetableData
-import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
-import me.tomasan7.jecnamobile.widgets.nextclass.NextClassWidget
-import me.tomasan7.jecnamobile.widgets.nextclass.NextClassWidgetStateDefinition
+import me.tomasan7.jecnamobile.widgets.timetable.nextclass.NextClassWidget
+import me.tomasan7.jecnamobile.widgets.timetable.nextclass.NextClassWidgetStateDefinition
+import me.tomasan7.jecnamobile.widgets.timetable.full.TimetableWidget
+import me.tomasan7.jecnamobile.widgets.timetable.full.TimetableWidgetStateDefinition
 
 private const val LOG_TAG = "TimetableWidgetWorker"
 
@@ -100,7 +101,7 @@ internal class TimetableWidgetWorker @AssistedInject constructor(
         }
     }
 
-    private suspend fun updateWidgetState(updateBlock: (SharedTimetableWidgetState) -> SharedTimetableWidgetState) {
+    private suspend fun updateWidgetState(updateBlock: (TimetableWidgetState) -> TimetableWidgetState) {
         try {
             val manager = GlanceAppWidgetManager(context)
             

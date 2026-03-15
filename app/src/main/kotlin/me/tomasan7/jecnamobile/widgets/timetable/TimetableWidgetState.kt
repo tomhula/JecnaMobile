@@ -1,11 +1,11 @@
-package me.tomasan7.jecnamobile.widgets.shared
+package me.tomasan7.jecnamobile.widgets.timetable
 
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import kotlinx.serialization.Serializable
 import me.tomasan7.jecnamobile.timetable.SubstitutionData
 
 @Serializable
-data class SharedTimetableWidgetState(
+data class TimetableWidgetState(
     val timetablePage: TimetablePage? = null,
     val substitutions: SubstitutionData? = null,
     val lastUpdated: Long = 0L,

@@ -409,4 +409,20 @@
     <string name="widget_nextclass_break">Přestávka</string>
     <string name="widget_nextclass_ends_in">%1$s minut do konce</string>
     <string name="widget_nextclass_starts_in">%1$s minut do začátku</string>
+
+    <!-- ##### Grades Widget ##### -->
+
+    <string name="widget_grades_description">Zobrazuje průměry známek za pololetí.</string>
+    <string name="widget_grades_title">Průměry známek</string>
+    <string name="widget_grades_last_updated">Aktualizováno: %1$s</string>
+    <string name="widget_grades_no_grades">Žádné známky</string>
+    <string name="widget_grades_error">Chyba připojení</string>
+    <string name="widget_grades_tap_to_refresh">Klepnutím obnovíte</string>
+    <string name="widget_grades_loading">Načítám známky…</string>
+    <string name="widget_grades_refresh_description">Obnovit známky</string>
+
+    <!-- ##### Recent Grades Widget ##### -->
+
+    <string name="widget_recent_grades_description">Zobrazuje poslední známky.</string>
+    <string name="widget_recent_grades_title">Poslední známky</string>
 </resources>

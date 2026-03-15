@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.widgets.nextclass
+package me.tomasan7.jecnamobile.widgets.timetable.nextclass
 
 import android.appwidget.AppWidgetManager
 import android.content.Context
@@ -56,22 +56,23 @@ import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.SubstitutionData
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
-import me.tomasan7.jecnamobile.widgets.shared.SharedTimetableWidgetState
+import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetState
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
+import java.util.Calendar
 
 private const val LOG_TAG = "NextClassWidget"
 
 private fun Context.getStringRes(@StringRes resId: Int, vararg formatArgs: Any): String =
     getString(resId, *formatArgs)
 
-object NextClassWidgetStateSerializer : BaseWidgetStateSerializer<SharedTimetableWidgetState>(
-    kSerializer = SharedTimetableWidgetState.serializer(),
+object NextClassWidgetStateSerializer : BaseWidgetStateSerializer<TimetableWidgetState>(
+    kSerializer = TimetableWidgetState.serializer(),
     logTag = LOG_TAG
 ) {
-    override val defaultValue = SharedTimetableWidgetState()
+    override val defaultValue = TimetableWidgetState()
 }
 
-object NextClassWidgetStateDefinition : BaseWidgetStateDefinition<SharedTimetableWidgetState>(
+object NextClassWidgetStateDefinition : BaseWidgetStateDefinition<TimetableWidgetState>(
     filePrefix = "nextclass_widget_",
     serializer = NextClassWidgetStateSerializer
 )
@@ -81,7 +82,7 @@ internal class NextClassWidget : GlanceAppWidget() {
 
     override suspend fun provideGlance(context: Context, id: GlanceId) {
         provideContent {
-            val state = currentState<SharedTimetableWidgetState>()
+            val state = currentState<TimetableWidgetState>()
             GlanceTheme { NextClassWidgetContent(context = context, state = state) }
         }
     }
@@ -121,11 +122,11 @@ internal class NextClassWidgetReceiver : GlanceAppWidgetReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val now = java.util.Calendar.getInstance()
-        val hour = now.get(java.util.Calendar.HOUR_OF_DAY)
-        val dayOfWeek = now.get(java.util.Calendar.DAY_OF_WEEK)
+        val now = Calendar.getInstance()
+        val hour = now.get(Calendar.HOUR_OF_DAY)
+        val dayOfWeek = now.get(Calendar.DAY_OF_WEEK)
 
-        val isWeekend = dayOfWeek == java.util.Calendar.SATURDAY || dayOfWeek == java.util.Calendar.SUNDAY
+        val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
         val isAfterSchool = hour >= 17
 
         val intervalMillis = when {
@@ -173,7 +174,7 @@ internal class RefreshNextClassAction : ActionCallback {
 }
 
 @Composable
-private fun NextClassWidgetContent(context: Context, state: SharedTimetableWidgetState) {
+private fun NextClassWidgetContent(context: Context, state: TimetableWidgetState) {
     val colors = GlanceTheme.colors
 
     val now = Clock.System.now()
