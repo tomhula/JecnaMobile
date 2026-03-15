@@ -6,15 +6,11 @@ import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
-import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
@@ -35,7 +31,6 @@ import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.layout.width
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
@@ -54,6 +49,8 @@ import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.SubstitutionData
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
+import me.tomasan7.jecnamobile.widgets.base.LoadingContent
+import me.tomasan7.jecnamobile.widgets.base.SimpleWidgetHeader
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetState
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
 import java.util.Calendar
@@ -301,36 +298,13 @@ private fun NextClassDisplayContent(
 
 @Composable
 private fun Header(context: Context, title: String, isLoading: Boolean, colors: ColorProviders) {
-    Row(
-        modifier = GlanceModifier
-            .fillMaxWidth()
-            .padding(bottom = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(
-            text = title,
-            style = TextStyle(
-                color = colors.onBackground,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
-            )
-        )
-        Spacer(modifier = GlanceModifier.defaultWeight())
-
-        if (isLoading) {
-            Box(
-                modifier = GlanceModifier.size(28.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator(
-                    modifier = GlanceModifier.size(16.dp),
-                    color = colors.onBackground
-                )
-            }
-        } else {
-            RefreshButton(context = context, colors = colors)
-        }
-    }
+    SimpleWidgetHeader(
+        context = context,
+        title = title,
+        isLoading = isLoading,
+        colors = colors,
+        refreshActionClass = RefreshNextClassAction::class.java
+    )
 }
 
 @Composable
@@ -362,24 +336,6 @@ private fun SectionHeader(title: String, timeText: String?, colors: ColorProvide
                 )
             )
         }
-    }
-}
-
-@Composable
-private fun RefreshButton(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .size(28.dp)
-            .cornerRadius(6.dp)
-            .clickable(actionRunCallback<RefreshNextClassAction>()),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            provider = ImageProvider(R.drawable.ic_refresh),
-            contentDescription = context.getStringRes(R.string.widget_timetable_refresh_description),
-            modifier = GlanceModifier.size(16.dp),
-            colorFilter = ColorFilter.tint(colors.onBackground)
-        )
     }
 }
 
@@ -490,13 +446,6 @@ private fun SubstitutionCard(
             style = TextStyle(color = colors.onErrorContainer, fontWeight = FontWeight.Bold, fontSize = 13.sp),
             maxLines = 3
         )
-    }
-}
-
-@Composable
-private fun LoadingContent(colors: ColorProviders) {
-    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(color = colors.onBackground, modifier = GlanceModifier.size(24.dp))
     }
 }
 

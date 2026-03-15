@@ -9,16 +9,11 @@ import androidx.annotation.StringRes
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.ColorFilter
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.clickable
 import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
@@ -52,9 +47,12 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.DailySchedule
 import me.tomasan7.jecnamobile.timetable.SubstitutionData
-
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
+import me.tomasan7.jecnamobile.widgets.base.EmptyContent
+import me.tomasan7.jecnamobile.widgets.base.ErrorContent
+import me.tomasan7.jecnamobile.widgets.base.LoadingContent
+import me.tomasan7.jecnamobile.widgets.base.RefreshButton
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetState
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
 
@@ -107,8 +105,16 @@ private fun TimetableWidgetContent(context: Context, state: TimetableWidgetState
                 colors = colors
             )
             state.isLoading -> LoadingContent(colors)
-            state.error != null -> ErrorContent(context, colors)
-            else -> EmptyContent(context, colors)
+            state.error != null -> ErrorContent(
+                context = context,
+                colors = colors,
+                refreshActionClass = RefreshTimetableAction::class.java
+            )
+            else -> EmptyContent(
+                context = context,
+                colors = colors,
+                refreshActionClass = RefreshTimetableAction::class.java
+            )
         }
     }
 }
@@ -194,7 +200,13 @@ private fun Header(
                     )
                 }
             } else {
-                RefreshButton(context = context, colors = colors)
+                RefreshButton(
+                    context = context,
+                    colors = colors,
+                    actionClass = RefreshTimetableAction::class.java,
+                    size = 32,
+                    iconSize = 20
+                )
             }
         }
         
@@ -274,24 +286,6 @@ private fun SubstitutionInfoCard(
                 )
             )
         }
-    }
-}
-
-@Composable
-private fun RefreshButton(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .size(32.dp)
-            .cornerRadius(8.dp)
-            .clickable(actionRunCallback<RefreshTimetableAction>()),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            provider = ImageProvider(R.drawable.ic_refresh),
-            contentDescription = context.getStringRes(R.string.widget_timetable_refresh_description),
-            modifier = GlanceModifier.size(20.dp),
-            colorFilter = ColorFilter.tint(colors.onBackground)
-        )
     }
 }
 
@@ -509,52 +503,6 @@ private fun FreePeriodCard(context: Context, colors: ColorProviders) {
         Text(
             text = context.getStringRes(R.string.widget_timetable_free_period),
             style = TextStyle(color = colors.onSurface, fontSize = 13.sp)
-        )
-    }
-}
-
-@Composable
-private fun LoadingContent(colors: ColorProviders) {
-    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            color = colors.onBackground
-        )
-    }
-}
-
-@Composable
-private fun ErrorContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .clickable(actionRunCallback<RefreshTimetableAction>())
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = context.getStringRes(R.string.widget_timetable_error),
-                style = TextStyle(color = colors.error, fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = context.getStringRes(R.string.widget_timetable_tap_to_refresh),
-                style = TextStyle(color = colors.onBackground, fontSize = 12.sp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .clickable(actionRunCallback<RefreshTimetableAction>()),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = context.getStringRes(R.string.widget_timetable_loading_timetable),
-            style = TextStyle(color = colors.onBackground)
         )
     }
 }

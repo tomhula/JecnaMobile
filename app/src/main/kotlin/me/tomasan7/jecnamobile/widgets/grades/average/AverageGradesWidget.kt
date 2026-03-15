@@ -9,16 +9,10 @@ import androidx.annotation.StringRes
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.GlanceTheme
-import androidx.glance.ColorFilter
-import androidx.glance.Image
-import androidx.glance.ImageProvider
 import androidx.glance.action.ActionParameters
-import androidx.glance.action.clickable
-import androidx.glance.appwidget.CircularProgressIndicator
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
 import androidx.glance.appwidget.action.ActionCallback
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.lazy.LazyColumn
 import androidx.glance.appwidget.provideContent
@@ -30,25 +24,24 @@ import androidx.glance.layout.Alignment
 import androidx.glance.layout.Box
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
-import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxSize
 import androidx.glance.layout.fillMaxWidth
 import androidx.glance.layout.height
 import androidx.glance.layout.padding
-import androidx.glance.layout.size
 import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import io.github.tomhula.jecnaapi.data.grade.Subject
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateDefinition
 import me.tomasan7.jecnamobile.widgets.base.BaseWidgetStateSerializer
+import me.tomasan7.jecnamobile.widgets.base.EmptyContent
+import me.tomasan7.jecnamobile.widgets.base.ErrorContent
+import me.tomasan7.jecnamobile.widgets.base.LoadingContent
+import me.tomasan7.jecnamobile.widgets.base.WidgetHeader
 import me.tomasan7.jecnamobile.widgets.grades.GradesWidgetWorkerShared
 import java.text.DecimalFormat
 import java.math.RoundingMode
-import kotlin.time.Instant
 
 private const val LOG_TAG = "GradesWidget"
 
@@ -94,8 +87,19 @@ private fun GradesWidgetContent(context: Context, state: AverageGradesWidgetStat
                 colors = colors
             )
             state.isLoading -> LoadingContent(colors)
-            state.error != null -> ErrorContent(context, colors)
-            else -> EmptyContent(context, colors)
+            state.error != null -> ErrorContent(
+                context = context,
+                colors = colors,
+                refreshActionClass = RefreshGradesAction::class.java,
+                errorResId = R.string.widget_grades_error,
+                tapToRefreshResId = R.string.widget_grades_tap_to_refresh
+            )
+            else -> EmptyContent(
+                context = context,
+                colors = colors,
+                refreshActionClass = RefreshGradesAction::class.java,
+                emptyResId = R.string.widget_grades_loading
+            )
         }
     }
 }
@@ -148,57 +152,15 @@ private fun Header(
     isLoading: Boolean,
     colors: ColorProviders
 ) {
-    Column(
-        modifier = GlanceModifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)
-    ) {
-        Row(
-            modifier = GlanceModifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = TextStyle(
-                    color = colors.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
-                )
-            )
-            Spacer(modifier = GlanceModifier.defaultWeight())
-
-            if (isLoading) {
-                Box(
-                    modifier = GlanceModifier.size(28.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    CircularProgressIndicator(
-                        modifier = GlanceModifier.size(18.dp),
-                        color = colors.onBackground
-                    )
-                }
-            } else {
-                RefreshButton(context = context, colors = colors)
-            }
-        }
-
-        Text(
-            text = formatLastUpdated(context, lastUpdated),
-            style = TextStyle(
-                color = colors.onBackground,
-                fontSize = 11.sp
-            ),
-            modifier = GlanceModifier.padding(top = 2.dp)
-        )
-    }
-}
-
-private fun formatLastUpdated(context: Context, timestamp: Long): String {
-    if (timestamp == 0L) return ""
-    val instant = Instant.fromEpochMilliseconds(timestamp)
-    val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
-    val timeStr = "${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}"
-    return context.getString(R.string.widget_grades_last_updated, timeStr)
+    WidgetHeader(
+        context = context,
+        title = title,
+        lastUpdated = lastUpdated,
+        isLoading = isLoading,
+        colors = colors,
+        refreshActionClass = RefreshGradesAction::class.java,
+        stringResId = R.string.widget_grades_last_updated
+    )
 }
 
 @Composable
@@ -282,70 +244,6 @@ private fun SubjectAverageRow(
     }
 }
 
-@Composable
-private fun RefreshButton(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .size(28.dp)
-            .cornerRadius(6.dp)
-            .clickable(actionRunCallback<RefreshGradesAction>()),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            provider = ImageProvider(R.drawable.ic_refresh),
-            contentDescription = context.getStringRes(R.string.widget_grades_refresh_description),
-            modifier = GlanceModifier.size(18.dp),
-            colorFilter = ColorFilter.tint(colors.onBackground)
-        )
-    }
-}
-
-@Composable
-private fun LoadingContent(colors: ColorProviders) {
-    Box(modifier = GlanceModifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator(
-            color = colors.onBackground
-        )
-    }
-}
-
-@Composable
-private fun ErrorContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .clickable(actionRunCallback<RefreshGradesAction>())
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(
-                text = context.getStringRes(R.string.widget_grades_error),
-                style = TextStyle(color = colors.error, fontWeight = FontWeight.Bold)
-            )
-            Text(
-                text = context.getStringRes(R.string.widget_grades_tap_to_refresh),
-                style = TextStyle(color = colors.onBackground, fontSize = 12.sp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun EmptyContent(context: Context, colors: ColorProviders) {
-    Box(
-        modifier = GlanceModifier
-            .fillMaxSize()
-            .clickable(actionRunCallback<RefreshGradesAction>()),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = context.getStringRes(R.string.widget_grades_loading),
-            style = TextStyle(color = colors.onBackground)
-        )
-    }
-}
-
 internal class GradesWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget = GradesWidget()
 
@@ -355,7 +253,7 @@ internal class GradesWidgetReceiver : GlanceAppWidgetReceiver() {
         appWidgetIds: IntArray
     ) {
         super.onUpdate(context, appWidgetManager, appWidgetIds)
-        GradesWidgetWorkerShared.Companion.schedule(context)
+        GradesWidgetWorkerShared.schedule(context)
     }
 }
 
@@ -369,6 +267,6 @@ internal class RefreshGradesAction : ActionCallback {
             state.copy(isLoading = true, isManualRefresh = true)
         }
         GradesWidget().update(context, glanceId)
-        GradesWidgetWorkerShared.Companion.schedule(context)
+        GradesWidgetWorkerShared.schedule(context)
     }
 }
