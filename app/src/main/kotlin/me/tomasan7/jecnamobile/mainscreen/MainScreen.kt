@@ -123,11 +123,13 @@ fun MainScreen(
                         )
                     }
 
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 28.dp)
-                    )
+                    if (destinationItems.isNotEmpty() && linkItems.isNotEmpty()) {
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 28.dp)
+                        )
+                    }
 
                     linkItems.forEach { LinkItem(it) }
                 }
