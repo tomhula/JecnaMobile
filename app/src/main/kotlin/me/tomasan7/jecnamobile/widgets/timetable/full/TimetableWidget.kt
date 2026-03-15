@@ -197,36 +197,7 @@ private fun Header(
                 RefreshButton(context = context, colors = colors)
             }
         }
-
-        if (substitutions != null) {
-            val intervalText = if (substitutions.currentUpdateSchedule < 60) {
-                context.resources.getQuantityString(
-                    R.plurals.substitution_update_interval_minutes,
-                    substitutions.currentUpdateSchedule,
-                    substitutions.currentUpdateSchedule
-                )
-            } else {
-                val hours = substitutions.currentUpdateSchedule / 60
-                context.resources.getQuantityString(
-                    R.plurals.subtitution_update_interval_hours,
-                    substitutions.currentUpdateSchedule,
-                    hours
-                )
-            }
-            Text(
-                text = context.getStringRes(
-                    R.string.subtitution_info,
-                    substitutions.lastUpdated,
-                    intervalText
-                ),
-                style = TextStyle(
-                    color = colors.onBackground,
-                    fontSize = 12.sp
-                ),
-                modifier = GlanceModifier.padding(top = 4.dp)
-            )
-        }
-
+        
         if (lastUpdated != 0L) {
             Text(
                 text = formatLastUpdated(context, lastUpdated),
@@ -234,7 +205,16 @@ private fun Header(
                     color = colors.onBackground,
                     fontSize = 11.sp
                 ),
-                modifier = GlanceModifier.padding(top = 4.dp)
+                modifier = GlanceModifier.padding(top = 8.dp)
+            )
+        }
+
+        if (substitutions != null) {
+            Spacer(modifier = GlanceModifier.padding(top = 8.dp))
+            SubstitutionInfoCard(
+                context = context,
+                substitutions = substitutions,
+                colors = colors
             )
         }
     }
@@ -246,6 +226,55 @@ private fun formatLastUpdated(context: Context, timestamp: Long): String {
     val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
     val timeString = String.format("%02d:%02d", localDateTime.hour, localDateTime.minute)
     return context.getStringRes(R.string.widget_timetable_last_updated, timeString)
+}
+
+@Composable
+private fun SubstitutionInfoCard(
+    context: Context,
+    substitutions: SubstitutionData,
+    colors: ColorProviders
+) {
+    val intervalText = if (substitutions.currentUpdateSchedule < 60) {
+        context.resources.getQuantityString(
+            R.plurals.substitution_update_interval_minutes,
+            substitutions.currentUpdateSchedule,
+            substitutions.currentUpdateSchedule
+        )
+    } else {
+        val hours = substitutions.currentUpdateSchedule / 60
+        context.resources.getQuantityString(
+            R.plurals.subtitution_update_interval_hours,
+            substitutions.currentUpdateSchedule,
+            hours
+        )
+    }
+
+    Box(
+        modifier = GlanceModifier
+            .fillMaxWidth()
+            .cornerRadius(12.dp)
+            .background(colors.secondaryContainer)
+            .padding(12.dp)
+    ) {
+        Column {
+            Text(
+                text = context.getStringRes(R.string.sidebar_link_substitution_timetable),
+                style = TextStyle(
+                    color = colors.onSecondaryContainer,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 14.sp
+                )
+            )
+            Spacer(modifier = GlanceModifier.padding(top = 4.dp))
+            Text(
+                text = "${substitutions.lastUpdated} ($intervalText)",
+                style = TextStyle(
+                    color = colors.onSecondaryContainer,
+                    fontSize = 12.sp
+                )
+            )
+        }
+    }
 }
 
 @Composable
