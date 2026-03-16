@@ -2,7 +2,7 @@ package me.tomasan7.jecnamobile.settings
 
 import kotlinx.serialization.Serializable
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.SidebarDestination
 
 @Serializable
 data class Settings(
@@ -10,7 +10,7 @@ data class Settings(
     var canteenLegendDismissed: Boolean = false,
     var gradesViewMode: GradesViewMode = GradesViewMode.GRID,
     val openSubScreenRoute: String? = null,
-    val defaultDestination: SubScreenDestination = openSubScreenRoute?.let { legacySubScreenRouteToDefaultDestination(it) } ?: SubScreenDestination.Timetable,
+    val defaultDestination: SidebarDestination = openSubScreenRoute?.let { legacySubScreenRouteToDefaultDestination(it) } ?: SidebarDestination.Timetable,
     val substitutionServerUrl: String = DEFAULT_SUBSTITUTION_SERVER_URL,
     val substitutionTimetableEnabled: Boolean = true,
     var hasSeenWelcomeScreen: Boolean = false,
@@ -24,7 +24,7 @@ data class Settings(
         const val DEFAULT_SUBSTITUTION_SERVER_URL = "https://jecnarozvrh.jzitnik.dev"
 
         val DEFAULT_DRAWER_PAGES =
-            SubScreenDestination.entries.map { DrawerPage(it.name, true) }
+            SidebarDestination.entries.map { DrawerPage(it.name, true) }
 
         val DEFAULT_DRAWER_LINKS =
             SidebarLink.entries.map { DrawerLink(it.name, true) }
@@ -55,15 +55,15 @@ data class Settings(
     )
 }
 
-private fun legacySubScreenRouteToDefaultDestination(route: String?): SubScreenDestination? =
+private fun legacySubScreenRouteToDefaultDestination(route: String?): SidebarDestination? =
     when (route)
     {
-        "absences_sub_screen" -> SubScreenDestination.Absences
-        "attendances_sub_screen" -> SubScreenDestination.Attendances
-        "canteen_sub_screen" -> SubScreenDestination.Canteen
-        "grades_sub_screen" -> SubScreenDestination.Grades
-        "news_sub_screen" -> SubScreenDestination.News
-        "teachers_sub_screen" -> SubScreenDestination.Teachers
-        "timetable_sub_screen" -> SubScreenDestination.Timetable
+        "absences_sub_screen" -> SidebarDestination.Absences
+        "attendances_sub_screen" -> SidebarDestination.Attendances
+        "canteen_sub_screen" -> SidebarDestination.Canteen
+        "grades_sub_screen" -> SidebarDestination.Grades
+        "news_sub_screen" -> SidebarDestination.News
+        "teachers_sub_screen" -> SidebarDestination.Teachers
+        "timetable_sub_screen" -> SidebarDestination.Timetable
         else -> null
     }

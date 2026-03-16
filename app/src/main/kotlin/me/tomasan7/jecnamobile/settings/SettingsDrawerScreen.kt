@@ -19,7 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 import sh.calvin.reorderable.ReorderableColumn
@@ -91,7 +91,7 @@ fun SettingsDrawerScreen(
             ) { _, page, isDragging ->
                 key(page.destinationName) {
                     ReorderableItem {
-                        val destination = runCatching { SubScreenDestination.valueOf(page.destinationName) }.getOrNull()
+                        val destination = runCatching { SidebarDestination.valueOf(page.destinationName) }.getOrNull()
 
                         if (destination != null) {
                             DrawerListItemContent(

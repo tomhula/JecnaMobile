@@ -24,7 +24,7 @@ import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.util.getWeekDayName
@@ -55,7 +55,7 @@ fun AbsencesSubScreen(
             SubScreenTopAppBar(R.string.sidebar_absences, navDrawerController) {
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = SubScreenDestination.Absences.iconSelected,
+                    underlyingIcon = SidebarDestination.Absences.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )

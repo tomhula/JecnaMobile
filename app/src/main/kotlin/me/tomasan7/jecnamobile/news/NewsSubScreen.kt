@@ -37,7 +37,7 @@ import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import kotlinx.datetime.toJavaLocalDate
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.ui.theme.jm_label
@@ -68,7 +68,7 @@ fun NewsSubScreen(
             SubScreenTopAppBar(R.string.sidebar_news, navDrawerController) {
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = SubScreenDestination.News.iconSelected,
+                    underlyingIcon = SidebarDestination.News.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )
