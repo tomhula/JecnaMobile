@@ -52,7 +52,6 @@ fun MainScreen(
             visiblePages.filter { it != NavDrawerDestination.Substitution }
         }
     }
-    
     val linkItems = remember(settings.drawerLinks) {
         settings.drawerLinks
             .filter { it.isVisible }
