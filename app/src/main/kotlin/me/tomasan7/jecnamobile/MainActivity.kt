@@ -11,12 +11,10 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.LoginScreen
 import me.tomasan7.jecnamobile.mainscreen.MainScreen
