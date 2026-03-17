@@ -13,7 +13,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.ui.component.FilledDropDownSelector
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
@@ -27,13 +27,13 @@ fun SettingsGeneralScreen(
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
     
     val names = mapOf(
-        SubScreenDestination.News to stringResource(R.string.sidebar_news),
-        SubScreenDestination.Grades to stringResource(R.string.sidebar_grades),
-        SubScreenDestination.Timetable to stringResource(R.string.sidebar_timetable),
-        SubScreenDestination.Canteen to stringResource(R.string.sidebar_canteen),
-        SubScreenDestination.Attendances to stringResource(R.string.sidebar_attendances),
-        SubScreenDestination.Absences to stringResource(R.string.sidebar_absences),
-        SubScreenDestination.Teachers to stringResource(R.string.sidebar_teachers),
+        NavDrawerDestination.News to stringResource(R.string.sidebar_news),
+        NavDrawerDestination.Grades to stringResource(R.string.sidebar_grades),
+        NavDrawerDestination.Timetable to stringResource(R.string.sidebar_timetable),
+        NavDrawerDestination.Canteen to stringResource(R.string.sidebar_canteen),
+        NavDrawerDestination.Attendances to stringResource(R.string.sidebar_attendances),
+        NavDrawerDestination.Absences to stringResource(R.string.sidebar_absences),
+        NavDrawerDestination.Teachers to stringResource(R.string.sidebar_teachers),
     )
 
     Scaffold(

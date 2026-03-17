@@ -24,7 +24,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.timetable.AbsenceEntry
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.TakesPlaceInfo
@@ -32,11 +31,11 @@ import me.tomasan7.jecnamobile.ui.component.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubstitutionSubScreen(
-    navDrawerController: NavDrawerController,
     onTeacherClick: (TeacherReference) -> Unit,
     viewModel: SubstitutionViewModel = hiltViewModel()
 )
@@ -72,7 +71,7 @@ fun SubstitutionSubScreen(
 
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_link_substitution_timetable, navDrawerController) {
+            SubScreenTopAppBar(R.string.sidebar_link_substitution_timetable, LocalNavDrawerHandle.current) {
                 IconButton(onClick = { showReportDialog.value = true }) {
                     Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
                 }

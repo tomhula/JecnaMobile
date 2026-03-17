@@ -35,12 +35,12 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.ui.theme.grade_absence_warning
 import me.tomasan7.jecnamobile.ui.theme.grade_excused
 import me.tomasan7.jecnamobile.ui.theme.grade_grades_warning
@@ -56,7 +56,6 @@ import kotlin.math.roundToInt
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GradesSubScreen(
-    navDrawerController: NavDrawerController,
     onTeacherClick: (TeacherReference) -> Unit,
     viewModel: GradesViewModel = hiltViewModel()
 )
@@ -78,9 +77,9 @@ fun GradesSubScreen(
 
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_grades, navDrawerController) {
+            SubScreenTopAppBar(R.string.sidebar_grades, LocalNavDrawerHandle.current) {
                 OfflineDataIndicator(
-                    underlyingIcon = SubScreenDestination.Grades.iconSelected,
+                    underlyingIcon = NavDrawerDestination.Grades.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )

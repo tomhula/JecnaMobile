@@ -33,6 +33,8 @@ fun WelcomeScreen(
 {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    var showLaterDialog by remember { mutableStateOf(false) }
+    var pendingWelcomeComplete by remember { mutableStateOf(false) }
 
     fun markWelcomeSeenAndContinue()
     {
@@ -42,16 +44,29 @@ fun WelcomeScreen(
         }
     }
 
+    LaunchedEffect(pendingWelcomeComplete, showLaterDialog) {
+        if (pendingWelcomeComplete && !showLaterDialog) {
+            markWelcomeSeenAndContinue()
+        }
+    }
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
     {
         val notificationPermissionState = rememberPermissionState(
             Manifest.permission.POST_NOTIFICATIONS
         ) { isGranted ->
-            if (isGranted)
-            {
-                GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+            coroutineScope.launch {
+                if (isGranted)
+                {
+                    context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
+                    GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                }
+                else
+                {
+                    showLaterDialog = true
+                }
+                pendingWelcomeComplete = true
             }
-            markWelcomeSeenAndContinue()
         }
 
         WelcomeContent(
@@ -62,24 +77,50 @@ fun WelcomeScreen(
                 }
                 else
                 {
-                    markWelcomeSeenAndContinue()
+                    coroutineScope.launch {
+                        context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
+                        GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                    }
+                    pendingWelcomeComplete = true
                 }
             },
             onSkip = {
-                markWelcomeSeenAndContinue()
+                showLaterDialog = true
+                pendingWelcomeComplete = true
             }
         )
     }
     else
     {
-        // For older Android versions, permission is granted at install time.
         WelcomeContent(
             onRequestPermission = {
-                GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
-                markWelcomeSeenAndContinue()
+                coroutineScope.launch {
+                    context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
+                    GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                }
+                pendingWelcomeComplete = true
             },
             onSkip = {
-                markWelcomeSeenAndContinue()
+                pendingWelcomeComplete = true
+            }
+        )
+    }
+
+    if (showLaterDialog) {
+        AlertDialog(
+            onDismissRequest = { 
+                showLaterDialog = false 
+                pendingWelcomeComplete = true
+            },
+            title = { Text(stringResource(R.string.welcome_notifications_later_dialog_title)) },
+            text = { Text(stringResource(R.string.welcome_notifications_later_dialog_description)) },
+            confirmButton = {
+                TextButton(onClick = { 
+                    showLaterDialog = false 
+                    pendingWelcomeComplete = true
+                }) {
+                    Text(stringResource(R.string.welcome_notifications_later_dialog_confirm))
+                }
             }
         )
     }

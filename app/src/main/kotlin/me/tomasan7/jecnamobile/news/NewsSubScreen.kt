@@ -36,17 +36,16 @@ import io.github.tomhula.jecnaapi.data.article.Article
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import kotlinx.datetime.toJavaLocalDate
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsSubScreen(
-    navDrawerController: NavDrawerController,
     viewModel: NewsViewModel = hiltViewModel()
 )
 {
@@ -65,10 +64,10 @@ fun NewsSubScreen(
 
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_news, navDrawerController) {
+            SubScreenTopAppBar(R.string.sidebar_news, LocalNavDrawerHandle.current) {
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = SubScreenDestination.News.iconSelected,
+                    underlyingIcon = NavDrawerDestination.News.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )

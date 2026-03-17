@@ -2,61 +2,57 @@ package me.tomasan7.jecnamobile.settings
 
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation3.runtime.NavEntry
-import androidx.navigation3.runtime.NavKey
-import kotlinx.serialization.Serializable
+import me.tomasan7.jecnamobile.navigation.AppDestination
 
-sealed interface SettingsDestination : NavKey {
-    @Serializable data object Main : SettingsDestination
-    @Serializable data object General : SettingsDestination
-    @Serializable data object Appearance : SettingsDestination
-    @Serializable data object Substitution : SettingsDestination
-    @Serializable data object Canteen : SettingsDestination
-    @Serializable data object About : SettingsDestination
-    @Serializable data object Drawer : SettingsDestination
-}
 
 fun <T : Any> settingsNavEntry(
     key: T,
-    onNavigate: (SettingsDestination) -> Unit,
+    onNavigate: (AppDestination.Settings) -> Unit,
     onBackClick: () -> Unit
 ): NavEntry<T> {
-    return when (key as SettingsDestination) {
-        is SettingsDestination.Main -> NavEntry(key) {
+    return when (key as AppDestination.Settings) {
+        is AppDestination.Settings.Main -> NavEntry(key) {
             SettingsMainScreen(
                 onNavigate = onNavigate,
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.General -> NavEntry(key) {
+        is AppDestination.Settings.General -> NavEntry(key) {
             SettingsGeneralScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.Appearance -> NavEntry(key) {
+        is AppDestination.Settings.Notifications -> NavEntry(key) {
+            SettingsNotificationsScreen(
+                viewModel = hiltViewModel(),
+                onBackClick = onBackClick
+            )
+        }
+        is AppDestination.Settings.Appearance -> NavEntry(key) {
             SettingsAppearanceScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.Substitution -> NavEntry(key) {
+        is AppDestination.Settings.Substitution -> NavEntry(key) {
             SettingsSubstitutionScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.Canteen -> NavEntry(key) {
+        is AppDestination.Settings.Canteen -> NavEntry(key) {
             SettingsCanteenScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.About -> NavEntry(key) {
+        is AppDestination.Settings.About -> NavEntry(key) {
             SettingsAboutScreen(
                 onBackClick = onBackClick
             )
         }
-        is SettingsDestination.Drawer -> NavEntry(key) {
+        is AppDestination.Settings.Drawer -> NavEntry(key) {
             SettingsDrawerScreen(
                 viewModel = hiltViewModel(),
                 onBackClick = onBackClick
