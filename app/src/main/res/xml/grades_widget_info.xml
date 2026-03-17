@@ -9,4 +9,5 @@
         android:targetCellWidth="4"
         android:targetCellHeight="3"
         android:updatePeriodMillis="1800000"
-        android:widgetCategory="home_screen" />
+        android:widgetCategory="home_screen"
+        android:previewImage="@drawable/grades_widget_preview" />
