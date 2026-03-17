@@ -52,10 +52,6 @@ android {
     }
 }
 
-ksp {
-    arg("compose-destinations.codeGenPackageName", "me.tomasan7.jecnamobile")
-}
-
 dependencies {
     implementation(libs.jecnaSupl.client) {
         exclude(group = "net.java.dev.jna", module = "jna")
