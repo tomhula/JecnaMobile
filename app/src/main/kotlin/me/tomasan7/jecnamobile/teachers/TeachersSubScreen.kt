@@ -19,13 +19,12 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.theme.teacher_search_query_highlight
 import me.tomasan7.jecnamobile.util.removeAccent
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
-import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

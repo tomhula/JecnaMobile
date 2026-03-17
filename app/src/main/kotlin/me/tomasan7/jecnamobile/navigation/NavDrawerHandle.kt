@@ -1,4 +1,4 @@
-package me.tomasan7.jecnamobile.mainscreen
+package me.tomasan7.jecnamobile.navigation
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.runtime.Composable

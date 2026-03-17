@@ -7,8 +7,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandle
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
+import me.tomasan7.jecnamobile.navigation.NavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

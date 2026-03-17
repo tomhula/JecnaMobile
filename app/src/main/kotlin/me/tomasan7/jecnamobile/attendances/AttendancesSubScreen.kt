@@ -26,13 +26,12 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
-import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 
 @OptIn(ExperimentalMaterial3Api::class)

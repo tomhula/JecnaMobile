@@ -36,11 +36,10 @@ import io.github.tomhula.jecnaapi.data.article.Article
 import io.github.tomhula.jecnaapi.data.article.ArticleFile
 import kotlinx.datetime.toJavaLocalDate
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
-import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.ui.theme.jm_label
 import java.time.format.DateTimeFormatter
 

@@ -24,7 +24,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.timetable.AbsenceEntry
 import me.tomasan7.jecnamobile.timetable.ChangeEntry
 import me.tomasan7.jecnamobile.timetable.TakesPlaceInfo
@@ -32,7 +31,7 @@ import me.tomasan7.jecnamobile.ui.component.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
-import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

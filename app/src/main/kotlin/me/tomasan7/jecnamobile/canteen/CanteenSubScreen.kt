@@ -37,8 +37,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled

@@ -25,8 +25,10 @@ import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.navigation.AppDestination
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.navigation.MainNavDisplay
 import me.tomasan7.jecnamobile.navigation.SidebarDestination
+import me.tomasan7.jecnamobile.navigation.rememberNavDrawerHandle
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
 @Composable
