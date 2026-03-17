@@ -28,7 +28,7 @@ import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.*
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
-import me.tomasan7.jecnamobile.navigation.SidebarDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
@@ -108,7 +108,7 @@ fun TimetableSubScreen(
                 }
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = SidebarDestination.Timetable.iconSelected,
+                    underlyingIcon = NavDrawerDestination.Timetable.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )

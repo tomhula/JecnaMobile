@@ -35,7 +35,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.navigation.SidebarDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
@@ -79,7 +79,7 @@ fun GradesSubScreen(
         topBar = {
             SubScreenTopAppBar(R.string.sidebar_grades, LocalNavDrawerHandle.current) {
                 OfflineDataIndicator(
-                    underlyingIcon = SidebarDestination.Grades.iconSelected,
+                    underlyingIcon = NavDrawerDestination.Grades.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )

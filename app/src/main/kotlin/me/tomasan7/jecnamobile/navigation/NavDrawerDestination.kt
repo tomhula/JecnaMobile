@@ -19,12 +19,11 @@ import androidx.compose.material.icons.outlined.People
 import androidx.compose.material.icons.outlined.Restaurant
 import androidx.compose.material.icons.outlined.TableChart
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import me.tomasan7.jecnamobile.R
 
 @Serializable
-enum class SidebarDestination(
+enum class NavDrawerDestination(
     @StringRes
     val label: Int,
     val icon: ImageVector,

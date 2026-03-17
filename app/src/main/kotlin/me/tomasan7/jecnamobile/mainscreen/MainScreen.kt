@@ -27,7 +27,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.navigation.AppDestination
 import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.navigation.MainNavDisplay
-import me.tomasan7.jecnamobile.navigation.SidebarDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.navigation.rememberNavDrawerHandle
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
@@ -43,12 +43,12 @@ fun MainScreen(
     val destinationItems = remember(settings.substitutionTimetableEnabled, settings.drawerPages) {
         val visiblePages = settings.drawerPages
             .filter { it.isVisible }
-            .mapNotNull { page -> SidebarDestination.entries.find { it.name == page.destinationName } }
+            .mapNotNull { page -> NavDrawerDestination.entries.find { it.name == page.destinationName } }
         
         if (settings.substitutionTimetableEnabled) {
             visiblePages
         } else {
-            visiblePages.filter { it != SidebarDestination.Substitution }
+            visiblePages.filter { it != NavDrawerDestination.Substitution }
         }
     }
     val linkItems = remember(settings.drawerLinks) {
@@ -180,7 +180,7 @@ private fun SidebarButtonsRow(
 
 @Composable
 fun DestinationItem(
-    item: SidebarDestination,
+    item: NavDrawerDestination,
     selected: Boolean,
     onClick: () -> Unit
 )
