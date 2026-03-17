@@ -20,28 +20,13 @@ import androidx.core.net.toUri
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
-import androidx.navigation3.ui.NavDisplay
 import de.palm.composestateevents.EventEffect
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
-import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
-import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
-import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.navigation.AppDestination
 import me.tomasan7.jecnamobile.navigation.MainNavDisplay
 import me.tomasan7.jecnamobile.navigation.SidebarDestination
-import me.tomasan7.jecnamobile.news.NewsSubScreen
-import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
-import me.tomasan7.jecnamobile.rooms.room.RoomScreen
-import me.tomasan7.jecnamobile.settings.settingsNavEntry
-import me.tomasan7.jecnamobile.student.StudentProfileScreen
-import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
-import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
-import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
-import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 
 @Composable
@@ -70,7 +55,7 @@ fun MainScreen(
             .mapNotNull { link -> SidebarLink.entries.find { it.name == link.linkName } }
     }
     val navBackStack: NavBackStack<AppDestination> = rememberNavBackStack(settings.defaultDestination.destination) as NavBackStack<AppDestination>
-    val navDrawerController = rememberNavDrawerController(drawerState, scope)
+    val navDrawerHandle = rememberNavDrawerHandle(drawerState, scope)
 
     EventEffect(
         event = viewModel.navigateToLoginEvent,
@@ -153,12 +138,14 @@ fun MainScreen(
                     )
                 }
             }
-        }) {
-        MainNavDisplay(
-            navBackStack = navBackStack,
-            onBack = { navBackStack.pop() },
-            navDrawerController = navDrawerController
-        )
+        }
+    ) {
+        CompositionLocalProvider(LocalNavDrawerHandle provides navDrawerHandle) {
+            MainNavDisplay(
+                navBackStack = navBackStack,
+                onBack = { navBackStack.pop() }
+            )
+        }
     }
 }
 

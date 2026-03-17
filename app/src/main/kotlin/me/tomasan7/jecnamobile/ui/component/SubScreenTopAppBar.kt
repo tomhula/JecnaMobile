@@ -7,20 +7,21 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
+import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandle
+import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SubScreenTopAppBar(
     title: String,
-    navDrawerController: NavDrawerController,
+    navDrawerHandle: NavDrawerHandle,
     actions: @Composable RowScope.() -> Unit = {}
 )
 {
     CenterAlignedTopAppBar(
         title = { Text(title) },
         navigationIcon = {
-            IconButton(onClick = { navDrawerController.open() }) {
+            IconButton(onClick = { navDrawerHandle.open() }) {
                 Icon(Icons.Default.Menu, contentDescription = null)
             }
         },
@@ -32,6 +33,6 @@ fun SubScreenTopAppBar(
 fun SubScreenTopAppBar(
     @StringRes
     title: Int,
-    navDrawerController: NavDrawerController,
+    navDrawerHandle: NavDrawerHandle,
     actions: @Composable RowScope.() -> Unit = {}
-): Unit = SubScreenTopAppBar(stringResource(title), navDrawerController, actions)
+): Unit = SubScreenTopAppBar(stringResource(title), navDrawerHandle, actions)

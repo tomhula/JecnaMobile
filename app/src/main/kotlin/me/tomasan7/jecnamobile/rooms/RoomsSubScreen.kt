@@ -19,17 +19,17 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
+import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.theme.teacher_search_query_highlight
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.util.removeAccent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RoomsSubScreen(
-    navDrawerController: NavDrawerController,
     onRoomClick: (RoomReference) -> Unit,
     viewModel: RoomsViewModel = hiltViewModel()
 )
@@ -48,7 +48,7 @@ fun RoomsSubScreen(
     }
 
     Scaffold(
-        topBar = { SubScreenTopAppBar(R.string.sidebar_rooms, navDrawerController) },
+        topBar = { SubScreenTopAppBar(R.string.sidebar_rooms, LocalNavDrawerHandle.current) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(

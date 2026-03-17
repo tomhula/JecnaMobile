@@ -26,18 +26,18 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
+import me.tomasan7.jecnamobile.mainscreen.NavDrawerHandleImpl
 import me.tomasan7.jecnamobile.navigation.SidebarDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_late_attendance
 import me.tomasan7.jecnamobile.util.getWeekDayName
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.mainscreen.LocalNavDrawerHandle
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendancesSubScreen(
-    navDrawerController: NavDrawerController,
     viewModel: AttendancesViewModel = hiltViewModel()
 )
 {
@@ -55,7 +55,7 @@ fun AttendancesSubScreen(
 
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_attendances, navDrawerController) {
+            SubScreenTopAppBar(R.string.sidebar_attendances, LocalNavDrawerHandle.current) {
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
                     underlyingIcon = SidebarDestination.Attendances.iconSelected,

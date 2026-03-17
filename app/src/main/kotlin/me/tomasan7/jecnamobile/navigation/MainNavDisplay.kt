@@ -8,7 +8,6 @@ import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
 import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
 import me.tomasan7.jecnamobile.grades.GradesSubScreen
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
@@ -22,8 +21,7 @@ import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
 @Composable
 fun MainNavDisplay(
     navBackStack: NavBackStack<AppDestination>,
-    onBack: () -> Unit,
-    navDrawerController: NavDrawerController
+    onBack: () -> Unit
 )
 {
     NavDisplay(
@@ -33,45 +31,40 @@ fun MainNavDisplay(
             when (key)
             {
                 is AppDestination.News -> NavEntry(key) {
-                    NewsSubScreen(navDrawerController)
+                    NewsSubScreen()
                 }
                 is AppDestination.Grades -> NavEntry(key) {
                     GradesSubScreen(
-                        navDrawerController = navDrawerController,
                         onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
                     )
                 }
                 is AppDestination.Timetable -> NavEntry(key) {
                     TimetableSubScreen(
-                        navDrawerController = navDrawerController,
                         onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) },
                         onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
                     )
                 }
                 is AppDestination.Canteen -> NavEntry(key) {
-                    CanteenSubScreen(navDrawerController)
+                    CanteenSubScreen()
                 }
                 is AppDestination.Attendances -> NavEntry(key) {
-                    AttendancesSubScreen(navDrawerController)
+                    AttendancesSubScreen()
                 }
                 is AppDestination.Absences -> NavEntry(key) {
-                    AbsencesSubScreen(navDrawerController)
+                    AbsencesSubScreen()
                 }
                 is AppDestination.Teachers -> NavEntry(key) {
                     TeachersSubScreen(
-                        navDrawerController = navDrawerController,
                         onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
                     )
                 }
                 is AppDestination.Rooms -> NavEntry(key) {
                     RoomsSubScreen(
-                        navDrawerController = navDrawerController,
                         onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
                     )
                 }
                 is AppDestination.Substitution -> NavEntry(key) {
                     SubstitutionSubScreen(
-                        navDrawerController = navDrawerController,
                         onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
                     )
                 }
