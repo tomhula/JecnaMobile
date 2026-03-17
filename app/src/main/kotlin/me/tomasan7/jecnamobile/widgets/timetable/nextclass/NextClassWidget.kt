@@ -53,7 +53,6 @@ import me.tomasan7.jecnamobile.widgets.base.LoadingContent
 import me.tomasan7.jecnamobile.widgets.base.SimpleWidgetHeader
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetState
 import me.tomasan7.jecnamobile.widgets.timetable.TimetableWidgetWorker
-import java.util.Calendar
 
 private const val LOG_TAG = "NextClassWidget"
 
@@ -117,24 +116,12 @@ internal class NextClassWidgetReceiver : GlanceAppWidgetReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val now = Calendar.getInstance()
-        val hour = now.get(Calendar.HOUR_OF_DAY)
-        val dayOfWeek = now.get(Calendar.DAY_OF_WEEK)
-
-        val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
-        val isAfterSchool = hour >= 17
-
-        val intervalMillis = when {
-            isWeekend || isAfterSchool -> 60 * 60 * 1000L  // 1 hour
-            else -> 5 * 60 * 1000L  // 5 minutes during classes
-        }
-
-        val triggerTime = System.currentTimeMillis() + intervalMillis
+        val triggerTime = System.currentTimeMillis() + 60_000L
 
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             triggerTime,
-            intervalMillis,
+            60_000L,
             pendingIntent
         )
     }

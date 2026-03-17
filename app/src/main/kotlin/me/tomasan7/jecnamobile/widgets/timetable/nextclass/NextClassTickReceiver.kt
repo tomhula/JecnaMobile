@@ -9,7 +9,6 @@ import androidx.glance.appwidget.GlanceAppWidgetManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class NextClassTickReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
@@ -37,22 +36,10 @@ class NextClassTickReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val now = Calendar.getInstance()
-        val hour = now.get(Calendar.HOUR_OF_DAY)
-        val dayOfWeek = now.get(Calendar.DAY_OF_WEEK)
-
-        val isWeekend = dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY
-        val isAfterSchool = hour >= 17
-
-        val intervalMillis = when {
-            isWeekend || isAfterSchool -> 60 * 60 * 1000L
-            else -> 5 * 60 * 1000L
-        }
-
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
-            System.currentTimeMillis() + intervalMillis,
-            intervalMillis,
+            System.currentTimeMillis() + 60_000L,
+            60_000L,
             pendingIntent
         )
     }
