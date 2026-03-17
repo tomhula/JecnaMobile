@@ -18,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.LoginScreen
 import me.tomasan7.jecnamobile.mainscreen.MainScreen
+import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.settings.isAppInDarkTheme
 import me.tomasan7.jecnamobile.ui.theme.JecnaMobileTheme
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity()
 
         val navigateTo = intent.getStringExtra(EXTRA_NAVIGATE_TO)?.let {
             try {
-                NavigateDestination.valueOf(it)
+                SubScreenDestination.valueOf(it)
             } catch (_: IllegalArgumentException) {
                 null
             }

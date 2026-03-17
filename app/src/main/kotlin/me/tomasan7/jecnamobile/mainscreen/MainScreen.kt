@@ -28,7 +28,6 @@ import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
-import me.tomasan7.jecnamobile.NavigateDestination
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
@@ -49,7 +48,7 @@ import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 @Composable
 fun MainScreen(
     onNavigateToLogin: () -> Unit,
-    initialNavigateTo: NavigateDestination? = null,
+    initialNavigateTo: SubScreenDestination? = null,
     viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
@@ -73,10 +72,7 @@ fun MainScreen(
             .filter { it.isVisible }
             .mapNotNull { link -> SidebarLink.entries.find { it.name == link.linkName } }
     }
-    val initialDestination = when (initialNavigateTo) {
-        NavigateDestination.Grades -> SubScreenDestination.Grades
-        null -> settings.defaultDestination
-    }
+    val initialDestination = initialNavigateTo ?: settings.defaultDestination
     val navBackStack = rememberNavBackStack(initialDestination)
 
     // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
