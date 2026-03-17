@@ -103,4 +103,6 @@ dependencies {
     implementation(libs.work.runtime.ktx)
     implementation(libs.datastore)
     implementation(libs.serialization.json)
+    implementation(libs.serialization.parcelable.core)
+    implementation(libs.serialization.parcelable.compose)
 }

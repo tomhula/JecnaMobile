@@ -14,11 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.ui.NavDisplay
+import com.chrynan.parcelable.core.getParcelableExtra
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.ExperimentalSerializationApi
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.LoginScreen
 import me.tomasan7.jecnamobile.mainscreen.MainScreen
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.AppDestination
 import me.tomasan7.jecnamobile.settings.isAppInDarkTheme
 import me.tomasan7.jecnamobile.ui.theme.JecnaMobileTheme
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
@@ -32,23 +34,21 @@ class MainActivity : ComponentActivity()
     @Inject
     lateinit var authRepository: AuthRepository
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?)
     {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
         val startDestination = if (authRepository.exists())
-            AppDestination.Main
+            AppState.Main
         else
-            AppDestination.Login
+            AppState.Login
 
-        val navigateTo = intent.getStringExtra(EXTRA_NAVIGATE_TO)?.let {
-            try {
-                SubScreenDestination.valueOf(it)
-            } catch (_: IllegalArgumentException) {
-                null
-            }
-        }
+        val navigateTo = intent.getParcelableExtra(
+            name = EXTRA_NAVIGATE_TO,
+            deserializer = AppDestination.serializer()
+        )
 
         setContent {
             val settings by settingsAsStateAwaitFirst()
@@ -65,19 +65,19 @@ class MainActivity : ComponentActivity()
                     entryProvider = { key ->
                         when (key)
                         {
-                            AppDestination.Login -> NavEntry(key) { 
+                            AppState.Login -> NavEntry(key) { 
                                 LoginScreen(onLoginSuccess = { 
-                                    currentDestination = if (settings.hasSeenWelcomeScreen) AppDestination.Main else AppDestination.Welcome 
+                                    currentDestination = if (settings.hasSeenWelcomeScreen) AppState.Main else AppState.Welcome 
                                 }) 
                             }
-                            AppDestination.Welcome -> NavEntry(key) {
+                            AppState.Welcome -> NavEntry(key) {
                                 WelcomeScreen(onWelcomeComplete = {
-                                    currentDestination = AppDestination.Main
+                                    currentDestination = AppState.Main
                                 })
                             }
-                            AppDestination.Main -> NavEntry(key) { 
+                            AppState.Main -> NavEntry(key) { 
                                 MainScreen(
-                                    onNavigateToLogin = { currentDestination = AppDestination.Login },
+                                    onNavigateToLogin = { currentDestination = AppState.Login },
                                     initialNavigateTo = navigateTo
                                 )
                             }
@@ -90,7 +90,7 @@ class MainActivity : ComponentActivity()
     }
 }
 
-private enum class AppDestination: NavKey
+private enum class AppState: NavKey
 {
     Login,
     Welcome,

@@ -19,5 +19,6 @@ dependencyResolutionManagement {
         /* TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743 */
         maven("https://central.sonatype.com/repository/maven-snapshots/")
         maven("https://jitpack.io")
+        maven { url = uri("https://repo.repsy.io/mvn/chrynan/public") }
     }
 }

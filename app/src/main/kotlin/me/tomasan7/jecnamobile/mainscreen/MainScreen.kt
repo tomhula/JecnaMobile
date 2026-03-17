@@ -34,7 +34,7 @@ import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 @Composable
 fun MainScreen(
     onNavigateToLogin: () -> Unit,
-    initialNavigateTo: SubScreenDestination? = null,
+    initialNavigateTo: AppDestination? = null,
     viewModel: MainScreenViewModel = hiltViewModel()
 )
 {
@@ -59,11 +59,10 @@ fun MainScreen(
             .mapNotNull { link -> SidebarLink.entries.find { it.name == link.linkName } }
     }
     
-    val initialDestination = initialNavigateTo ?: settings.defaultDestination
-    val navBackStack = rememberNavBackStack(initialDestination)
+    val initialDestination = initialNavigateTo ?: settings.defaultDestination.destination
+    val navBackStack: NavBackStack<AppDestination>  = rememberNavBackStack(initialDestination) as NavBackStack<AppDestination>
 
-    // val navBackStack = remember { mutableStateListOf<Any>(settings.defaultDestination) }
-    val navDrawerController = rememberNavDrawerController(drawerState, scope)
+    val navDrawerHandle = rememberNavDrawerHandle(drawerState, scope)
 
     EventEffect(
         event = viewModel.navigateToLoginEvent,

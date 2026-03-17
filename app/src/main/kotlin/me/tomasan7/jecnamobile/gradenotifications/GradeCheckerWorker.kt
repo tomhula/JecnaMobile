@@ -13,6 +13,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.work.HiltWorker
 import androidx.work.*
+import com.chrynan.parcelable.core.putExtra
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import io.github.tomhula.jecnaapi.JecnaClient
@@ -25,7 +26,6 @@ import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.MainActivity
 import me.tomasan7.jecnamobile.EXTRA_NAVIGATE_TO
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChange
@@ -34,6 +34,8 @@ import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.ExperimentalSerializationApi
+import me.tomasan7.jecnamobile.navigation.AppDestination
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
@@ -159,12 +161,16 @@ class GradeCheckerWorker @AssistedInject constructor(
 
     private fun Boolean.sizeString() = if (this) appContext.getString(R.string.notification_grade_size_small) else appContext.getString(R.string.notification_grade_size_big)
 
+    @OptIn(ExperimentalSerializationApi::class)
     @RequiresPermission(Manifest.permission.POST_NOTIFICATIONS)
     private fun sendGradeNotification(title: String, text: String, id: Int)
     {
         val intent = Intent(appContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            putExtra(EXTRA_NAVIGATE_TO, SubScreenDestination.Grades.name)
+            putExtra(
+                name = EXTRA_NAVIGATE_TO,
+                value = AppDestination.Grades(),
+            )
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(appContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
