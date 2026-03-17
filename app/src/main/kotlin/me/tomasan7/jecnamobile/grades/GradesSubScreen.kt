@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
@@ -542,7 +543,7 @@ private fun PredictionToggleButton(
 
     IconButton(onClick = onClick) {
         Icon(
-            imageVector = Icons.Filled.Lightbulb,
+            imageVector = if (enabled) Icons.Filled.Lightbulb else Icons.Outlined.Lightbulb,
             contentDescription = null,
             tint = tint
         )
