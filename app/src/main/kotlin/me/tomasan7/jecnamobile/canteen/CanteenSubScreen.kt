@@ -37,7 +37,7 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.ui.theme.jm_canteen_disabled
@@ -49,7 +49,6 @@ import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CanteenSubScreen(
-    navDrawerController: NavDrawerController,
     viewModel: CanteenViewModel = hiltViewModel()
 )
 {
@@ -92,7 +91,7 @@ fun CanteenSubScreen(
         topBar = {
             SubScreenTopAppBar(
                 R.string.sidebar_canteen,
-                navDrawerController = navDrawerController,
+                navDrawerHandle = LocalNavDrawerHandle.current,
                 actions = {
                     if (uiState.credit != null)
                         Credit(uiState.credit)

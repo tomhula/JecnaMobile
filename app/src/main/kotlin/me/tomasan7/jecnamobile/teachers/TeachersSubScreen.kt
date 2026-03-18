@@ -19,17 +19,16 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
 import me.tomasan7.jecnamobile.ui.component.VerticalSpacer
 import me.tomasan7.jecnamobile.ui.theme.teacher_search_query_highlight
 import me.tomasan7.jecnamobile.util.removeAccent
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TeachersSubScreen(
-    navDrawerController: NavDrawerController,
     onTeacherClick: (TeacherReference) -> Unit,
     viewModel: TeachersViewModel = hiltViewModel()
 )
@@ -47,7 +46,7 @@ fun TeachersSubScreen(
     }
 
     Scaffold(
-        topBar = { SubScreenTopAppBar(R.string.sidebar_teachers, navDrawerController) },
+        topBar = { SubScreenTopAppBar(R.string.sidebar_teachers, LocalNavDrawerHandle.current) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         PullToRefreshBox(

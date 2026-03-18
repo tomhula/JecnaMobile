@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    // https://developer.android.com/build/migrate-to-built-in-kotlin#migration-steps-migrate-kotlin-kapt-plugin
-    alias(libs.plugins.legacy.kapt)
     alias(libs.plugins.hilt)
 }
 
@@ -54,15 +52,6 @@ android {
     }
 }
 
-ksp {
-    arg("compose-destinations.codeGenPackageName", "me.tomasan7.jecnamobile")
-}
-
-/* Allow references to generated code */
-/*kapt {
-    correctErrorTypes = true
-}*/
-
 dependencies {
     implementation(libs.jecnaSupl.client) {
         exclude(group = "net.java.dev.jna", module = "jna")
@@ -74,9 +63,6 @@ dependencies {
         }
     }
     implementation(libs.jecnaAPI)
-
-    // https://github.com/google/dagger/issues/4693#issuecomment-2823736143
-    kapt("androidx.room:room-compiler-processing:2.8.4")
 
     implementation(platform(libs.compose.android.bom))
     debugImplementation(libs.compose.ui.tooling)
@@ -95,14 +81,15 @@ dependencies {
 
     implementation(libs.activity.ktx)
 
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
-    implementation(libs.hilt.navigation.compose)
+    implementation(libs.hilt.lifecycle.viewmodel.compose)
     implementation(libs.hilt.work)
     implementation(libs.work.runtime.ktx)
     implementation(libs.datastore)
     implementation(libs.serialization.json)
+    implementation(libs.serialization.parcelable.core)
+    implementation(libs.serialization.parcelable.compose)
     implementation(libs.glance.appwidget)
     implementation(libs.glance.material3)
 }

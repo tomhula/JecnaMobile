@@ -27,18 +27,17 @@ import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.*
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.mainscreen.NavDrawerController
 import me.tomasan7.jecnamobile.mainscreen.SidebarLink
-import me.tomasan7.jecnamobile.mainscreen.SubScreenDestination
+import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 import me.tomasan7.jecnamobile.util.settingsAsState
 import kotlin.time.Clock
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimetableSubScreen(
-    navDrawerController: NavDrawerController,
     onTeacherClick: (TeacherReference) -> Unit,
     onRoomClick: (RoomReference) -> Unit,
     viewModel: TimetableViewModel = hiltViewModel()
@@ -101,7 +100,7 @@ fun TimetableSubScreen(
 
     Scaffold(
         topBar = {
-            SubScreenTopAppBar(R.string.sidebar_timetable, navDrawerController) {
+            SubScreenTopAppBar(R.string.sidebar_timetable, LocalNavDrawerHandle.current) {
                 if (showSubstitution) {
                     IconButton(onClick = { showReportDialog.value = true }) {
                         Icon(Icons.Filled.Report, contentDescription = stringResource(R.string.report_button_description))
@@ -109,7 +108,7 @@ fun TimetableSubScreen(
                 }
                 OfflineDataIndicator(
                     modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = SubScreenDestination.Timetable.iconSelected,
+                    underlyingIcon = NavDrawerDestination.Timetable.iconSelected,
                     lastUpdateTimestamp = uiState.lastUpdateTimestamp,
                     visible = uiState.isCache
                 )
