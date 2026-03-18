@@ -98,46 +98,46 @@ fun CanteenSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        JecnaMobilePullToRefreshBox(
-            isRefreshing = uiState.loading,
-            onRefresh = {
-                when (selectedTabIndex)
-                {
-                    0 -> viewModel.reloadMenu()
-                    1 -> viewModel.reloadExchange()
-                }
-            },
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Column(
+            PrimaryTabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = Modifier.zIndex(1f),
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                indicator = {
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            ) {
+                Tab(
+                    selected = selectedTabIndex == 0,
+                    onClick = { selectedTabIndex = 0 },
+                    text = { Text(stringResource(R.string.canteen_menu)) },
+                )
+                Tab(
+                    selected = selectedTabIndex == 1,
+                    onClick = { selectedTabIndex = 1 },
+                    text = { Text(stringResource(R.string.canteen_exchange)) },
+                )
+            }
+
+            JecnaMobilePullToRefreshBox(
+                isRefreshing = uiState.loading,
+                onRefresh = {
+                    when (selectedTabIndex)
+                    {
+                        0 -> viewModel.reloadMenu()
+                        1 -> viewModel.reloadExchange()
+                    }
+                },
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                PrimaryTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.zIndex(1f),
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    indicator = {
-                        TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                ) {
-                    Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 },
-                        text = { Text(stringResource(R.string.canteen_menu)) },
-                    )
-                    Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 },
-                        text = { Text(stringResource(R.string.canteen_exchange)) },
-                    )
-                }
-
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
