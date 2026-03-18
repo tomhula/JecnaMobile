@@ -1,8 +1,7 @@
 [versions]
 plugin-android = "9.1.0"
 plugin-kotlin = "2.3.10"
-# TODO: Update to a release once its made: https://github.com/google/ksp/issues/2743
-plugin-ksp = "2.3.5-SNAPSHOT"
+plugin-ksp = "2.3.6"
 
 jecnaAPI = "10.0.0"
 jecnaSupl = "0.2.3"
