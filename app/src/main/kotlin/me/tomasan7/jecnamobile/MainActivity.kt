@@ -14,10 +14,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import com.chrynan.parcelable.core.getParcelableExtra
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.ExperimentalSerializationApi
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.LoginScreen
 import me.tomasan7.jecnamobile.mainscreen.MainScreen
+import me.tomasan7.jecnamobile.navigation.AppDestination
 import me.tomasan7.jecnamobile.settings.isAppInDarkTheme
 import me.tomasan7.jecnamobile.ui.theme.JecnaMobileTheme
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
@@ -31,6 +34,7 @@ class MainActivity : ComponentActivity()
     @Inject
     lateinit var authRepository: AuthRepository
 
+    @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?)
     {
         enableEdgeToEdge()
@@ -40,6 +44,11 @@ class MainActivity : ComponentActivity()
             AppState.Main
         else
             AppState.Login
+
+        val navigateTo = intent.getParcelableExtra(
+            name = EXTRA_NAVIGATE_TO,
+            deserializer = AppDestination.serializer()
+        )
 
         setContent {
             val settings by settingsAsStateAwaitFirst()
@@ -62,7 +71,8 @@ class MainActivity : ComponentActivity()
                             onWelcomeComplete = { currentState = AppState.Main }
                         )
                         AppState.Main -> MainScreen(
-                            onNavigateToLogin = { currentState = AppState.Login }
+                            onNavigateToLogin = { currentState = AppState.Login },
+                            initialNavigateTo = navigateTo
                         )
                     }
                 }
@@ -77,3 +87,5 @@ private enum class AppState
     Welcome,
     Main
 }
+
+const val EXTRA_NAVIGATE_TO = "navigate_to"
