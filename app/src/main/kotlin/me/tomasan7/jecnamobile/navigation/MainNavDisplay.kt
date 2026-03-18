@@ -1,6 +1,11 @@
 package me.tomasan7.jecnamobile.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
@@ -17,6 +22,8 @@ import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
 import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
 import me.tomasan7.jecnamobile.timetable.TimetableSubScreen
+
+private const val TRANSITION_DURATION = 200
 
 @Composable
 fun MainNavDisplay(
@@ -93,6 +100,33 @@ fun MainNavDisplay(
                     onBackClick = onBack
                 )
             }
+        },
+        transitionSpec = {
+            slideInHorizontally(
+                initialOffsetX = { it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            ) togetherWith slideOutHorizontally(
+                targetOffsetX = { -it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            )
+        },
+        popTransitionSpec = {
+            slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            ) togetherWith slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            )
+        },
+        predictivePopTransitionSpec = { _ ->
+            slideInHorizontally(
+                initialOffsetX = { -it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            ) togetherWith slideOutHorizontally(
+                targetOffsetX = { it },
+                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+            )
         }
     )
 }
