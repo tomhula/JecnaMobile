@@ -13,7 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.JecnaMobilePullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,8 +71,6 @@ fun CanteenSubScreen(
         previousTabIndex = selectedTabIndex
     }
 
-    // Pull-to-refresh handled by PullToRefreshBox in the content
-
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
         onDispose {
@@ -100,7 +98,7 @@ fun CanteenSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        JecnaMobilePullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = {
                 when (selectedTabIndex)

@@ -6,7 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.JecnaMobilePullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -65,7 +65,7 @@ fun AbsencesSubScreen(
         Box(
             modifier = Modifier.padding(paddingValues)
         ) {
-            PullToRefreshBox(
+            JecnaMobilePullToRefreshBox(
                 isRefreshing = uiState.loading,
                 onRefresh = viewModel::reload,
                 modifier = Modifier.align(Alignment.TopCenter)
