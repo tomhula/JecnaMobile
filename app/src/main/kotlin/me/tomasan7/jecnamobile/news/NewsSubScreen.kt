@@ -12,7 +12,7 @@ import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material3.*
-import me.tomasan7.jecnamobile.ui.component.JecnaMobilePullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +75,7 @@ fun NewsSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        JecnaMobilePullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier

@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import kotlin.math.pow
 
 @Composable
-fun JecnaMobilePullToRefreshBox(
+fun LinearPullToRefreshBox(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
