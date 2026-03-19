@@ -19,6 +19,7 @@ import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
 import me.tomasan7.jecnamobile.settings.*
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
+import me.tomasan7.jecnamobile.student.cert.StudentCertificatesScreen
 import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
 import me.tomasan7.jecnamobile.teachers.teacher.TeacherScreen
@@ -97,6 +98,14 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 StudentProfileScreen(
+                    onCertificatesClick = { navBackStack.add(AppDestination.StudentCertificates) },
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.StudentCertificates>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                StudentCertificatesScreen(
                     onBackClick = onBack
                 )
             }

@@ -220,6 +220,8 @@
     <string name="teacher_title_timetable">Rozvrh hodin</string>
     <string name="teacher_title_certifications">Certifikáty</string>
     <string name="teacher_no_certifications">Tento učitel nemá žádné certifikáty</string>
+    <string name="student_no_certifications">Nemáte žádné certifikáty</string>
+    <string name="student_certifications_load_error">Nepodařilo se načíst certifikáty.</string>
 
     <string name="teacher_load_error">Při načítání učitele došlo k chybě.</string>
     <string name="room_load_error">Při načítání učebny došlo k chybě.</string>

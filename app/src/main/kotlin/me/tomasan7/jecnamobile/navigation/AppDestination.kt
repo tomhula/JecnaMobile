@@ -34,6 +34,8 @@ sealed interface AppDestination : NavKey
 
     @Serializable
     data object StudentProfile : AppDestination
+    @Serializable
+    data object StudentCertificates : AppDestination
 
     @Serializable
     sealed interface Settings : AppDestination

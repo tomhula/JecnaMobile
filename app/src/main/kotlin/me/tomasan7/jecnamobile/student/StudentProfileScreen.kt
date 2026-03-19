@@ -8,6 +8,7 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material3.*
 import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ import me.tomasan7.jecnamobile.SubScreenViewModelHook
 @Composable
 fun StudentProfileScreen(
     onBackClick: () -> Unit,
+    onCertificatesClick: () -> Unit = {},
     viewModel: StudentProfileViewModel = hiltViewModel()
 )
 {
@@ -77,8 +79,33 @@ fun StudentProfileScreen(
                     )
 
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
+                    
+                    CertificatesLink(onClick = onCertificatesClick)
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun CertificatesLink(onClick: () -> Unit)
+{
+    Surface(
+        tonalElevation = 4.dp,
+        shape = RoundedCornerShape(12.dp),
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.teacher_title_certifications),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f)
+            )
+            Icon(Icons.AutoMirrored.Filled.NavigateNext, contentDescription = null)
         }
     }
 }
