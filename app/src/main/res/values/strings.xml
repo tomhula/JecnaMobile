@@ -390,9 +390,6 @@
     <string name="welcome_notifications_description">Ječná Mobile vám pošle oznámení, když dostanete novou známku.</string>
     <string name="welcome_notifications_button_turn_on">Zapnout upozornění</string>
     <string name="welcome_notifications_button_skip">Teď ne</string>
-    <string name="welcome_notifications_later_dialog_title">Upozornění vypnuta</string>
-    <string name="welcome_notifications_later_dialog_description">Upozornění můžete kdykoliv zapnout později v nastavení.</string>
-    <string name="welcome_notifications_later_dialog_confirm">Rozumím</string>
 
     <!-- ##### Settings Notifications ##### -->
     <string name="settings_category_notifications">Upozornění</string>
@@ -403,4 +400,46 @@
     <string name="settings_notifications_system_settings">Otevřít nastavení systému</string>
     <string name="settings_notifications_system_settings_description">Pokud je oprávnění odepřeno, můžete jej změnit v nastavení systému.</string>
     <string name="settings_notifications_permission_required">Oprávnění k upozorněním je vyžadováno</string>
+  
+    <!-- ##### Timetable Widget ##### -->
+    <string name="widget_timetable_name">Rozvrh hodin</string>
+    <string name="widget_timetable_description">Zobrazuje celý rozvrh pro aktuální den.</string>
+    <string name="widget_timetable_no_data">Žádná data</string>
+    <string name="widget_timetable_refresh">Obnovit</string>
+    <string name="widget_timetable_loading">Načítání…</string>
+    <string name="widget_timetable_today">Dnes (%1$s)</string>
+    <string name="widget_timetable_tomorrow">Zítra (%1$s)</string>
+    <string name="widget_timetable_on_monday">V pondělí</string>
+    <string name="widget_timetable_no_classes">Žádné vyučování</string>
+    <string name="widget_timetable_free_period">Volná hodina</string>
+    <string name="widget_timetable_error">Chyba připojení</string>
+    <string name="widget_timetable_tap_to_refresh">Klepnutím obnovíte</string>
+    <string name="widget_timetable_loading_timetable">Načítám rozvrh…</string>
+    <string name="widget_timetable_refresh_description">Obnovit rozvrh</string>
+    <string name="widget_timetable_last_updated">Aktualizováno: %1$s</string>
+
+    <!-- ##### Next Class Widget ##### -->
+    <string name="widget_nextclass_description">Zobrazuje aktuální a další hodinu.</string>
+    <string name="widget_nextclass_now">Právě probíhá</string>
+    <string name="widget_nextclass_next">Další hodina</string>
+    <string name="widget_nextclass_break">Přestávka</string>
+    <string name="widget_nextclass_ends_in">%1$s minut do konce</string>
+    <string name="widget_nextclass_starts_in">%1$s minut do začátku</string>
+
+    <!-- ##### Grades Widget ##### -->
+    <string name="widget_grades_description">Zobrazuje průměry známek za pololetí.</string>
+    <string name="widget_grades_title">Průměry známek</string>
+    <string name="widget_grades_last_updated">Aktualizováno: %1$s</string>
+    <string name="widget_grades_no_grades">Žádné známky</string>
+    <string name="widget_grades_error">Chyba připojení</string>
+    <string name="widget_grades_tap_to_refresh">Klepnutím obnovíte</string>
+    <string name="widget_grades_loading">Načítám známky…</string>
+    <string name="widget_grades_refresh_description">Obnovit známky</string>
+
+    <!-- ##### Recent Grades Widget ##### -->
+    <string name="widget_recent_grades_description">Zobrazuje poslední známky.</string>
+    <string name="widget_recent_grades_title">Poslední známky</string>
+    <string name="welcome_notifications_later_dialog_title">Upozornění vypnuta</string>
+    <string name="welcome_notifications_later_dialog_description">Upozornění můžete kdykoliv zapnout později v nastavení.</string>
+    <string name="welcome_notifications_later_dialog_confirm">Rozumím</string>
 </resources>

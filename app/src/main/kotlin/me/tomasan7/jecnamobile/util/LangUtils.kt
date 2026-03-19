@@ -8,15 +8,17 @@ import me.tomasan7.jecnamobile.R
 import java.text.Normalizer
 
 @Composable
-fun getWeekDayName(dayOfWeek: DayOfWeek) = when (dayOfWeek)
+fun getWeekDayName(dayOfWeek: DayOfWeek) = stringResource(getWeekDayNameKey(dayOfWeek))
+
+fun getWeekDayNameKey(dayOfWeek: DayOfWeek) = when (dayOfWeek)
 {
-    DayOfWeek.MONDAY    -> stringResource(R.string.monday)
-    DayOfWeek.TUESDAY   -> stringResource(R.string.tuesday)
-    DayOfWeek.WEDNESDAY -> stringResource(R.string.wednesday)
-    DayOfWeek.THURSDAY  -> stringResource(R.string.thursday)
-    DayOfWeek.FRIDAY    -> stringResource(R.string.friday)
-    DayOfWeek.SATURDAY  -> stringResource(R.string.saturday)
-    DayOfWeek.SUNDAY    -> stringResource(R.string.sunday)
+    DayOfWeek.MONDAY    -> R.string.monday
+    DayOfWeek.TUESDAY   -> R.string.tuesday
+    DayOfWeek.WEDNESDAY -> R.string.wednesday
+    DayOfWeek.THURSDAY  -> R.string.thursday
+    DayOfWeek.FRIDAY    -> R.string.friday
+    DayOfWeek.SATURDAY  -> R.string.saturday
+    DayOfWeek.SUNDAY    -> R.string.sunday
 }
 
 @Composable

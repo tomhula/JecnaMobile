@@ -90,4 +90,6 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.serialization.parcelable.core)
     implementation(libs.serialization.parcelable.compose)
+    implementation(libs.glance.appwidget)
+    implementation(libs.glance.material3)
 }

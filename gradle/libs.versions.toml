@@ -24,6 +24,7 @@ work = "2.11.1"
 datastore = "1.2.0"
 serialization = "1.10.0"
 serialization-parcelable = "0.9.0"
+glance = "1.1.1"
 
 [libraries]
 jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
@@ -58,6 +59,8 @@ datastore = { module = "androidx.datastore:datastore", version.ref = "datastore"
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
 serialization-parcelable-core = { module = "com.chrynan.parcelable:parcelable-core", version.ref = "serialization-parcelable" }
 serialization-parcelable-compose = { module = "com.chrynan.parcelable:parcelable-compose", version.ref = "serialization-parcelable" }
+glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }
+glance-material3 = { module = "androidx.glance:glance-material3", version.ref = "glance" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "plugin-android" }
