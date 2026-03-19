@@ -13,7 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
-import me.tomasan7.jecnamobile.ui.component.JecnaMobilePullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -126,7 +126,7 @@ fun CanteenSubScreen(
                 )
             }
 
-            JecnaMobilePullToRefreshBox(
+            LinearPullToRefreshBox(
                 isRefreshing = uiState.loading,
                 onRefresh = {
                     when (selectedTabIndex)
@@ -135,12 +135,10 @@ fun CanteenSubScreen(
                         1 -> viewModel.reloadExchange()
                     }
                 },
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     when (selectedTabIndex)
                     {

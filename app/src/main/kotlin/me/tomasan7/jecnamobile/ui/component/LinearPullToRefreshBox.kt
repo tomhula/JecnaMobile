@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import kotlin.math.pow
 
 @Composable
-fun JecnaMobilePullToRefreshBox(
+fun LinearPullToRefreshBox(
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
@@ -66,6 +66,7 @@ private fun LinearIndicator(
     }
 }
 
+// https://easings.net/#easeInOutQuint
 private fun easeInOutQuint(x: Float) = if (x < 0.5f)
     16f * x * x * x * x * x
 else

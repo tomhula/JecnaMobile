@@ -7,7 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Cancel
 import androidx.compose.material3.*
-import me.tomasan7.jecnamobile.ui.component.JecnaMobilePullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -49,7 +49,7 @@ fun TeachersSubScreen(
         topBar = { SubScreenTopAppBar(R.string.sidebar_teachers, LocalNavDrawerHandle.current) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        JecnaMobilePullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier
