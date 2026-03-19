@@ -12,7 +12,11 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.layout
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @Composable
 fun LinearPullToRefreshBox(
@@ -60,8 +64,12 @@ private fun LinearIndicator(
         else if (state.distanceFraction != 0f)
             LinearProgressIndicator(
                 drawStopIndicator = {},
-                progress = { easeInOutQuint(state.distanceFraction) },
-                modifier = Modifier.fillMaxWidth()
+                progress = { 1f },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .graphicsLayer {
+                        scaleX = easeInOutQuint(state.distanceFraction).coerceIn(0f, 1f)
+                    }
             )
     }
 }
