@@ -138,7 +138,8 @@ fun CanteenSubScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 Box(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                 ) {
                     when (selectedTabIndex)
                     {
