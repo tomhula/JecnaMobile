@@ -1,13 +1,14 @@
 package me.tomasan7.jecnamobile.navigation
 
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
-import androidx.compose.animation.togetherWith
-import androidx.compose.runtime.Composable
+import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.runtime.Composable
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.navigation3.runtime.MetadataScope
 import androidx.navigation3.runtime.NavBackStack
-import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.metadata
 import androidx.navigation3.ui.NavDisplay
 import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
@@ -16,7 +17,7 @@ import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
 import me.tomasan7.jecnamobile.rooms.room.RoomScreen
-import me.tomasan7.jecnamobile.settings.settingsNavEntry
+import me.tomasan7.jecnamobile.settings.*
 import me.tomasan7.jecnamobile.student.StudentProfileScreen
 import me.tomasan7.jecnamobile.substitutions.SubstitutionSubScreen
 import me.tomasan7.jecnamobile.teachers.TeachersSubScreen
@@ -34,99 +35,153 @@ fun MainNavDisplay(
     NavDisplay(
         backStack = navBackStack,
         onBack = onBack,
-        entryProvider = { key ->
-            when (key)
-            {
-                is AppDestination.News -> NavEntry(key) {
-                    NewsSubScreen()
-                }
-                is AppDestination.Grades -> NavEntry(key) {
-                    GradesSubScreen(
-                        onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
-                    )
-                }
-                is AppDestination.Timetable -> NavEntry(key) {
-                    TimetableSubScreen(
-                        onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) },
-                        onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
-                    )
-                }
-                is AppDestination.Canteen -> NavEntry(key) {
-                    CanteenSubScreen()
-                }
-                is AppDestination.Attendances -> NavEntry(key) {
-                    AttendancesSubScreen()
-                }
-                is AppDestination.Absences -> NavEntry(key) {
-                    AbsencesSubScreen()
-                }
-                is AppDestination.Teachers -> NavEntry(key) {
-                    TeachersSubScreen(
-                        onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
-                    )
-                }
-                is AppDestination.Rooms -> NavEntry(key) {
-                    RoomsSubScreen(
-                        onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
-                    )
-                }
-                is AppDestination.Substitution -> NavEntry(key) {
-                    SubstitutionSubScreen(
-                        onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
-                    )
-                }
-                is AppDestination.Teacher -> NavEntry(key) {
-                    TeacherScreen(
-                        teacherReference = key.reference,
-                        onBackClick = onBack,
-                        onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
-                    )
-                }
-                is AppDestination.Room -> NavEntry(key) {
-                    RoomScreen(
-                        roomReference = key.reference,
-                        onBackClick = onBack,
-                        onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
-                    )
-                }
-                is AppDestination.StudentProfile -> NavEntry(key) {
-                    StudentProfileScreen(
-                        onBackClick = onBack
-                    )
-                }
-                is AppDestination.Settings -> settingsNavEntry(
-                    key = key,
+        transitionSpec = {
+            fadeIn() togetherWith fadeOut()
+        },
+        entryProvider = entryProvider{
+            entry<AppDestination.News> {
+                NewsSubScreen()
+            }
+            entry<AppDestination.Grades> {
+                GradesSubScreen(
+                    onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
+                )
+            }
+            entry<AppDestination.Timetable> {
+                TimetableSubScreen(
+                    onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) },
+                    onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
+                )
+            }
+            entry<AppDestination.Canteen> {
+                CanteenSubScreen()
+            }
+            entry<AppDestination.Attendances> {
+                AttendancesSubScreen()
+            }
+            entry<AppDestination.Absences> {
+                AbsencesSubScreen()
+            }
+            entry<AppDestination.Teachers> {
+                TeachersSubScreen(
+                    onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
+                )
+            }
+            entry<AppDestination.Rooms> {
+                RoomsSubScreen(
+                    onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
+                )
+            }
+            entry<AppDestination.Substitution> {
+                SubstitutionSubScreen(
+                    onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
+                )
+            }
+            entry<AppDestination.Teacher>(
+                metadata = metadata { slideTransitions() }
+            ) { key ->
+                TeacherScreen(
+                    teacherReference = key.reference,
+                    onBackClick = onBack,
+                    onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
+                )
+            }
+            entry<AppDestination.Room>(
+                metadata = metadata { slideTransitions() }
+            ) { key ->
+                RoomScreen(
+                    roomReference = key.reference,
+                    onBackClick = onBack,
+                    onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
+                )
+            }
+            entry<AppDestination.StudentProfile>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                StudentProfileScreen(
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Main>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsMainScreen(
                     onNavigate = { navBackStack.add(it) },
                     onBackClick = onBack
                 )
             }
-        },
-        transitionSpec = {
-            slideInHorizontally(
-                initialOffsetX = { it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { -it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            )
-        },
-        popTransitionSpec = {
-            slideInHorizontally(
-                initialOffsetX = { -it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            )
-        },
-        predictivePopTransitionSpec = { _ ->
-            slideInHorizontally(
-                initialOffsetX = { -it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            ) togetherWith slideOutHorizontally(
-                targetOffsetX = { it },
-                animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
-            )
+            entry<AppDestination.Settings.General>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsGeneralScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Notifications>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsNotificationsScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Appearance>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsAppearanceScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Substitution>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsSubstitutionScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Canteen>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsCanteenScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.About>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsAboutScreen(
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Drawer>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsDrawerScreen(
+                    viewModel = hiltViewModel(),
+                    onBackClick = onBack
+                )
+            }
         }
     )
+}
+
+private fun MetadataScope.slideTransitions()
+{
+    val popTransition: ContentTransform = EnterTransition.None togetherWith slideOutHorizontally(
+        targetOffsetX = { it },
+        animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+    )
+    
+    put(NavDisplay.TransitionKey) {
+        slideInHorizontally(
+            initialOffsetX = { it },
+            animationSpec = tween(TRANSITION_DURATION, easing = FastOutSlowInEasing)
+        ) togetherWith ExitTransition.KeepUntilTransitionsFinished
+    }
+    put(NavDisplay.PopTransitionKey) { popTransition }
+    put(NavDisplay.PredictivePopTransitionKey) { popTransition }
 }
