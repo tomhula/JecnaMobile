@@ -35,9 +35,7 @@ fun MainNavDisplay(
     NavDisplay(
         backStack = navBackStack,
         onBack = onBack,
-        transitionSpec = {
-            fadeIn() togetherWith fadeOut()
-        },
+        transitionSpec = { fadeIn() togetherWith fadeOut() },
         entryProvider = entryProvider{
             entry<AppDestination.News> {
                 NewsSubScreen()
