@@ -8,7 +8,6 @@ import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material3.*
 import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -33,6 +32,7 @@ import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.ui.component.LinkButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,36 +79,16 @@ fun StudentProfileScreen(
                     )
 
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
-                    
-                    CertificatesLink(onClick = onCertificatesClick)
+
+                    if (student.hasCertificates) {
+                        LinkButton(text = stringResource(R.string.teacher_title_certifications), onClick = onCertificatesClick)
+                    }
                 }
             }
         }
     }
 }
 
-@Composable
-private fun CertificatesLink(onClick: () -> Unit)
-{
-    Surface(
-        tonalElevation = 4.dp,
-        shape = RoundedCornerShape(12.dp),
-        onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = stringResource(R.string.teacher_title_certifications),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f)
-            )
-            Icon(Icons.AutoMirrored.Filled.NavigateNext, contentDescription = null)
-        }
-    }
-}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -362,3 +342,9 @@ private val DATE_FORMATTER = LocalDate.Format {
     char('.')
     year()
 }
+
+// Testing polyfill
+private val Student.hasCertificates: Boolean
+    get() {
+        return this.className?.get(1) == '4'
+    }

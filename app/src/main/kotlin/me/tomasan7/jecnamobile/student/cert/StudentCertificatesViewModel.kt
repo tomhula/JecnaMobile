@@ -20,7 +20,7 @@ class StudentCertificatesViewModel @Inject constructor(
     @ApplicationContext
     appContext: Context,
     private val repository: StudentProfileRepository
-) : SubScreenViewModel<List<Certificate>>(appContext)
+) : SubScreenViewModel<List<Certificate>?>(appContext)
 {
     override val parseErrorMessage = appContext.getString(R.string.student_certifications_load_error)
     override val loadErrorMessage = appContext.getString(R.string.student_certifications_load_error)
@@ -28,7 +28,7 @@ class StudentCertificatesViewModel @Inject constructor(
     var uiState by mutableStateOf(StudentCertificatesState())
         private set
 
-    override fun setDataUiState(data: List<Certificate>) = changeUiState(certificates = data)
+    override fun setDataUiState(data: List<Certificate>?) = changeUiState(certificates = data)
 
     override suspend fun fetchRealData() = repository.getCertificates()
 

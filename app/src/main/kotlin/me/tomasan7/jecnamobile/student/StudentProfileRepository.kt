@@ -8,5 +8,5 @@ interface StudentProfileRepository
 {
     suspend fun getCurrentStudent(): Student
     suspend fun getLocker(): Locker?
-    suspend fun getCertificates(): List<Certificate>
+    suspend fun getCertificates(): List<Certificate>?
 }
