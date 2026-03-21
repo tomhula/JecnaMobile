@@ -80,7 +80,7 @@ fun StudentProfileScreen(
 
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
 
-                    if (student.hasCertificates) {
+                    if (student.hasCertificatesLink) {
                         LinkButton(text = stringResource(R.string.teacher_title_certifications), onClick = onCertificatesClick)
                     }
                 }
@@ -342,9 +342,3 @@ private val DATE_FORMATTER = LocalDate.Format {
     char('.')
     year()
 }
-
-// Testing polyfill
-private val Student.hasCertificates: Boolean
-    get() {
-        return this.className?.get(1) == '4'
-    }
