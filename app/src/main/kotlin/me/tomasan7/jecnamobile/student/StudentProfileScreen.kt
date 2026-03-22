@@ -81,7 +81,11 @@ fun StudentProfileScreen(
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
 
                     if (student.hasCertificatesLink) {
-                        LinkButton(text = stringResource(R.string.teacher_title_certifications), onClick = onCertificatesClick)
+                        LinkButton(
+                            text = stringResource(R.string.teacher_title_certifications),
+                            onClick = onCertificatesClick,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
             }

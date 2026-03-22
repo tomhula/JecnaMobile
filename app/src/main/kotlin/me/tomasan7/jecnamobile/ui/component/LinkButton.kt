@@ -18,14 +18,15 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun LinkButton(
     text: String,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 )
 {
     Surface(
         tonalElevation = 4.dp,
         shape = RoundedCornerShape(12.dp),
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier
     ) {
         Row(
             modifier = Modifier.padding(16.dp),
