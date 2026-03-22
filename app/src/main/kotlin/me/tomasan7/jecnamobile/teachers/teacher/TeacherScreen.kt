@@ -26,6 +26,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.ui.component.CertificateCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -95,6 +96,27 @@ fun TeacherScreen(
                             timetable = it,
                             modifier = Modifier.padding(10.dp),
                             onRoomClick = onRoomClick
+                        )
+                    }
+                }
+
+                uiState.teacher?.let { teacher ->
+                    Text(
+                        text = stringResource(R.string.teacher_title_certifications),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    if (teacher.certificates.isNotEmpty()) {
+                        teacher.certificates.forEach { certificate ->
+                            CertificateCard(
+                                certificate = certificate,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.teacher_no_certifications),
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }

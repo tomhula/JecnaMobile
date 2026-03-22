@@ -3,7 +3,7 @@ plugin-android = "9.1.0"
 plugin-kotlin = "2.3.10"
 plugin-ksp = "2.3.6"
 
-jecnaAPI = "10.0.0"
+jecnaAPI = "10.1.0"
 jecnaSupl = "0.2.3"
 jna = "5.18.1"
 

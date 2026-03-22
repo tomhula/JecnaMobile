@@ -32,11 +32,13 @@ import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.ui.component.LinkButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentProfileScreen(
     onBackClick: () -> Unit,
+    onCertificatesClick: () -> Unit = {},
     viewModel: StudentProfileViewModel = hiltViewModel()
 )
 {
@@ -77,11 +79,20 @@ fun StudentProfileScreen(
                     )
 
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
+
+                    if (student.hasCertificatesLink) {
+                        LinkButton(
+                            text = stringResource(R.string.teacher_title_certifications),
+                            onClick = onCertificatesClick,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
