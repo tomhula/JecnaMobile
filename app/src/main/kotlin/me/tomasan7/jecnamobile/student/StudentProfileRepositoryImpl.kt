@@ -9,4 +9,5 @@ class StudentProfileRepositoryImpl @Inject constructor(
 {
     override suspend fun getCurrentStudent() = jecnaClient.getStudentProfile()
     override suspend fun getLocker() = jecnaClient.getLocker()
+    override suspend fun getCertificates() = jecnaClient.getStudentCertificates()
 }

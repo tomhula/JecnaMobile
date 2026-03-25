@@ -9,7 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -116,7 +116,7 @@ fun TimetableSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier

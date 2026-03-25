@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Report
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -79,7 +79,7 @@ fun SubstitutionSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier

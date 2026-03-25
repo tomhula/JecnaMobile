@@ -9,7 +9,7 @@ import androidx.compose.material.icons.automirrored.filled.ViewList
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.Lightbulb
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,7 +96,7 @@ fun GradesSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier

@@ -7,7 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +26,7 @@ import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.InfoRow
 import me.tomasan7.jecnamobile.ui.component.Timetable
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.ui.component.CertificateCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +60,7 @@ fun TeacherScreen(
         topBar = { TopAppBar(teacherReference.fullName, onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier
@@ -95,6 +96,27 @@ fun TeacherScreen(
                             timetable = it,
                             modifier = Modifier.padding(10.dp),
                             onRoomClick = onRoomClick
+                        )
+                    }
+                }
+
+                uiState.teacher?.let { teacher ->
+                    Text(
+                        text = stringResource(R.string.teacher_title_certifications),
+                        style = MaterialTheme.typography.headlineMedium
+                    )
+
+                    if (teacher.certificates.isNotEmpty()) {
+                        teacher.certificates.forEach { certificate ->
+                            CertificateCard(
+                                certificate = certificate,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    } else {
+                        Text(
+                            text = stringResource(R.string.teacher_no_certifications),
+                            style = MaterialTheme.typography.bodyMedium
                         )
                     }
                 }

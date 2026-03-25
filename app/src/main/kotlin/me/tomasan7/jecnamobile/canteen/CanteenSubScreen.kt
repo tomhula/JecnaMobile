@@ -13,7 +13,7 @@ import androidx.compose.material.icons.automirrored.filled.TrendingUp
 import androidx.compose.material.icons.filled.AccountBalanceWallet
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -71,8 +71,6 @@ fun CanteenSubScreen(
         previousTabIndex = selectedTabIndex
     }
 
-    // Pull-to-refresh handled by PullToRefreshBox in the content
-
     DisposableEffect(Unit) {
         viewModel.enteredComposition()
         onDispose {
@@ -100,46 +98,45 @@ fun CanteenSubScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
-            isRefreshing = uiState.loading,
-            onRefresh = {
-                when (selectedTabIndex)
-                {
-                    0 -> viewModel.reloadMenu()
-                    1 -> viewModel.reloadExchange()
-                }
-            },
+        Column(
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-            ) {
-                PrimaryTabRow(
-                    selectedTabIndex = selectedTabIndex,
-                    modifier = Modifier.zIndex(1f),
-                    contentColor = MaterialTheme.colorScheme.onBackground,
-                    indicator = {
-                        TabRowDefaults.SecondaryIndicator(
-                            modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                ) {
-                    Tab(
-                        selected = selectedTabIndex == 0,
-                        onClick = { selectedTabIndex = 0 },
-                        text = { Text(stringResource(R.string.canteen_menu)) },
-                    )
-                    Tab(
-                        selected = selectedTabIndex == 1,
-                        onClick = { selectedTabIndex = 1 },
-                        text = { Text(stringResource(R.string.canteen_exchange)) },
+            PrimaryTabRow(
+                selectedTabIndex = selectedTabIndex,
+                modifier = Modifier.zIndex(1f),
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                indicator = {
+                    TabRowDefaults.SecondaryIndicator(
+                        modifier = Modifier.tabIndicatorOffset(selectedTabIndex),
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
+            ) {
+                Tab(
+                    selected = selectedTabIndex == 0,
+                    onClick = { selectedTabIndex = 0 },
+                    text = { Text(stringResource(R.string.canteen_menu)) },
+                )
+                Tab(
+                    selected = selectedTabIndex == 1,
+                    onClick = { selectedTabIndex = 1 },
+                    text = { Text(stringResource(R.string.canteen_exchange)) },
+                )
+            }
 
+            LinearPullToRefreshBox(
+                isRefreshing = uiState.loading,
+                onRefresh = {
+                    when (selectedTabIndex)
+                    {
+                        0 -> viewModel.reloadMenu()
+                        1 -> viewModel.reloadExchange()
+                    }
+                },
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

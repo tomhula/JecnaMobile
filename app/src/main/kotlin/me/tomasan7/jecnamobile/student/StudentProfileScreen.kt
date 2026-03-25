@@ -9,7 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,11 +32,13 @@ import kotlinx.datetime.format.char
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.ui.component.HorizontalSpacer
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
+import me.tomasan7.jecnamobile.ui.component.LinkButton
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun StudentProfileScreen(
     onBackClick: () -> Unit,
+    onCertificatesClick: () -> Unit = {},
     viewModel: StudentProfileViewModel = hiltViewModel()
 )
 {
@@ -56,7 +58,7 @@ fun StudentProfileScreen(
         topBar = { TopAppBar(stringResource(R.string.profile_title), onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
-        PullToRefreshBox(
+        LinearPullToRefreshBox(
             isRefreshing = uiState.loading,
             onRefresh = { viewModel.reload() },
             modifier = Modifier
@@ -77,11 +79,20 @@ fun StudentProfileScreen(
                     )
 
                     StudentInfoTable(student, uiState.locker, uiState.lockerLoading, uiState.lockerError)
+
+                    if (student.hasCertificatesLink) {
+                        LinkButton(
+                            text = stringResource(R.string.teacher_title_certifications),
+                            onClick = onCertificatesClick,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
+                    }
                 }
             }
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
