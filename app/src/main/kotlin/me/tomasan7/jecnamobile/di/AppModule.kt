@@ -46,9 +46,9 @@ import me.tomasan7.jecnamobile.timetable.TimetableRepositoryImpl
 import me.tomasan7.jecnamobile.timetable.TimetableViewModel
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import org.koin.android.ext.koin.androidContext
-import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.module.dsl.singleOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.core.qualifier.named
 import org.koin.dsl.bind
