@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.canteen.DayMenu
 import io.github.tomhula.jecnaapi.data.canteen.ExchangeItem
@@ -49,7 +49,7 @@ import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CanteenSubScreen(
-    viewModel: CanteenViewModel = hiltViewModel()
+    viewModel: CanteenViewModel = koinViewModel()
 )
 {
     val uiState = viewModel.uiState

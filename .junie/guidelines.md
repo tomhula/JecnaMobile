@@ -17,7 +17,7 @@
 - If a composable function accepts a modifier, it should be the first optional parameter.
 - Any composables that could be reused in multiple places must be placed in the `ui/component` package.
 - Prefer stateless composables by hoisting state to the caller.
-- For screen-level composables, obtain the ViewModel using `hiltViewModel()`.
+- For screen-level composables, obtain the ViewModel using `koinViewModel()`.
 - Use the `MaterialTheme` object instead of hardcoding colors, styles tc.
 
 # Formatting

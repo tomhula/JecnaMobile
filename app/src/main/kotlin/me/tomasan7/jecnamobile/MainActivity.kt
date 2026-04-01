@@ -12,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.chrynan.parcelable.core.getParcelableExtra
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.serialization.ExperimentalSerializationApi
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.login.LoginScreen
@@ -23,13 +22,11 @@ import me.tomasan7.jecnamobile.ui.theme.JecnaMobileTheme
 import me.tomasan7.jecnamobile.util.rememberMutableStateOf
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 import me.tomasan7.jecnamobile.welcome.WelcomeScreen
-import javax.inject.Inject
+import org.koin.android.ext.android.get
 
-@AndroidEntryPoint
 class MainActivity : ComponentActivity()
 {
-    @Inject
-    lateinit var authRepository: AuthRepository
+    private val authRepository: AuthRepository = get()
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?)

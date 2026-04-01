@@ -19,6 +19,9 @@ composeReorderable = "3.0.0"
 activity = "1.13.0"
 
 hilt-dagger = "2.59.2"
+koin-bom = "4.2.0"
+koin-plugin = "0.4.1"
+
 hilt-android = "1.3.0"
 work = "2.11.1"
 datastore = "1.2.1"
@@ -53,6 +56,12 @@ hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt-
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt-dagger" }
 hilt-lifecycle-viewmodel-compose = { module = "androidx.hilt:hilt-lifecycle-viewmodel-compose", version.ref = "hilt-android" }
 hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hilt-android" }
+koin-bom = { module = "io.insert-koin:koin-bom", version.ref = "koin-bom" }
+koin-android = { module = "io.insert-koin:koin-android" }   
+koin-compose = { module = "io.insert-koin:koin-compose" }
+koin-compose-viewmodel = { module = "io.insert-koin:koin-compose-viewmodel" }
+koin-compose-navigation3 = { module = "io.insert-koin:koin-compose-navigation3" }
+koin-workmanager = { module = "io.insert-koin:koin-androidx-workmanager" }
 work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "work" }
 datastore = { module = "androidx.datastore:datastore", version.ref = "datastore" }
 serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "serialization" }
@@ -66,3 +75,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 ksp = { id = "com.google.devtools.ksp", version.ref = "plugin-ksp" }
 serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "plugin-kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt-dagger" }
+koin-compiler = { id = "io.insert-koin.compiler.plugin", version.ref = "koin-plugin" }

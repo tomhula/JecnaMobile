@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
 import me.tomasan7.jecnamobile.R
@@ -37,7 +37,7 @@ import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 @Composable
 fun SubstitutionSubScreen(
     onTeacherClick: (TeacherReference) -> Unit,
-    viewModel: SubstitutionViewModel = hiltViewModel()
+    viewModel: SubstitutionViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -35,7 +35,7 @@ import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 fun MainScreen(
     onNavigateToLogin: () -> Unit,
     initialNavigateTo: AppDestination? = null,
-    viewModel: MainScreenViewModel = hiltViewModel()
+    viewModel: MainScreenViewModel = koinViewModel()
 )
 {
     val settings by settingsAsStateAwaitFirst()

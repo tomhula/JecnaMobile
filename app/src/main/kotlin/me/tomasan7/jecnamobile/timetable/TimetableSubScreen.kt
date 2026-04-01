@@ -19,7 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeacherReference
@@ -40,7 +40,7 @@ import kotlin.time.Clock
 fun TimetableSubScreen(
     onTeacherClick: (TeacherReference) -> Unit,
     onRoomClick: (RoomReference) -> Unit,
-    viewModel: TimetableViewModel = hiltViewModel()
+    viewModel: TimetableViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

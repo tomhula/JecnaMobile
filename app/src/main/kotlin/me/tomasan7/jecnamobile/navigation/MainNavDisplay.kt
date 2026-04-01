@@ -4,7 +4,7 @@ import androidx.compose.animation.*
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import androidx.navigation3.runtime.MetadataScope
 import androidx.navigation3.runtime.NavBackStack
 import androidx.navigation3.runtime.entryProvider
@@ -121,7 +121,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsGeneralScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }
@@ -129,7 +129,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsNotificationsScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }
@@ -137,7 +137,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsAppearanceScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }
@@ -145,7 +145,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsSubstitutionScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }
@@ -153,7 +153,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsCanteenScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }
@@ -168,7 +168,7 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsDrawerScreen(
-                    viewModel = hiltViewModel(),
+                    viewModel = koinViewModel(),
                     onBackClick = onBack
                 )
             }

@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.absence.AbsenceInfo
 import kotlinx.datetime.LocalDate
@@ -34,7 +34,7 @@ import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AbsencesSubScreen(
-    viewModel: AbsencesViewModel = hiltViewModel()
+    viewModel: AbsencesViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

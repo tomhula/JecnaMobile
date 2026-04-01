@@ -18,7 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import de.palm.composestateevents.EventEffect
@@ -39,7 +39,7 @@ import me.tomasan7.jecnamobile.ui.component.LinkButton
 fun StudentProfileScreen(
     onBackClick: () -> Unit,
     onCertificatesClick: () -> Unit = {},
-    viewModel: StudentProfileViewModel = hiltViewModel()
+    viewModel: StudentProfileViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

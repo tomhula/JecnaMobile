@@ -3,26 +3,27 @@ package me.tomasan7.jecnamobile
 import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import androidx.hilt.work.HiltWorkerFactory
-import androidx.work.Configuration
-import dagger.hilt.android.HiltAndroidApp
+import me.tomasan7.jecnamobile.di.appModule
+import me.tomasan7.jecnamobile.di.cacheRepositoriesModule
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
-import javax.inject.Inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
+import org.koin.core.context.GlobalContext.startKoin
 
-@HiltAndroidApp
-class JecnaMobileApplication : Application(), Configuration.Provider
+class JecnaMobileApplication : Application()
 {
-    @Inject
-    lateinit var workerFactory: HiltWorkerFactory
-
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .build()
-
     override fun onCreate()
     {
         super.onCreate()
+        startKoin {
+            androidLogger()
+            androidContext(this@JecnaMobileApplication)
+            workManagerFactory()
+
+            modules(appModule, cacheRepositoriesModule)
+        }
+        
         createNotificationChannels()
         GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(this)
     }

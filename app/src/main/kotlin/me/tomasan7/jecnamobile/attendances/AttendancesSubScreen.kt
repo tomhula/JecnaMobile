@@ -14,7 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.attendance.Attendance
 import io.github.tomhula.jecnaapi.data.attendance.AttendanceType
@@ -37,7 +37,7 @@ import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AttendancesSubScreen(
-    viewModel: AttendancesViewModel = hiltViewModel()
+    viewModel: AttendancesViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

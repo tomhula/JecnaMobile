@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import de.palm.composestateevents.EventEffect
 import io.github.tomhula.jecnaapi.data.grade.Behaviour
 import io.github.tomhula.jecnaapi.data.grade.FinalGrade
@@ -58,7 +58,7 @@ import kotlin.math.roundToInt
 @Composable
 fun GradesSubScreen(
     onTeacherClick: (TeacherReference) -> Unit,
-    viewModel: GradesViewModel = hiltViewModel()
+    viewModel: GradesViewModel = koinViewModel()
 )
 {
     SubScreenViewModelHook(viewModel)

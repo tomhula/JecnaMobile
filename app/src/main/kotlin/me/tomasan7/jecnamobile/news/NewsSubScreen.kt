@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.net.toUri
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import org.koin.compose.viewmodel.koinViewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.ireward.htmlcompose.HtmlText
@@ -46,7 +46,7 @@ import java.time.format.DateTimeFormatter
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NewsSubScreen(
-    viewModel: NewsViewModel = hiltViewModel()
+    viewModel: NewsViewModel = koinViewModel()
 )
 {
     val uiState = viewModel.uiState
