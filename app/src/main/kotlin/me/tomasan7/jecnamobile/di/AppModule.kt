@@ -7,27 +7,9 @@ import io.github.tomhula.jecnaapi.WebJecnaClient
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.LoginStateProvider
-import me.tomasan7.jecnamobile.absence.AbsencesRepository
-import me.tomasan7.jecnamobile.absence.AbsencesRepositoryImpl
-import me.tomasan7.jecnamobile.attendances.AttendancesRepository
-import me.tomasan7.jecnamobile.attendances.AttendancesRepositoryImpl
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeCheckerImpl
-import me.tomasan7.jecnamobile.grades.GradesRepository
-import me.tomasan7.jecnamobile.grades.GradesRepositoryImpl
-import me.tomasan7.jecnamobile.login.AuthRepository
-import me.tomasan7.jecnamobile.login.ObfuscationSharedPreferencesAuthRepository
-import me.tomasan7.jecnamobile.news.NewsRepository
-import me.tomasan7.jecnamobile.news.NewsRepositoryImpl
-import me.tomasan7.jecnamobile.rooms.RoomsRepository
-import me.tomasan7.jecnamobile.rooms.RoomsRepositoryImpl
-import me.tomasan7.jecnamobile.student.StudentProfileRepository
-import me.tomasan7.jecnamobile.student.StudentProfileRepositoryImpl
-import me.tomasan7.jecnamobile.teachers.TeachersRepository
-import me.tomasan7.jecnamobile.teachers.TeachersRepositoryImpl
-import me.tomasan7.jecnamobile.timetable.TimetableRepository
-import me.tomasan7.jecnamobile.timetable.TimetableRepositoryImpl
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
@@ -56,16 +38,7 @@ val appModule = module {
     }
     
     singleOf(::DefaultLoginStateProvider) bind LoginStateProvider::class
-    singleOf(::ObfuscationSharedPreferencesAuthRepository) bind AuthRepository::class
-    singleOf(::GradesRepositoryImpl) bind GradesRepository::class
-    singleOf(::TimetableRepositoryImpl) bind TimetableRepository::class
-    singleOf(::NewsRepositoryImpl) bind NewsRepository::class
-    singleOf(::AttendancesRepositoryImpl) bind AttendancesRepository::class
-    singleOf(::TeachersRepositoryImpl) bind TeachersRepository::class
     singleOf(::GradesChangeCheckerImpl) bind GradesChangeChecker::class
-    singleOf(::AbsencesRepositoryImpl) bind AbsencesRepository::class
-    singleOf(::StudentProfileRepositoryImpl) bind StudentProfileRepository::class
-    singleOf(::RoomsRepositoryImpl) bind RoomsRepository::class
     
     worker { params ->
         GradeCheckerWorker(
