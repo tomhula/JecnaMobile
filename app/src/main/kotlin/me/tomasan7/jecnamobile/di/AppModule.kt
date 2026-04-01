@@ -19,8 +19,10 @@ import org.koin.dsl.bind
 import org.koin.dsl.module
 import kotlin.time.Duration.Companion.seconds
 
-val appModule = module {
-    // TODO: Migrate to compiler DSL: https://github.com/InsertKoinIO/koin/issues/2390
+internal val appModule = module {
+    // TODO: Migrate every Koin definition to compiler DSL: https://github.com/InsertKoinIO/koin/issues/2390
+    includes(repositoriesModule, cacheRepositoriesModule, viewModelsModule)
+    
     single { JecnaClient(autoLogin = true, userAgent = "JM", requestTimeout = 15.seconds) } bind JecnaClient::class
     single { CanteenClient(autoLogin = true, userAgent = "JM") } bind CanteenClient::class
     single {

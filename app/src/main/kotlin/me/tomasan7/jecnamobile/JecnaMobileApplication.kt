@@ -23,7 +23,7 @@ class JecnaMobileApplication : Application()
             androidContext(this@JecnaMobileApplication)
             workManagerFactory()
 
-            modules(appModule, repositoriesModule, cacheRepositoriesModule, viewModelsModule)
+            modules(appModule)
         }
         
         createNotificationChannels()
