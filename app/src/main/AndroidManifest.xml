@@ -16,7 +16,6 @@
             android:supportsRtl="true"
             android:theme="@style/Theme.JecnaMobile">
 
-        <!-- https://developer.android.com/training/dependency-injection/hilt-jetpack#workmanager -->
         <!-- https://developer.android.com/develop/background-work/background-tasks/persistent/configuration/custom-configuration#remove-default -->
         <provider
                 android:name="androidx.startup.InitializationProvider"

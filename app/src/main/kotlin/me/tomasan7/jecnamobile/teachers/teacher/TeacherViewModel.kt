@@ -5,8 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import coil.request.ImageRequest
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -19,11 +17,9 @@ import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.teachers.TeachersRepository
-import javax.inject.Inject
 
-@HiltViewModel
-class TeacherViewModel @Inject constructor(
-    @ApplicationContext
+
+class TeacherViewModel(
     appContext: Context,
     private val jecnaClient: JecnaClient,
     private val repository: TeachersRepository

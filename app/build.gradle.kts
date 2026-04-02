@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    alias(libs.plugins.hilt)
     // alias(libs.plugins.koin.compiler)
 }
 
@@ -82,10 +81,6 @@ dependencies {
 
     implementation(libs.activity.ktx)
 
-    ksp(libs.hilt.compiler)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.lifecycle.viewmodel.compose)
-    implementation(libs.hilt.work)
     implementation(libs.work.runtime.ktx)
     implementation(platform(libs.koin.bom))
     implementation(libs.koin.android)

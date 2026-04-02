@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import cz.jzitnik.jecna_supl_client.ReportLocation
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -20,13 +18,11 @@ import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
-import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
-@HiltViewModel
-class TimetableViewModel @Inject constructor(
-    @ApplicationContext
+
+class TimetableViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
     repository: CacheRepository<TimetableData, SchoolYearPeriodParams>,

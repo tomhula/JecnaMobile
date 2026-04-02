@@ -5,16 +5,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.web.Auth
 import io.ktor.util.network.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@HiltViewModel
-class LoginViewModel @Inject constructor(
+
+class LoginViewModel(
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient
 ) : ViewModel()

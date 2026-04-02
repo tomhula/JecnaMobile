@@ -16,8 +16,6 @@ import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEvent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -32,13 +30,11 @@ import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
-import javax.inject.Inject
 
 private const val LOG_TAG = "MainScreenViewmodel"
 
-@HiltViewModel
-class MainScreenViewModel @Inject constructor(
-    @ApplicationContext
+
+class MainScreenViewModel(
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,

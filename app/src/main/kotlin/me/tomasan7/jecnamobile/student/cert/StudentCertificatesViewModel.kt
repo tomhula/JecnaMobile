@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -13,11 +11,9 @@ import io.github.tomhula.jecnaapi.data.cert.Certificate
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.student.StudentProfileRepository
-import javax.inject.Inject
 
-@HiltViewModel
-class StudentCertificatesViewModel @Inject constructor(
-    @ApplicationContext
+
+class StudentCertificatesViewModel(
     appContext: Context,
     private val repository: StudentProfileRepository
 ) : SubScreenViewModel<List<Certificate>?>(appContext)

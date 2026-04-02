@@ -3,9 +3,8 @@ package me.tomasan7.jecnamobile.attendances
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.datetime.Month
-import javax.inject.Inject
 
-class AttendancesRepositoryImpl @Inject constructor(
+class AttendancesRepositoryImpl(
     val jecnaClient: JecnaClient
 ) : AttendancesRepository
 {

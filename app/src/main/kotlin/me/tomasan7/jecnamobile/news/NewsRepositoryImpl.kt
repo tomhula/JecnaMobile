@@ -1,9 +1,8 @@
 package me.tomasan7.jecnamobile.news
 
 import io.github.tomhula.jecnaapi.JecnaClient
-import javax.inject.Inject
 
-class NewsRepositoryImpl @Inject constructor(
+class NewsRepositoryImpl(
     private val client: JecnaClient
 ) : NewsRepository
 {

@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import cz.jzitnik.jecna_supl_client.ReportLocation
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import kotlinx.coroutines.launch
@@ -16,12 +14,11 @@ import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.timetable.SubstitutionAllData
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import java.time.LocalDate
-import javax.inject.Inject
 import kotlin.time.Clock
 
-@HiltViewModel
-class SubstitutionViewModel @Inject constructor(
-    @ApplicationContext context: Context,
+
+class SubstitutionViewModel(
+    context: Context,
     private val repository: TimetableRepository
 ) : SubScreenViewModel<SubstitutionAllData>(context)
 {

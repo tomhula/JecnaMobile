@@ -8,9 +8,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class TimetableRepositoryImpl @Inject constructor(
+class TimetableRepositoryImpl(
     private val jecnaClient: JecnaClient,
     private val substitutionClient: JecnaSuplClient,
 ) : TimetableRepository

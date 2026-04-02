@@ -1,9 +1,8 @@
 package me.tomasan7.jecnamobile.teachers
 
 import io.github.tomhula.jecnaapi.JecnaClient
-import javax.inject.Inject
 
-class TeachersRepositoryImpl @Inject constructor(
+class TeachersRepositoryImpl(
     private val jecnaClient: JecnaClient
 ) : TeachersRepository
 {

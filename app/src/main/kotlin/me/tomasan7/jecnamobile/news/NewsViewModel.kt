@@ -16,8 +16,6 @@ import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
 import coil.request.ImageRequest
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -36,14 +34,11 @@ import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
-import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Instant
 
 
-@HiltViewModel
-class NewsViewModel @Inject constructor(
-    @ApplicationContext
+class NewsViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
     repository: CacheRepository<NewsPage, NoParams>,

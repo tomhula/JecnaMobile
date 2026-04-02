@@ -2,7 +2,6 @@ package me.tomasan7.jecnamobile.caching
 
 import android.content.Context
 import android.util.Log
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -18,7 +17,6 @@ import kotlin.time.Clock
 private const val LOG_TAG = "CacheRepository"
 
 open class CacheRepository<T, P>(
-    @ApplicationContext
     private val appContext: Context,
     val key: String,
     dataSerializer: KSerializer<T>,

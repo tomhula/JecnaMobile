@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.tomhula.jecnaapi.parser.ParseException
 import io.ktor.util.network.*
 import kotlinx.coroutines.CancellationException
@@ -19,7 +18,6 @@ import java.net.UnknownHostException
 private const val LOG_TAG = "SubScreenViewModel"
 
 abstract class SubScreenViewModel<T>(
-    @ApplicationContext
     protected val appContext: Context,
 ) : ViewModel()
 {

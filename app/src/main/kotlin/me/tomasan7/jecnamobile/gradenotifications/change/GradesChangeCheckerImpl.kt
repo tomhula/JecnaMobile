@@ -1,10 +1,9 @@
 package me.tomasan7.jecnamobile.gradenotifications.change
 
 import io.github.tomhula.jecnaapi.data.grade.Grade
-import javax.inject.Inject
 
 
-class GradesChangeCheckerImpl @Inject constructor() : GradesChangeChecker
+class GradesChangeCheckerImpl : GradesChangeChecker
 {
     override fun checkForChanges(
         oldGrades: Collection<Grade>,

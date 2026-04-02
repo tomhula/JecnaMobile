@@ -2,9 +2,8 @@ package me.tomasan7.jecnamobile.absence
 
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.util.SchoolYear
-import javax.inject.Inject
 
-class AbsencesRepositoryImpl @Inject constructor(
+class AbsencesRepositoryImpl(
     val jecnaClient: JecnaClient
 ) : AbsencesRepository
 {

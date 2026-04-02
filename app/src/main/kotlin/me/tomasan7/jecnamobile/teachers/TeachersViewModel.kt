@@ -4,19 +4,15 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.schoolStaff.TeachersPage
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
-import javax.inject.Inject
 
-@HiltViewModel
-class TeachersViewModel @Inject constructor(
-    @ApplicationContext
+
+class TeachersViewModel(
     appContext: Context,
     private val repository: TeachersRepository
 ) : SubScreenViewModel<TeachersPage>(appContext)

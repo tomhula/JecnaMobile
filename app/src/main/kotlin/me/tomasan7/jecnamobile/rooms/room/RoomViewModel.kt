@@ -4,8 +4,6 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -14,11 +12,9 @@ import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.rooms.RoomsRepository
-import javax.inject.Inject
 
-@HiltViewModel
-class RoomViewModel @Inject constructor(
-    @ApplicationContext
+
+class RoomViewModel(
     appContext: Context,
     private val repository: RoomsRepository
 ) : SubScreenViewModel<Room>(appContext)

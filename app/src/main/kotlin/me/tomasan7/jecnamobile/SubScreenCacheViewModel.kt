@@ -3,7 +3,6 @@ package me.tomasan7.jecnamobile
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.launch
 import kotlinx.datetime.*
 import kotlinx.datetime.format.Padding
@@ -17,7 +16,6 @@ import kotlin.time.Instant
 private const val SSCVM_LOG_TAG = "SubScreenCacheViewModel"
 
 abstract class SubScreenCacheViewModel<T, P>(
-    @ApplicationContext
     appContext: Context,
     protected val loginStateProvider: LoginStateProvider,
     private val cacheRepository: CacheRepository<T, P>

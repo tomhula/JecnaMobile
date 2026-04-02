@@ -2,9 +2,8 @@ package me.tomasan7.jecnamobile.rooms
 
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.room.RoomReference
-import javax.inject.Inject
 
-class RoomsRepositoryImpl @Inject constructor(
+class RoomsRepositoryImpl(
     private val jecnaClient: JecnaClient
 ) : RoomsRepository
 {

@@ -10,8 +10,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
@@ -41,11 +39,9 @@ import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import me.tomasan7.jecnamobile.util.now
 import me.tomasan7.jecnamobile.util.settingsDataStore
-import javax.inject.Inject
 
-@HiltViewModel
-class CanteenViewModel @Inject constructor(
-    @ApplicationContext
+
+class CanteenViewModel(
     private val appContext: Context,
     private val authRepository: AuthRepository,
     private val jecnaClient: JecnaClient,
