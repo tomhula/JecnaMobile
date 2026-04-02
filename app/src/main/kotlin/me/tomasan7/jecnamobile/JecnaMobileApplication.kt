@@ -4,9 +4,6 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import me.tomasan7.jecnamobile.di.appModule
-import me.tomasan7.jecnamobile.di.cacheRepositoriesModule
-import me.tomasan7.jecnamobile.di.repositoriesModule
-import me.tomasan7.jecnamobile.di.viewModelsModule
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
