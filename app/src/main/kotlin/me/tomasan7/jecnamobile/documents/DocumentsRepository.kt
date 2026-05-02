@@ -1,8 +1,8 @@
-package me.tomasan7.jecnamobile.document
+package me.tomasan7.jecnamobile.documents
 
 import io.github.tomhula.jecnaapi.data.document.DocumentsPage
 
-interface DocumentRepository
+interface DocumentsRepository
 {
     suspend fun getDocumentsPage(): DocumentsPage
 }

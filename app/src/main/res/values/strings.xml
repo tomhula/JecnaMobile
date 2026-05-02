@@ -407,4 +407,6 @@
     <string name="settings_notifications_system_settings">Otevřít nastavení systému</string>
     <string name="settings_notifications_system_settings_description">Pokud je oprávnění odepřeno, můžete jej změnit v nastavení systému.</string>
     <string name="settings_notifications_permission_required">Oprávnění k upozorněním je vyžadováno</string>
+    <string name="error_unsupported_document">Dokument je v nepodporovaném formátu</string>
+    <string name="document_load_error">Při načítání dokumentu došlo k chybě.\n</string>
 </resources>
