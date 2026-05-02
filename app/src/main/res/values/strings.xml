@@ -69,6 +69,7 @@
     <string name="sidebar_teachers">Učitelé</string>
     <string name="sidebar_canteen">Jídelna</string>
     <string name="sidebar_rooms">Učebny</string>
+    <string name="sidebar_documents">Dokumenty</string>
     <string name="sidebar_settings">Nastavení</string>
     <string name="sidebar_logout">Odhlásit se</string>
 
@@ -409,4 +410,8 @@
     <string name="settings_notifications_permission_required">Oprávnění k upozorněním je vyžadováno</string>
     <string name="error_unsupported_document">Dokument je v nepodporovaném formátu</string>
     <string name="document_load_error">Při načítání dokumentu došlo k chybě.\n</string>
+    <string name="no_documents">Žádné dokumenty nejsou k dispozici</string>
+    <string name="document_name">Název:</string>
+    <string name="document_path">Cesta:</string>
+    <string name="document_open">Otevřít dokument</string>
 </resources>

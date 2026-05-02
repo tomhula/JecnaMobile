@@ -26,6 +26,7 @@ Minimální podporovaný Android je `Android 8.0 (Oreo)`.
 - [X] Burza v jídelně
 - [X] Učebny
 - [X] Profil studenta
+- [X] Dokumenty
 
 ## Screenshoty
 
