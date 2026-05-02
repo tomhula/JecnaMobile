@@ -4,5 +4,5 @@ import io.github.tomhula.jecnaapi.data.document.DocumentsPage
 
 interface DocumentRepository
 {
-    suspend fun getDocuments(): DocumentsPage
+    suspend fun getDocumentsPage(): DocumentsPage
 }
