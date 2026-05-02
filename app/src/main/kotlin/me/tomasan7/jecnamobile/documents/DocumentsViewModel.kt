@@ -92,7 +92,7 @@ class DocumentsViewModel @Inject constructor(
             
             val sessionCookie = (jecnaClient as WebJecnaClient).getSessionCookie()
             if (sessionCookie != null) {
-                addRequestHeader("Cookie", sessionCookie.toHeaderString())
+                addRequestHeader("Cookie", sessionCookie.toString())
             }
         }
 

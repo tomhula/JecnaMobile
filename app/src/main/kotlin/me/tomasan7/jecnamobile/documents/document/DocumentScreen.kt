@@ -73,12 +73,12 @@ fun DocumentScreen(
                 {
                     InfoRow(
                         label = stringResource(R.string.document_name),
-                        content = uiState.document.label
+                        value = uiState.document.label
                     )
 
                     InfoRow(
                         label = stringResource(R.string.document_path),
-                        content = uiState.document.path
+                        value = uiState.document.path
                     )
 
                     Spacer(Modifier.height(16.dp))

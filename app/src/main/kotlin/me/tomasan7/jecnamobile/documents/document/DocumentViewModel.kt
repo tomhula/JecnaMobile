@@ -27,7 +27,7 @@ class DocumentViewModel @Inject constructor(
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_document)
     override val loadErrorMessage = appContext.getString(R.string.document_load_error)
     
-    private var documentPath: String = ""
+    private var documentPath: String = "/dokumenty"
     
     override suspend fun fetchRealData(): DocumentFile = repository.getDocument(Paths.get(documentPath))
 
