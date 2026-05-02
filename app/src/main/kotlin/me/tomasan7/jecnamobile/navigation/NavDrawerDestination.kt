@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.EventBusy
+import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.Grade
 import androidx.compose.material.icons.filled.MeetingRoom
 import androidx.compose.material.icons.filled.Newspaper
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.TableChart
 import androidx.compose.material.icons.outlined.DateRange
 import androidx.compose.material.icons.outlined.EventBusy
+import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.MeetingRoom
 import androidx.compose.material.icons.outlined.Newspaper
@@ -39,5 +41,6 @@ enum class NavDrawerDestination(
     Attendances(R.string.sidebar_attendances, Icons.Outlined.DateRange, Icons.Filled.DateRange, AppDestination.Attendances),
     Absences(R.string.sidebar_absences, Icons.Outlined.EventBusy, Icons.Filled.EventBusy, AppDestination.Absences),
     Teachers(R.string.sidebar_teachers, Icons.Outlined.People, Icons.Filled.People, AppDestination.Teachers),
-    Rooms(R.string.sidebar_rooms, Icons.Outlined.MeetingRoom, Icons.Filled.MeetingRoom, AppDestination.Rooms)
+    Rooms(R.string.sidebar_rooms, Icons.Outlined.MeetingRoom, Icons.Filled.MeetingRoom, AppDestination.Rooms),
+    Documents(R.string.sidebar_documents, Icons.Outlined.Folder, Icons.Filled.Folder, AppDestination.Documents)
 }

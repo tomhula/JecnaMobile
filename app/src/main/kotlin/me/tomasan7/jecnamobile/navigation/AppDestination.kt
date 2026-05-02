@@ -26,6 +26,8 @@ sealed interface AppDestination : NavKey
     data object Teachers : AppDestination
     @Serializable
     data object Rooms : AppDestination
+    @Serializable
+    data object Documents : AppDestination
 
     @Serializable
     data class Teacher(val reference: TeacherReference) : AppDestination
