@@ -86,9 +86,8 @@ fun DocumentsSubScreen(
                             onFolderClick = { path ->
                                 viewModel.toggleFolderExpansion(path)
                             },
-                            isExpanded = uiState.expandedFolders.containsKey(document.path),
-                            isLoading = uiState.loadingFolders.contains(document.path),
-                            expandedContent = uiState.expandedFolders[document.path],
+                            expandedFolders = uiState.expandedFolders,
+                            loadingFolders = uiState.loadingFolders,
                             depth = 0
                         )
                     }
@@ -112,9 +111,8 @@ private fun DocumentItemWithExpand(
     document: SchoolDocument,
     onFileClick: (DocumentFile) -> Unit,
     onFolderClick: (String) -> Unit,
-    isExpanded: Boolean = false,
-    isLoading: Boolean = false,
-    expandedContent: DocumentsPage? = null,
+    expandedFolders: Map<String, DocumentsPage> = emptyMap(),
+    loadingFolders: Set<String> = emptySet(),
     depth: Int = 0
 )
 {
@@ -123,6 +121,10 @@ private fun DocumentItemWithExpand(
             FileItem(file = document, onFileClick = onFileClick, depth = depth)
         }
         is DocumentFolder -> {
+            val isExpanded = expandedFolders.containsKey(document.path)
+            val isLoading = loadingFolders.contains(document.path)
+            val expandedContent = expandedFolders[document.path]
+            
             Column {
                 FolderItem(
                     folder = document,
@@ -138,9 +140,8 @@ private fun DocumentItemWithExpand(
                             document = nestedDoc,
                             onFileClick = onFileClick,
                             onFolderClick = onFolderClick,
-                            isExpanded = false,
-                            isLoading = false,
-                            expandedContent = null,
+                            expandedFolders = expandedFolders,
+                            loadingFolders = loadingFolders,
                             depth = depth + 1
                         )
                     }
@@ -193,8 +194,8 @@ private fun FileItem(
 private fun FolderItem(
     folder: DocumentFolder,
     onFolderClick: (String) -> Unit,
-    isExpanded: Boolean = false,
-    isLoading: Boolean = false,
+    expandedFolders: Map<String, DocumentsPage> = emptyMap(),
+    loadingFolders: Set<String> = emptySet(),
     depth: Int = 0
 )
 {
