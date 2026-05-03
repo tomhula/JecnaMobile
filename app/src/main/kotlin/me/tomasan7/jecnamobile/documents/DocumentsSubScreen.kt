@@ -194,6 +194,8 @@ private fun FileItem(
 private fun FolderItem(
     folder: DocumentFolder,
     onFolderClick: (String) -> Unit,
+    isExpanded: Boolean = false,
+    isLoading: Boolean = false,
     expandedFolders: Map<String, DocumentsPage> = emptyMap(),
     loadingFolders: Set<String> = emptySet(),
     depth: Int = 0
