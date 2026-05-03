@@ -209,7 +209,7 @@ private fun FolderItem(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        // Chevron icon
+        
         Icon(
             imageVector = if (isExpanded) Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowRight,
             contentDescription = if (isExpanded) stringResource(R.string.collapse) else stringResource(R.string.expand),
@@ -217,7 +217,7 @@ private fun FolderItem(
             modifier = Modifier.size(24.dp)
         )
         
-        // Folder icon
+        
         Icon(
             imageVector = Icons.Outlined.FolderOpen,
             contentDescription = null,
@@ -245,24 +245,6 @@ private fun FolderItem(
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-        }
-    }
-}
-
-@Composable
-private fun DocumentItem(
-    document: SchoolDocument,
-    onFileClick: (DocumentFile) -> Unit,
-    onFolderClick: (String) -> Unit = {}
-)
-{
-    when (document)
-    {
-        is DocumentFile -> {
-            FileItem(file = document, onFileClick = onFileClick)
-        }
-        is DocumentFolder -> {
-            FolderItem(folder = document, onFolderClick = onFolderClick)
         }
     }
 }
