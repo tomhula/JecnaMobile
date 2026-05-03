@@ -10,6 +10,8 @@ data class DocumentsState(
     val documentsPage: DocumentsPage? = null,
     val lastUpdateTimestamp: Instant? = null,
     val isCache: Boolean = false,
+    val expandedFolders: Map<String, DocumentsPage> = emptyMap(),
+    val loadingFolders: Set<String> = emptySet(),
     val snackBarMessageEvent: StateEventWithContent<String> = consumed()
 )
 

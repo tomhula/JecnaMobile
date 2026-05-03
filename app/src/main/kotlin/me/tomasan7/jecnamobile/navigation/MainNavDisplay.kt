@@ -14,7 +14,6 @@ import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
 import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
 import me.tomasan7.jecnamobile.documents.DocumentsSubScreen
-import me.tomasan7.jecnamobile.documents.folder.FolderScreen
 import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
@@ -74,18 +73,7 @@ fun MainNavDisplay(
                 )
             }
             entry<AppDestination.Documents> {
-                DocumentsSubScreen(
-                    onFolderClick = { path -> navBackStack.add(AppDestination.Folder(path)) }
-                )
-            }
-            entry<AppDestination.Folder>(
-                metadata = metadata { slideTransitions() }
-            ) { key ->
-                FolderScreen(
-                    path = key.path,
-                    onBackClick = onBack,
-                    onFolderClick = { path -> navBackStack.add(AppDestination.Folder(path)) }
-                )
+                DocumentsSubScreen()
             }
             entry<AppDestination.Substitution> {
                 SubstitutionSubScreen(

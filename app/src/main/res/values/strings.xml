@@ -70,6 +70,8 @@
     <string name="sidebar_canteen">Jídelna</string>
     <string name="sidebar_rooms">Učebny</string>
     <string name="sidebar_documents">Dokumenty</string>
+    <string name="expand">Rozbalit</string>
+    <string name="collapse">Sbalit</string>
     <string name="sidebar_settings">Nastavení</string>
     <string name="sidebar_logout">Odhlásit se</string>
 

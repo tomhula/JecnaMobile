@@ -8,6 +8,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FolderOpen
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material3.*
 import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import androidx.compose.runtime.Composable
@@ -30,7 +32,6 @@ import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentsSubScreen(
-    onFolderClick: (String) -> Unit = {},
     viewModel: DocumentsViewModel = hiltViewModel()
 )
 {
@@ -76,12 +77,18 @@ fun DocumentsSubScreen(
                 if (uiState.documentsPage != null)
                 {
                     uiState.documentsPage.documents.forEach { document ->
-                        DocumentItem(
+                        DocumentItemWithExpand(
                             document = document,
                             onFileClick = { file ->
                                 viewModel.downloadAndOpenDocument(file.path)
                             },
-                            onFolderClick = onFolderClick
+                            onFolderClick = { path ->
+                                viewModel.toggleFolderExpansion(path)
+                            },
+                            isExpanded = uiState.expandedFolders.containsKey(document.path),
+                            isLoading = uiState.loadingFolders.contains(document.path),
+                            expandedContent = uiState.expandedFolders[document.path],
+                            depth = 0
                         )
                     }
                 }
@@ -100,19 +107,44 @@ fun DocumentsSubScreen(
 }
 
 @Composable
-private fun DocumentItem(
+private fun DocumentItemWithExpand(
     document: SchoolDocument,
     onFileClick: (DocumentFile) -> Unit,
-    onFolderClick: (String) -> Unit = {}
+    onFolderClick: (String) -> Unit,
+    isExpanded: Boolean = false,
+    isLoading: Boolean = false,
+    expandedContent: DocumentsPage? = null,
+    depth: Int = 0
 )
 {
-    when (document)
-    {
+    when (document) {
         is DocumentFile -> {
-            FileItem(file = document, onFileClick = onFileClick)
+            FileItem(file = document, onFileClick = onFileClick, depth = depth)
         }
         is DocumentFolder -> {
-            FolderItem(folder = document, onFolderClick = onFolderClick)
+            Column {
+                FolderItem(
+                    folder = document,
+                    onFolderClick = onFolderClick,
+                    isExpanded = isExpanded,
+                    isLoading = isLoading,
+                    depth = depth
+                )
+                
+                if (isExpanded && expandedContent != null) {
+                    expandedContent.documents.forEach { nestedDoc ->
+                        DocumentItemWithExpand(
+                            document = nestedDoc,
+                            onFileClick = onFileClick,
+                            onFolderClick = onFolderClick,
+                            isExpanded = false,
+                            isLoading = false,
+                            expandedContent = null,
+                            depth = depth + 1
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -120,14 +152,15 @@ private fun DocumentItem(
 @Composable
 private fun FileItem(
     file: DocumentFile,
-    onFileClick: (DocumentFile) -> Unit
+    onFileClick: (DocumentFile) -> Unit,
+    depth: Int = 0
 )
 {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onFileClick(file) }
-            .padding(12.dp),
+            .padding(start = (12 + depth * 16).dp, top = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
@@ -158,17 +191,29 @@ private fun FileItem(
 @Composable
 private fun FolderItem(
     folder: DocumentFolder,
-    onFolderClick: (String) -> Unit = {}
+    onFolderClick: (String) -> Unit,
+    isExpanded: Boolean = false,
+    isLoading: Boolean = false,
+    depth: Int = 0
 )
 {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onFolderClick(folder.path) }
-            .padding(12.dp),
+            .padding(start = (12 + depth * 16).dp, top = 12.dp, end = 12.dp, bottom = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+        // Chevron icon
+        Icon(
+            imageVector = if (isExpanded) Icons.Outlined.KeyboardArrowDown else Icons.Outlined.KeyboardArrowRight,
+            contentDescription = if (isExpanded) stringResource(R.string.collapse) else stringResource(R.string.expand),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(24.dp)
+        )
+        
+        // Folder icon
         Icon(
             imageVector = Icons.Outlined.FolderOpen,
             contentDescription = null,
@@ -184,11 +229,36 @@ private fun FolderItem(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface
             )
-            Text(
-                text = folder.path,
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            if (isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    strokeWidth = 2.dp
+                )
+            } else {
+                Text(
+                    text = folder.path,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DocumentItem(
+    document: SchoolDocument,
+    onFileClick: (DocumentFile) -> Unit,
+    onFolderClick: (String) -> Unit = {}
+)
+{
+    when (document)
+    {
+        is DocumentFile -> {
+            FileItem(file = document, onFileClick = onFileClick)
+        }
+        is DocumentFolder -> {
+            FolderItem(folder = document, onFolderClick = onFolderClick)
         }
     }
 }

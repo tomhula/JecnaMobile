@@ -48,6 +48,7 @@ class DocumentsViewModel @Inject constructor(
         private set
     
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    private var downloadReceiverRegistered = false
 
     private val downloadFinishedBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -147,11 +148,41 @@ class DocumentsViewModel @Inject constructor(
     
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
     
+    fun toggleFolderExpansion(folderPath: String) {
+        if (uiState.expandedFolders.containsKey(folderPath)) {
+            // Already expanded, collapse it
+            changeUiState(expandedFolders = uiState.expandedFolders - folderPath)
+        } else {
+            // Not expanded, fetch and expand
+            fetchFolderContents(folderPath)
+        }
+    }
+    
+    private fun fetchFolderContents(folderPath: String) {
+        changeUiState(loadingFolders = uiState.loadingFolders + folderPath)
+        
+        viewModelScope.launch {
+            try {
+                val folderContents = repository.getDocumentsPage(folderPath)
+                changeUiState(
+                    expandedFolders = uiState.expandedFolders + (folderPath to folderContents),
+                    loadingFolders = uiState.loadingFolders - folderPath
+                )
+            } catch (e: Exception) {
+                changeUiState(loadingFolders = uiState.loadingFolders - folderPath)
+                showSnackBarMessage(loadErrorMessage)
+                e.printStackTrace()
+            }
+        }
+    }
+    
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         documentsPage: DocumentsPage? = uiState.documentsPage,
         lastUpdateTimestamp: Instant? = uiState.lastUpdateTimestamp,
         isCache: Boolean = uiState.isCache,
+        expandedFolders: Map<String, DocumentsPage> = uiState.expandedFolders,
+        loadingFolders: Set<String> = uiState.loadingFolders,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     ){
         uiState = uiState.copy(
@@ -159,6 +190,8 @@ class DocumentsViewModel @Inject constructor(
             documentsPage = documentsPage,
             lastUpdateTimestamp = lastUpdateTimestamp,
             isCache = isCache,
+            expandedFolders = expandedFolders,
+            loadingFolders = loadingFolders,
             snackBarMessageEvent = snackBarMessageEvent
         )
     }
