@@ -16,7 +16,4 @@ class DocumentsRepositoryImpl @Inject constructor(
     
     override suspend fun getDocumentsPage(path: String): DocumentsPage = 
         client.getDocumentsPage(path)
-    
-    override suspend fun getDocumentFolder(path: Path) : DocumentFolder = client.getDocumentsPage().documents.find { it.path == path.toString() } as DocumentFolder
-    override suspend fun getDocument(path: Path): DocumentFile = client.getDocumentsPage().documents.find { it.path == path.toString() } as DocumentFile
 }

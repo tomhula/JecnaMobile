@@ -10,6 +10,4 @@ interface DocumentsRepository
 {
     suspend fun getDocumentsPage(): DocumentsPage
     suspend fun getDocumentsPage(path: String): DocumentsPage
-    suspend fun getDocument(path: Path): DocumentFile
-    suspend fun getDocumentFolder(path: Path): DocumentFolder
 }

@@ -23,6 +23,7 @@ import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.document.DocumentsPage
+import io.ktor.http.Cookie
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
@@ -90,9 +91,9 @@ class DocumentsViewModel @Inject constructor(
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
             setMimeType(getMimeTypeByExtension(extension))
             
-            val sessionCookie = (jecnaClient as WebJecnaClient).getSessionCookie()
+            val sessionCookie = jecnaClient.getSessionCookie()
             if (sessionCookie != null) {
-                addRequestHeader("Cookie", sessionCookie.toString())
+                addRequestHeader("Cookie", sessionCookie.toHeaderString())
             }
         }
 
@@ -142,9 +143,7 @@ class DocumentsViewModel @Inject constructor(
     private fun getMimeTypeByExtension(extension: String) =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "*/*"
 
-    private data class Cookie(val name: String, val value: String) {
-        fun toHeaderString() = "$name=$value"
-    }
+    private fun Cookie.toHeaderString() = "$name=$value"
     
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
     
