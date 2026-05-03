@@ -58,6 +58,7 @@ class FolderViewModel @Inject constructor(
     private var folderPath: String = ""
     
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+    private var downloadReceiverRegistered = false
 
     private val downloadFinishedBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
@@ -81,16 +82,24 @@ class FolderViewModel @Inject constructor(
     
     override fun enteredComposition() {
         super.enteredComposition()
+        if (downloadReceiverRegistered)
+            return
+
         appContext.registerReceiver(
             downloadFinishedBroadcastReceiver,
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             Context.RECEIVER_NOT_EXPORTED
         )
+        downloadReceiverRegistered = true
     }
 
     override fun leftComposition() {
         super.leftComposition()
+        if (!downloadReceiverRegistered)
+            return
+
         appContext.unregisterReceiver(downloadFinishedBroadcastReceiver)
+        downloadReceiverRegistered = false
     }
     
     fun downloadAndOpenDocument(path: String) = viewModelScope.launch {

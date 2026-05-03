@@ -26,6 +26,7 @@ abstract class SubScreenViewModel<T>(
     open val noInternetConnectionMessage: String = appContext.getString(R.string.no_internet_connection)
     
     var loadRealJob: Job? = null
+    private var loginBroadcastReceiverRegistered = false
     
     protected open val loginBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val first = intent.getBooleanExtra(JecnaMobileApplication.SUCCESSFUL_LOGIN_FIRST_EXTRA, false)
@@ -44,16 +45,24 @@ abstract class SubScreenViewModel<T>(
     
     protected fun registerLoginBroadcastReceiver()
     {
+        if (loginBroadcastReceiverRegistered)
+            return
+
         appContext.registerReceiver(
             loginBroadcastReceiver,
             IntentFilter(JecnaMobileApplication.SUCCESSFUL_LOGIN_ACTION),
             Context.RECEIVER_NOT_EXPORTED
         )
+        loginBroadcastReceiverRegistered = true
     }
     
     protected fun unregisterLoginBroadcastReceiver()
     {
+        if (!loginBroadcastReceiverRegistered)
+            return
+
         appContext.unregisterReceiver(loginBroadcastReceiver)
+        loginBroadcastReceiverRegistered = false
     }
 
     open fun enteredComposition()
