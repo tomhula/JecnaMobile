@@ -48,7 +48,6 @@ class DocumentsViewModel @Inject constructor(
         private set
     
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-    private var downloadReceiverRegistered = false
 
     private val downloadFinishedBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
