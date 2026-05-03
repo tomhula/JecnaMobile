@@ -1,11 +1,11 @@
-package me.tomasan7.jecnamobile.documents
+package me.tomasan7.jecnamobile.documents.folder
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FolderOpen
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Description
 import androidx.compose.material.icons.outlined.FolderOpen
 import androidx.compose.material3.*
@@ -22,19 +22,25 @@ import io.github.tomhula.jecnaapi.data.document.DocumentFile
 import io.github.tomhula.jecnaapi.data.document.DocumentFolder
 import io.github.tomhula.jecnaapi.data.document.SchoolDocument
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
-import me.tomasan7.jecnamobile.ui.component.*
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
-import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DocumentsSubScreen(
-    onFolderClick: (String) -> Unit = {},
-    viewModel: DocumentsViewModel = hiltViewModel()
+fun FolderScreen(
+    path: String,
+    onBackClick: () -> Unit,
+    onFolderClick: (String) -> Unit,
+    viewModel: FolderViewModel = hiltViewModel(),
 )
 {
-    SubScreenViewModelHook(viewModel)
+    SubScreenViewModelHook(
+        key = path,
+        onEnter = {
+            viewModel.setFolderPath(path)
+            viewModel.enteredComposition()
+        },
+        onLeave = viewModel::leftComposition
+    )
 
     val uiState = viewModel.uiState
     val snackbarHostState = remember { SnackbarHostState() }
@@ -47,16 +53,7 @@ fun DocumentsSubScreen(
     }
 
     Scaffold(
-        topBar = {
-            SubScreenTopAppBar(R.string.sidebar_documents, LocalNavDrawerHandle.current) {
-                OfflineDataIndicator(
-                    modifier = Modifier.padding(end = 16.dp),
-                    underlyingIcon = NavDrawerDestination.Documents.iconSelected,
-                    lastUpdateTimestamp = uiState.lastUpdateTimestamp,
-                    visible = uiState.isCache
-                )
-            }
-        },
+        topBar = { TopAppBar(label = path, onBackClick = onBackClick) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         LinearPullToRefreshBox(
@@ -97,6 +94,29 @@ fun DocumentsSubScreen(
             }
         }
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun TopAppBar(
+    label: String,
+    onBackClick: () -> Unit
+)
+{
+    CenterAlignedTopAppBar(
+        title = {
+            Text(
+                text = label,
+                maxLines = 1,
+                style = MaterialTheme.typography.headlineSmall
+            )
+        },
+        navigationIcon = {
+            IconButton(onClick = onBackClick) {
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = null)
+            }
+        }
+    )
 }
 
 @Composable
