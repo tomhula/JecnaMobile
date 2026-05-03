@@ -33,12 +33,12 @@ fun FolderScreen(
     viewModel: FolderViewModel = hiltViewModel(),
 )
 {
+    // Update folderPath whenever it changes (from parameter)
+    viewModel.setFolderPath(path)
+    
     SubScreenViewModelHook(
-        key = path,
-        onEnter = {
-            viewModel.setFolderPath(path)
-            viewModel.enteredComposition()
-        },
+        key = viewModel,
+        onEnter = viewModel::enteredComposition,
         onLeave = viewModel::leftComposition
     )
 
