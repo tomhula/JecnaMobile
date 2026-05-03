@@ -91,8 +91,8 @@ class DocumentsViewModel @Inject constructor(
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
             setMimeType(getMimeTypeByExtension(extension))
+
             addRequestHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0")
-            addRequestHeader("Accept-Language", "en-US,en;q=0.9")
             
             val sessionCookie = jecnaClient.getSessionCookie()
             if (sessionCookie != null) {
@@ -151,13 +151,30 @@ class DocumentsViewModel @Inject constructor(
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
     
     fun toggleFolderExpansion(folderPath: String) {
+        if (uiState.loadingFolders.contains(folderPath))
+            return
+
         if (uiState.expandedFolders.containsKey(folderPath)) {
-            // Already expanded, collapse it
-            changeUiState(expandedFolders = uiState.expandedFolders - folderPath)
-        } else {
-            // Not expanded, fetch and expand
-            fetchFolderContents(folderPath)
+            collapseFolderExpansion(folderPath)
+            return
         }
+
+        fetchFolderContents(folderPath)
+    }
+
+    private fun collapseFolderExpansion(folderPath: String) {
+        val normalizedFolderPath = folderPath.trimEnd('/')
+        val descendantPrefix = "$normalizedFolderPath/"
+
+        changeUiState(
+            expandedFolders = uiState.expandedFolders.filterKeys { expandedFolderPath ->
+                expandedFolderPath != normalizedFolderPath && !expandedFolderPath.startsWith(descendantPrefix)
+            },
+            loadingFolders = uiState.loadingFolders.filterNot { loadingFolderPath ->
+                loadingFolderPath != normalizedFolderPath && loadingFolderPath.startsWith(descendantPrefix) ||
+                    loadingFolderPath == normalizedFolderPath
+            }.toSet()
+        )
     }
     
     private fun fetchFolderContents(folderPath: String) {
@@ -166,6 +183,11 @@ class DocumentsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val folderContents = repository.getDocumentsPage(folderPath)
+                if (!uiState.expandedFolders.containsKey(folderPath)) {
+                    changeUiState(loadingFolders = uiState.loadingFolders - folderPath)
+                    return@launch
+                }
+
                 changeUiState(
                     expandedFolders = uiState.expandedFolders + (folderPath to folderContents),
                     loadingFolders = uiState.loadingFolders - folderPath
