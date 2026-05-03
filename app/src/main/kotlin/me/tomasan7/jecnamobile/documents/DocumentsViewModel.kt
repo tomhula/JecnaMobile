@@ -91,6 +91,8 @@ class DocumentsViewModel @Inject constructor(
             setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
             setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename)
             setMimeType(getMimeTypeByExtension(extension))
+            addRequestHeader("User-Agent", "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0")
+            addRequestHeader("Accept-Language", "en-US,en;q=0.9")
             
             val sessionCookie = jecnaClient.getSessionCookie()
             if (sessionCookie != null) {
