@@ -3,7 +3,7 @@ plugin-android = "9.1.0"
 plugin-kotlin = "2.3.20"
 plugin-ksp = "2.3.6"
 
-jecnaAPI = "10.1.0"
+jecnaAPI = "10.3.0"
 jecnaSupl = "0.2.3"
 jna = "5.18.1"
 
@@ -27,7 +27,9 @@ serialization = "1.10.0"
 serialization-parcelable = "0.9.0"
 
 [libraries]
-jecnaAPI = { module = "io.github.tomhula:jecnaapi", version.ref = "jecnaAPI" }
+jecnaAPI-core = { module = "io.github.tomhula:jecnaapi-core", version.ref = "jecnaAPI" }
+jecnaAPI-jecna = { module = "io.github.tomhula:jecnaapi-jecna", version.ref = "jecnaAPI" }
+jecnaAPI-canteen = { module = "io.github.tomhula:jecnaapi-canteen", version.ref = "jecnaAPI" }
 jecnaSupl-client = { module = "cz.jzitnik:jecna-supl-client", version.ref = "jecnaSupl" }
 jecnaSupl-android = { module = "cz.jzitnik:jecna-supl-client-android", version.ref = "jecnaSupl" }
 

@@ -62,7 +62,9 @@ dependencies {
             type = "aar"
         }
     }
-    implementation(libs.jecnaAPI)
+    implementation(libs.jecnaAPI.core)
+    implementation(libs.jecnaAPI.jecna)
+    implementation(libs.jecnaAPI.canteen)
 
     implementation(platform(libs.compose.android.bom))
     debugImplementation(libs.compose.ui.tooling)
