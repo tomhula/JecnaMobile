@@ -14,7 +14,7 @@ composeHtml = "1.0.2"
 composeCoil = "2.7.0"
 accompanist = "0.37.3"
 nav3Core = "1.1.2"
-composeReorderable = "3.0.0"
+composeReorderable = "3.1.0"
 
 activity = "1.13.0"
 
