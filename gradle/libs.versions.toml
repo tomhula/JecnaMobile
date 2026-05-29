@@ -18,8 +18,8 @@ composeReorderable = "3.0.0"
 
 activity = "1.13.0"
 
-koin-bom = "4.2.0"
-koin-plugin = "0.4.1"
+koin-bom = "4.2.1"
+koin-plugin = "1.0.0"
 
 work = "2.11.1"
 datastore = "1.2.1"
