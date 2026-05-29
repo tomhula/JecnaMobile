@@ -12,7 +12,7 @@ import io.github.tomhula.jecnaapi.util.SchoolYear
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.caching.CacheRepository
+import me.tomasan7.jecnamobile.di.AbsencesCacheRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -21,7 +21,7 @@ import kotlin.time.Instant
 class AbsencesViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<AbsencesPage, SchoolYear>
+    repository: AbsencesCacheRepository
 ) : SubScreenCacheViewModel<AbsencesPage, SchoolYear>(appContext, loginStateProvider, repository) 
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_absences)

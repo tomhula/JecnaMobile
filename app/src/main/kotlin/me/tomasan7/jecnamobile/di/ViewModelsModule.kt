@@ -16,26 +16,24 @@ import me.tomasan7.jecnamobile.substitutions.SubstitutionViewModel
 import me.tomasan7.jecnamobile.teachers.TeachersViewModel
 import me.tomasan7.jecnamobile.teachers.teacher.TeacherViewModel
 import me.tomasan7.jecnamobile.timetable.TimetableViewModel
-import org.koin.core.module.dsl.viewModel
-import org.koin.core.module.dsl.viewModelOf
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.viewModel
 
 internal val viewModelsModule = module {
-    viewModel { NewsViewModel(get(), get(), get(named("news")), get()) }
-    viewModel { AbsencesViewModel(get(), get(), get(named("absences"))) }
-    viewModel { AttendancesViewModel(get(), get(), get(named("attendances"))) }
-    viewModelOf(::CanteenViewModel)
-    viewModel { GradesViewModel(get(), get(), get(named("grades")), get()) }
-    viewModelOf(::LoginViewModel)
-    viewModelOf(::MainScreenViewModel)
-    viewModelOf(::RoomsViewModel)
-    viewModelOf(::RoomViewModel)
-    viewModelOf(::SettingsViewModel)
-    viewModelOf(::StudentProfileViewModel)
-    viewModelOf(::StudentCertificatesViewModel)
-    viewModelOf(::SubstitutionViewModel)
-    viewModelOf(::TeachersViewModel)
-    viewModelOf(::TeacherViewModel)
-    viewModel { TimetableViewModel(get(), get(), get(named("timetable")), get()) }
+    viewModel<NewsViewModel>()
+    viewModel<AbsencesViewModel>()
+    viewModel<AttendancesViewModel>()
+    viewModel<CanteenViewModel>()
+    viewModel<GradesViewModel>()
+    viewModel<LoginViewModel>()
+    viewModel<MainScreenViewModel>()
+    viewModel<RoomsViewModel>()
+    viewModel<RoomViewModel>()
+    viewModel<SettingsViewModel>()
+    viewModel<StudentProfileViewModel>()
+    viewModel<StudentCertificatesViewModel>()
+    viewModel<SubstitutionViewModel>()
+    viewModel<TeachersViewModel>()
+    viewModel<TeacherViewModel>()
+    viewModel<TimetableViewModel>()
 }

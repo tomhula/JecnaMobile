@@ -19,8 +19,8 @@ import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
+import me.tomasan7.jecnamobile.di.GradesCacheRepository
 import me.tomasan7.jecnamobile.settings.Settings
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.settingsDataStore
@@ -31,7 +31,7 @@ import kotlin.time.Instant
 class GradesViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<GradesPage, SchoolYearHalfParams>,
+    repository: GradesCacheRepository,
     private val jecnaClient: JecnaClient
 ) : SubScreenCacheViewModel<GradesPage, SchoolYearHalfParams>(appContext, loginStateProvider, repository)
 {

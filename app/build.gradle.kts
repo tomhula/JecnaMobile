@@ -3,7 +3,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.serialization)
     alias(libs.plugins.ksp)
-    // alias(libs.plugins.koin.compiler)
+    alias(libs.plugins.koin.compiler)
 }
 
 kotlin {

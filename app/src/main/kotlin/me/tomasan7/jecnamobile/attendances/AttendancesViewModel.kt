@@ -13,8 +13,8 @@ import kotlinx.datetime.Month
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.di.AttendancesCacheRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import kotlin.time.Clock
 import kotlin.time.Instant
@@ -23,7 +23,7 @@ import kotlin.time.Instant
 class AttendancesViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<AttendancesPage, SchoolYearMonthParams>
+    repository: AttendancesCacheRepository
 ) : SubScreenCacheViewModel<AttendancesPage, SchoolYearMonthParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_attendances)

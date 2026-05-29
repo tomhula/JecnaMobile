@@ -29,8 +29,8 @@ import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.NoParams
+import me.tomasan7.jecnamobile.di.NewsCacheRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
@@ -41,7 +41,7 @@ import kotlin.time.Instant
 class NewsViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<NewsPage, NoParams>,
+    repository: NewsCacheRepository,
     private val jecnaClient: JecnaClient
 ) : SubScreenCacheViewModel<NewsPage, NoParams>(appContext, loginStateProvider, repository)
 {

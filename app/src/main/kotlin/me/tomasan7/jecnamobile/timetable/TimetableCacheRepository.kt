@@ -1,22 +1,29 @@
 package me.tomasan7.jecnamobile.timetable
 
 import android.content.Context
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlin.time.Clock
 
 class TimetableCacheRepository(
-    key: String,
-    appContext: Context,
-    fetcher: suspend (SchoolYearPeriodParams) -> TimetableData
+    repository: TimetableRepository,
+    context: Context,
 ) : CacheRepository<TimetableData, SchoolYearPeriodParams>(
-    appContext,
-    key,
-    serializer<TimetableData>(),
-    serializer<SchoolYearPeriodParams>(),
-    fetcher
+    appContext = context,
+    key = "timetable",
+    dataSerializer = serializer<TimetableData>(),
+    paramsSerializer = serializer<SchoolYearPeriodParams>(),
+    fetcher = {
+        val settings = context.settingsDataStore.data.first()
+        if (it.periodId == SchoolYearPeriodParams.CURRENT_PERIOD_ID)
+            repository.getTimetableData(it.schoolYear, null as Int?, settings.substitutionTimetableEnabled)
+        else
+            repository.getTimetableData(it.schoolYear, it.periodId, settings.substitutionTimetableEnabled)
+    }
 )
 {
     override suspend fun getCache(params: SchoolYearPeriodParams): CachedDataNew<TimetableData, SchoolYearPeriodParams>?

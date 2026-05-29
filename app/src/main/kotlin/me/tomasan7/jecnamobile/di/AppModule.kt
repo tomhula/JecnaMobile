@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile.di
 
+import android.content.Context
 import cz.jzitnik.jecna_supl_client.JecnaSuplClient
 import io.github.tomhula.jecnaapi.CanteenClient
 import io.github.tomhula.jecnaapi.JecnaClient
@@ -11,30 +12,23 @@ import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeCheckerImpl
 import me.tomasan7.jecnamobile.util.settingsDataStore
-import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.workmanager.dsl.worker
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.qualifier.named
-import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.create
+import org.koin.plugin.module.dsl.bind
+import org.koin.plugin.module.dsl.single
 import kotlin.time.Duration.Companion.seconds
 
 internal val appModule = module {
-    // TODO: Migrate every Koin definition to compiler DSL: https://github.com/InsertKoinIO/koin/issues/2390
     includes(repositoriesModule, cacheRepositoriesModule, viewModelsModule)
     
-    single { JecnaClient(autoLogin = true, userAgent = "JM", requestTimeout = 15.seconds) } bind JecnaClient::class
-    single { CanteenClient(autoLogin = true, userAgent = "JM") } bind CanteenClient::class
-    single {
-        JecnaSuplClient().apply {
-            setProvider(runBlocking {
-                androidContext().settingsDataStore.data.first().substitutionServerUrl.trim()
-            })
-        }
-    }
+    single { create(::jecnaClient) }
+    single { create(::canteenClient) }
+    single { create(::jecnaSuplClient) }
     
-    singleOf(::JecnaClientLoginStateProvider) bind LoginStateProvider::class
-    singleOf(::GradesChangeCheckerImpl) bind GradesChangeChecker::class
+    single<JecnaClientLoginStateProvider>().bind(LoginStateProvider::class)
+    single<GradesChangeCheckerImpl>().bind(GradesChangeChecker::class)
     
     worker { params ->
         GradeCheckerWorker(
@@ -46,4 +40,15 @@ internal val appModule = module {
             gradeChangeChecker = GradesChangeCheckerImpl()
         ) 
     }
+}
+
+private fun jecnaClient(): JecnaClient = JecnaClient(autoLogin = true, userAgent = "JM", requestTimeout = 15.seconds)
+private fun canteenClient(): CanteenClient = CanteenClient(autoLogin = true, userAgent = "JM")
+private fun jecnaSuplClient(context: Context): JecnaSuplClient
+{
+    val jecnaSuplClient = JecnaSuplClient()
+    runBlocking {
+        jecnaSuplClient.setProvider(context.settingsDataStore.data.first().substitutionServerUrl.trim())
+    }
+    return jecnaSuplClient
 }

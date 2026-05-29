@@ -18,18 +18,18 @@ import me.tomasan7.jecnamobile.teachers.TeachersRepository
 import me.tomasan7.jecnamobile.teachers.TeachersRepositoryImpl
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepositoryImpl
-import org.koin.core.module.dsl.singleOf
-import org.koin.dsl.bind
 import org.koin.dsl.module
+import org.koin.plugin.module.dsl.bind
+import org.koin.plugin.module.dsl.single
 
 internal val repositoriesModule = module {
-    singleOf(::ObfuscationSharedPreferencesAuthRepository) bind AuthRepository::class
-    singleOf(::GradesRepositoryImpl) bind GradesRepository::class
-    singleOf(::TimetableRepositoryImpl) bind TimetableRepository::class
-    singleOf(::NewsRepositoryImpl) bind NewsRepository::class
-    singleOf(::AttendancesRepositoryImpl) bind AttendancesRepository::class
-    singleOf(::TeachersRepositoryImpl) bind TeachersRepository::class
-    singleOf(::AbsencesRepositoryImpl) bind AbsencesRepository::class
-    singleOf(::StudentProfileRepositoryImpl) bind StudentProfileRepository::class
-    singleOf(::RoomsRepositoryImpl) bind RoomsRepository::class
+    single<ObfuscationSharedPreferencesAuthRepository>().bind(AuthRepository::class)
+    single<GradesRepositoryImpl>().bind(GradesRepository::class)
+    single<TimetableRepositoryImpl>().bind(TimetableRepository::class)
+    single<NewsRepositoryImpl>().bind(NewsRepository::class)
+    single<AttendancesRepositoryImpl>().bind(AttendancesRepository::class)
+    single<TeachersRepositoryImpl>().bind(TeachersRepository::class)
+    single<AbsencesRepositoryImpl>().bind(AbsencesRepository::class)
+    single<StudentProfileRepositoryImpl>().bind(StudentProfileRepository::class)
+    single<RoomsRepositoryImpl>().bind(RoomsRepository::class)
 }

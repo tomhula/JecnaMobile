@@ -25,7 +25,7 @@ import kotlin.time.Instant
 class TimetableViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: CacheRepository<TimetableData, SchoolYearPeriodParams>,
+    repository: TimetableCacheRepository,
     private val timetableRepository: TimetableRepository
 ) : SubScreenCacheViewModel<TimetableData, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
