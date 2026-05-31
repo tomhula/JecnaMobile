@@ -1,20 +1,17 @@
 package me.tomasan7.jecnamobile.di
 
 import android.content.Context
+import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.serializer
-import me.tomasan7.jecnamobile.absence.AbsencesRepository
-import me.tomasan7.jecnamobile.attendances.AttendancesRepository
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.caching.SchoolYearMonthParams
-import me.tomasan7.jecnamobile.grades.GradesRepository
-import me.tomasan7.jecnamobile.news.NewsRepository
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
@@ -27,38 +24,38 @@ internal val cacheRepositoriesModule = module {
     single<AbsencesCacheRepository>()
 }
 
-class AttendancesCacheRepository(repository: AttendancesRepository, context: Context) :
+class AttendancesCacheRepository(jecnaClient: JecnaClient, context: Context) :
     CacheRepository<AttendancesPage, SchoolYearMonthParams>(
         appContext = context,
         key = "attendances",
         dataSerializer = serializer<AttendancesPage>(),
         paramsSerializer = serializer<SchoolYearMonthParams>(),
-        fetcher = { repository.getAttendancesPage(it.schoolYear, it.month) }
+        fetcher = { jecnaClient.getAttendancesPage(it.schoolYear, it.month) }
     )
 
-class NewsCacheRepository(repository: NewsRepository, context: Context) :
+class NewsCacheRepository(jecnaClient: JecnaClient, context: Context) :
     CacheRepository<NewsPage, NoParams>(
         appContext = context,
         key = "news",
         dataSerializer = serializer<NewsPage>(),
         paramsSerializer = serializer<NoParams>(),
-        fetcher = { repository.getNewsPage() }
+        fetcher = { jecnaClient.getNewsPage() }
     )
 
-class GradesCacheRepository(repository: GradesRepository, context: Context) :
+class GradesCacheRepository(jecnaClient: JecnaClient, context: Context) :
     CacheRepository<GradesPage, SchoolYearHalfParams>(
         appContext = context,
         key = "grades",
         dataSerializer = serializer<GradesPage>(),
         paramsSerializer = serializer<SchoolYearHalfParams>(),
-        fetcher = { repository.getGradesPage(it.schoolYear, it.schoolYearHalf) }
+        fetcher = { jecnaClient.getGradesPage(it.schoolYear, it.schoolYearHalf) }
     )
 
-class AbsencesCacheRepository(repository: AbsencesRepository, context: Context) :
+class AbsencesCacheRepository(jecnaClient: JecnaClient, context: Context) :
     CacheRepository<AbsencesPage, SchoolYear>(
         appContext = context,
         key = "absences",
         dataSerializer = serializer<AbsencesPage>(),
         paramsSerializer = serializer<SchoolYear>(),
-        fetcher = { repository.getAbsencesPage(it) }
+        fetcher = { jecnaClient.getAbsencesPage(it) }
     )

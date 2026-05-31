@@ -23,7 +23,6 @@ import me.tomasan7.jecnamobile.SubScreenViewModel
 class StudentProfileViewModel(
     appContext: Context,
     private val jecnaClient: JecnaClient,
-    private val repository: StudentProfileRepository
 ) : SubScreenViewModel<Student>(appContext)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_student_profile)
@@ -38,7 +37,7 @@ class StudentProfileViewModel(
         loadLocker()
     }
     
-    override suspend fun fetchRealData() = repository.getCurrentStudent()
+    override suspend fun fetchRealData() = jecnaClient.getStudentProfile()
     
     override fun setDataUiState(data: Student) = changeUiState(student = data)
     
@@ -56,7 +55,7 @@ class StudentProfileViewModel(
         viewModelScope.launch {
             try
             {
-                val locker = repository.getLocker()
+                val locker = jecnaClient.getLocker()
                 if (locker == null) {
                     changeUiState(locker = null, lockerError = appContext.getString(R.string.profile_locker_load_error))
                 } else {

@@ -19,7 +19,7 @@ import kotlin.time.Clock
 
 class SubstitutionViewModel(
     context: Context,
-    private val repository: TimetableRepository
+    private val jecnaClient: TimetableRepository
 ) : SubScreenViewModel<SubstitutionAllData>(context)
 {
     override val parseErrorMessage = context.getString(R.string.substitution_all_load_error)
@@ -28,7 +28,7 @@ class SubstitutionViewModel(
     var uiState by mutableStateOf(SubstitutionState())
         private set
 
-    override suspend fun fetchRealData() = repository.getAllSubstitutions()
+    override suspend fun fetchRealData() = jecnaClient.getAllSubstitutions()
 
     override fun setDataUiState(data: SubstitutionAllData)
     {
@@ -65,7 +65,7 @@ class SubstitutionViewModel(
     fun reportError(content: String, location: ReportLocation, onFinished: () -> Unit)
     {
         viewModelScope.launch {
-            repository.reportSubstitutionError(content, location)
+            jecnaClient.reportSubstitutionError(content, location)
                 .onSuccess {
                     showSnackBarMessage(appContext.getString(R.string.report_success))
                 }

@@ -16,13 +16,11 @@ import io.ktor.http.*
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
-import me.tomasan7.jecnamobile.teachers.TeachersRepository
 
 
 class TeacherViewModel(
     appContext: Context,
     private val jecnaClient: JecnaClient,
-    private val repository: TeachersRepository
 ) : SubScreenViewModel<Teacher>(appContext)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_teacher)
@@ -43,7 +41,7 @@ class TeacherViewModel(
 
     override fun setDataUiState(data: Teacher) = changeUiState(teacher = data)
     
-    override suspend fun fetchRealData() = repository.getTeacher(teacherReference)
+    override suspend fun fetchRealData() = jecnaClient.getTeacher(teacherReference)
     
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)

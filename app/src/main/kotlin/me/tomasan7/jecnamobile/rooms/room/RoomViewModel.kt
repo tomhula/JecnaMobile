@@ -7,16 +7,16 @@ import androidx.compose.runtime.setValue
 import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
+import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.room.Room
 import io.github.tomhula.jecnaapi.data.room.RoomReference
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
-import me.tomasan7.jecnamobile.rooms.RoomsRepository
 
 
 class RoomViewModel(
     appContext: Context,
-    private val repository: RoomsRepository
+    private val jecnaClient: JecnaClient
 ) : SubScreenViewModel<Room>(appContext)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_room)
@@ -35,7 +35,7 @@ class RoomViewModel(
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
 
-    override suspend fun fetchRealData(): Room = repository.getRoom(roomReference)
+    override suspend fun fetchRealData(): Room = jecnaClient.getRoom(roomReference)
 
     override fun setDataUiState(data: Room) = changeUiState(room = data)
 
