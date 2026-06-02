@@ -237,6 +237,15 @@ fun TimetableSubScreen(
                                     end = 8.dp,
                                     bottom = if (takesPlaceText != null) 8.dp else 0.dp
                                 )
+
+                                uiState.substitutions.announcements?.let {
+                                    AnnouncementsSection(
+                                        announcements = it,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        targetDate = targetDate
+                                    )
+                                }
+                                
                                 ExpandableSection(
                                     title = stringResource(R.string.sidebar_link_substitution_timetable),
                                     modifier = Modifier.fillMaxWidth(),

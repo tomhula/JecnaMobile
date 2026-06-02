@@ -146,6 +146,16 @@ fun SubstitutionSubScreen(
                         )
                     }
 
+                    uiState.selectedDate?.let { selectedDate ->
+                        if (uiState.data.announcements.isNotEmpty()) {
+                            AnnouncementsSection(
+                                announcements = uiState.data.announcements,
+                                modifier = Modifier.fillMaxWidth(),
+                                targetDate = kotlinx.datetime.LocalDate.parse(selectedDate.date.toString())
+                            )
+                        }
+                    }
+
                     val selectedDayData = uiState.data.schedule[uiState.selectedDate?.key]
                     if (selectedDayData != null)
                     {
