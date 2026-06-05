@@ -66,9 +66,10 @@ class TimetableRepositoryImpl(
             substitutionClient.getSchedule(className)
         }
         return SubstitutionData(
-            subs.status.lastUpdated,
-            subs.status.currentUpdateSchedule.toInt(),
-            subs.schedule.map { (date, schedule) -> schedule.toDailySchedule(date) }
+            lastUpdated = subs.status.lastUpdated,
+            currentUpdateSchedule = subs.status.currentUpdateSchedule.toInt(),
+            data = subs.schedule.map { (date, schedule) -> schedule.toDailySchedule(date) },
+            announcements = subs.annoucements.mapValues { it.value.map { a -> a.toAnnouncement() } }
         )
     }
 

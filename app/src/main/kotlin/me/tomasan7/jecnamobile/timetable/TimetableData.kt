@@ -5,6 +5,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import cz.jzitnik.jecna_supl_client.AbsenceEntry as JecnaAbsenceEntry
 import cz.jzitnik.jecna_supl_client.ApiResponse as JecnaApiResponse
+import cz.jzitnik.jecna_supl_client.Announcement as JecnaAnnouncement
+import cz.jzitnik.jecna_supl_client.AnnouncementFlag as JecnaAnnouncementFlag
 import cz.jzitnik.jecna_supl_client.ChangeEntry as JecnaChangeEntry
 import cz.jzitnik.jecna_supl_client.DailyData as JecnaDailyData
 import cz.jzitnik.jecna_supl_client.DailySchedule as JecnaDailySchedule
@@ -19,7 +21,8 @@ data class TimetableData(
 data class SubstitutionAllData(
     val lastUpdated: String,
     val currentUpdateSchedule: Int,
-    val schedule: Map<String, GlobalDailyData>
+    val schedule: Map<String, GlobalDailyData>,
+    val announcements: Map<String, List<Announcement>> = emptyMap()
 )
 
 @Serializable
@@ -111,10 +114,33 @@ data class SubstituteInfo(
     val teacherCode: String
 )
 
+@Serializable
+data class Announcement(
+    val id: Int,
+    val author: String,
+    val createdAt: String,
+    val startDate: String,
+    val endDate: String,
+    val textContent: String?,
+    val flags: List<AnnouncementFlag>
+)
+
+@Serializable
+sealed class AnnouncementFlag {
+    @Serializable
+    @SerialName("SHOW_ALL_ENTRIES")
+    data object ShowAllEntries : AnnouncementFlag()
+
+    @Serializable
+    @SerialName("Unknown")
+    data class Unknown(val v1: String) : AnnouncementFlag()
+}
+
 fun JecnaApiResponse.toSubstitutionAllData() = SubstitutionAllData(
     lastUpdated = status.lastUpdated,
     currentUpdateSchedule = status.currentUpdateSchedule.toInt(),
-    schedule = schedule.mapValues { it.value.toGlobalDailyData() }
+    schedule = schedule.mapValues { it.value.toGlobalDailyData() },
+    announcements = announcements.mapValues { it.value.map { a -> a.toAnnouncement() } }
 )
 
 fun JecnaDailyData.toGlobalDailyData() = GlobalDailyData(
@@ -139,6 +165,21 @@ fun JecnaChangeEntry.toChangeEntry() = ChangeEntry(
     willBeSpecified = willBeSpecified
 )
 
+fun JecnaAnnouncementFlag.toAnnouncementFlag(): AnnouncementFlag = when (this) {
+    is JecnaAnnouncementFlag.ShowAllEntries -> AnnouncementFlag.ShowAllEntries
+    is JecnaAnnouncementFlag.Unknown -> AnnouncementFlag.Unknown(v1)
+}
+
+fun JecnaAnnouncement.toAnnouncement() = Announcement(
+    id = id,
+    author = author,
+    createdAt = createdAt,
+    startDate = startDate,
+    endDate = endDate,
+    textContent = textContent,
+    flags = flags.map { it.toAnnouncementFlag() }
+)
+
 fun JecnaAbsenceEntry.toAbsenceEntry(): AbsenceEntry = when (this) {
     is JecnaAbsenceEntry.WholeDay -> AbsenceEntry.WholeDay(teacher, teacherCode)
     is JecnaAbsenceEntry.Single -> AbsenceEntry.Single(teacher, teacherCode, hours.toInt())
@@ -153,4 +194,5 @@ data class SubstitutionData(
     val lastUpdated: String,
     val currentUpdateSchedule: Int,
     val data: List<DailySchedule> = emptyList(),
+    val announcements: Map<String, List<Announcement>>? = null
 )
