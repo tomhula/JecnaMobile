@@ -5,6 +5,7 @@ import io.github.tomhula.jecnaapi.JecnaClient
 import io.github.tomhula.jecnaapi.data.absence.AbsencesPage
 import io.github.tomhula.jecnaapi.data.article.NewsPage
 import io.github.tomhula.jecnaapi.data.attendance.AttendancesPage
+import io.github.tomhula.jecnaapi.data.document.DocumentsPage
 import io.github.tomhula.jecnaapi.data.grade.GradesPage
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.serialization.serializer
@@ -22,7 +23,17 @@ internal val cacheRepositoriesModule = module {
     single<GradesCacheRepository>()
     single<TimetableCacheRepository>()
     single<AbsencesCacheRepository>()
+    single<DocumentsCacheRepository>()
 }
+
+class DocumentsCacheRepository(jecnaClient: JecnaClient, context: Context) :
+    CacheRepository<DocumentsPage, String>(
+        appContext = context,
+        key = "documents",
+        dataSerializer = serializer<DocumentsPage>(),
+        paramsSerializer = serializer<String>(),
+        fetcher = { jecnaClient.getDocumentsPage(it) }
+    )
 
 class AttendancesCacheRepository(jecnaClient: JecnaClient, context: Context) :
     CacheRepository<AttendancesPage, SchoolYearMonthParams>(

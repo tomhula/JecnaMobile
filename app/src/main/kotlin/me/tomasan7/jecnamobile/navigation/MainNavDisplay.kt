@@ -13,6 +13,7 @@ import androidx.navigation3.ui.NavDisplay
 import me.tomasan7.jecnamobile.absence.AbsencesSubScreen
 import me.tomasan7.jecnamobile.attendances.AttendancesSubScreen
 import me.tomasan7.jecnamobile.canteen.CanteenSubScreen
+import me.tomasan7.jecnamobile.documents.DocumentsSubScreen
 import me.tomasan7.jecnamobile.grades.GradesSubScreen
 import me.tomasan7.jecnamobile.news.NewsSubScreen
 import me.tomasan7.jecnamobile.rooms.RoomsSubScreen
@@ -69,6 +70,20 @@ fun MainNavDisplay(
             entry<AppDestination.Rooms> {
                 RoomsSubScreen(
                     onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
+                )
+            }
+            entry<AppDestination.Documents> {
+                DocumentsSubScreen(
+                    path = "/dokumenty",
+                    onNavigateToFolder = { navBackStack.add(AppDestination.DocumentsFolder(it)) }
+                )
+            }
+            entry<AppDestination.DocumentsFolder>(
+                metadata = metadata { slideTransitions() }
+            ) { key ->
+                DocumentsSubScreen(
+                    path = key.path,
+                    onNavigateToFolder = { navBackStack.add(AppDestination.DocumentsFolder(it)) }
                 )
             }
             entry<AppDestination.Substitution> {

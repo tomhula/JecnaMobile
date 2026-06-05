@@ -343,6 +343,13 @@
     <string name="profile_locker_present">součastnosti</string>
     <string name="rooms_load_error">Chyba při načítání učeben</string>
 
+    <!-- ##### Documents Screen ##### -->
+
+    <string name="sidebar_documents">Dokumenty</string>
+    <string name="documents_load_error">Při načítání dokumentů došlo k chybě.</string>
+    <string name="documents_parse_error">Dokumenty jsou v nepodporovaném formátu.</string>
+    <string name="documents_empty">Tato složka je prázdná.</string>
+
     <!-- ##### Rooms Screen ##### -->
 
     <string name="room_floor">Patro</string>
