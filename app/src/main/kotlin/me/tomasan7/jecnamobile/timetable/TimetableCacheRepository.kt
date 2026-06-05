@@ -35,9 +35,12 @@ class TimetableCacheRepository(
             return entireCache[params]
         
         val schoolYearTimetables = entireCache.filterKeys { it.schoolYear == params.schoolYear }
-        val mostRecentOne = schoolYearTimetables.maxByOrNull { entry ->
-            entry.value.data.page.periodOptions.find { it.selected }!!.from
-        }?.value ?: return null
+        
+        val maxFrom = schoolYearTimetables.maxOf { it.value.data.page.periodOptions.find { it.selected }!!.from }
+        val mostRecentOne = schoolYearTimetables
+            .filter { it.value.data.page.periodOptions.find { it.selected }!!.from == maxFrom }
+            .maxByOrNull { it.value.timestamp }
+            ?.value
         
         return mostRecentOne
     }
