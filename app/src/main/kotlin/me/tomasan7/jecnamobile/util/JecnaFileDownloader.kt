@@ -23,7 +23,7 @@ class JecnaFileDownloader(
 
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
-    private val broadcastReceiver = createBroadcastReceiver { _, intent ->
+    private val downloadCompleteBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
         if (downloadId == -1L) return@createBroadcastReceiver
         
@@ -72,7 +72,7 @@ class JecnaFileDownloader(
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
             Context.RECEIVER_EXPORTED else 0
         appContext.registerReceiver(
-            broadcastReceiver,
+            downloadCompleteBroadcastReceiver,
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
             flags
         )
@@ -81,7 +81,7 @@ class JecnaFileDownloader(
 
     fun unregister() {
         if (!isRegistered) return
-        runCatching { appContext.unregisterReceiver(broadcastReceiver) }
+        runCatching { appContext.unregisterReceiver(downloadCompleteBroadcastReceiver) }
         isRegistered = false
     }
 
