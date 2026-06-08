@@ -11,6 +11,7 @@ import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeChecker
 import me.tomasan7.jecnamobile.gradenotifications.change.GradesChangeCheckerImpl
+import me.tomasan7.jecnamobile.util.FileDownloader
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.core.qualifier.named
@@ -26,6 +27,8 @@ internal val appModule = module {
     single { create(::jecnaClient) }
     single { create(::canteenClient) }
     single { create(::jecnaSuplClient) }
+    
+    factory { params -> FileDownloader(get(), params.get(), get()) }
     
     single<JecnaClientLoginStateProvider>().bind(LoginStateProvider::class)
     single<GradesChangeCheckerImpl>().bind(GradesChangeChecker::class)
