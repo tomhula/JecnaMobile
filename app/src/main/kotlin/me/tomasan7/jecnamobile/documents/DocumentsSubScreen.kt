@@ -1,6 +1,8 @@
 package me.tomasan7.jecnamobile.documents
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,15 +17,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.tomhula.jecnaapi.JecnaClient
-import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.SubScreenViewModelHook
 import me.tomasan7.jecnamobile.ui.component.LinearPullToRefreshBox
 import me.tomasan7.jecnamobile.ui.component.SubScreenTopAppBar
-import me.tomasan7.jecnamobile.ui.component.OfflineDataIndicator
 import me.tomasan7.jecnamobile.navigation.LocalNavDrawerHandle
-import me.tomasan7.jecnamobile.navigation.NavDrawerDestination
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.di.DocumentsCacheRepository
 import me.tomasan7.jecnamobile.ui.ElevationLevel
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,16 +41,16 @@ import me.tomasan7.jecnamobile.ui.component.ObjectDialog
 import me.tomasan7.jecnamobile.ui.component.rememberObjectDialogState
 import org.koin.compose.koinInject
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DocumentsSubScreen(
     path: String = "/dokumenty",
     onNavigateToFolder: (String) -> Unit,
+    onBackClick: (() -> Unit)? = null,
 )
 {
     val appContext: Context = koinInject()
-    val loginStateProvider: LoginStateProvider = koinInject()
-    val repository: DocumentsCacheRepository = koinInject()
     val jecnaClient: JecnaClient = koinInject()
 
     val viewModel: DocumentsViewModel = viewModel(
@@ -63,8 +61,6 @@ fun DocumentsSubScreen(
                 DocumentsViewModel(
                     initialPath = path,
                     appContext = appContext,
-                    loginStateProvider = loginStateProvider,
-                    repository = repository,
                     jecnaClient = jecnaClient
                 ) as T
         }
@@ -93,14 +89,7 @@ fun DocumentsSubScreen(
         topBar = {
             if (isRoot)
             {
-                SubScreenTopAppBar(R.string.sidebar_documents, LocalNavDrawerHandle.current) {
-                    OfflineDataIndicator(
-                        modifier = Modifier.padding(end = 16.dp),
-                        underlyingIcon = NavDrawerDestination.Documents.iconSelected,
-                        lastUpdateTimestamp = uiState.lastUpdateTimestamp,
-                        visible = uiState.isCache
-                    )
-                }
+                SubScreenTopAppBar(R.string.sidebar_documents, LocalNavDrawerHandle.current)
             }
             else
             {
@@ -113,7 +102,7 @@ fun DocumentsSubScreen(
                     },
                     navigationIcon = {
                         IconButton(onClick = {
-                            onNavigateToFolder(uiState.documentsPage?.parentPath ?: "/dokumenty")
+                            onBackClick?.invoke()
                         }) {
                             Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = null)
                         }

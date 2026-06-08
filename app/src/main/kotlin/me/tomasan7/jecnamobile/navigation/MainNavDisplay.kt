@@ -83,7 +83,8 @@ fun MainNavDisplay(
             ) { key ->
                 DocumentsSubScreen(
                     path = key.path,
-                    onNavigateToFolder = { navBackStack.add(AppDestination.DocumentsFolder(it)) }
+                    onNavigateToFolder = { navBackStack.add(AppDestination.DocumentsFolder(it)) },
+                    onBackClick = onBack
                 )
             }
             entry<AppDestination.Substitution> {

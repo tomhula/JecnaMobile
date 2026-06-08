@@ -27,23 +27,16 @@ import io.github.tomhula.jecnaapi.data.document.DocumentsPage
 import io.ktor.http.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
-import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.di.DocumentsCacheRepository
-import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.SubScreenViewModel
 import me.tomasan7.jecnamobile.util.createBroadcastReceiver
 import java.io.File
-import kotlin.time.Clock
-import kotlin.time.Instant
 
 class DocumentsViewModel(
     private val initialPath: String,
     appContext: Context,
-    loginStateProvider: LoginStateProvider,
-    repository: DocumentsCacheRepository,
     private val jecnaClient: JecnaClient
-) : SubScreenCacheViewModel<DocumentsPage, String>(appContext, loginStateProvider, repository)
+) : SubScreenViewModel<DocumentsPage>(appContext)
 {
     override val parseErrorMessage = appContext.getString(R.string.documents_parse_error)
     override val loadErrorMessage = appContext.getString(R.string.documents_load_error)
@@ -58,32 +51,12 @@ class DocumentsViewModel(
         openDownloadedFile(downloadId)
     }
 
-    override fun getParams(): String
-    {
-        return initialPath
-    }
+    override suspend fun fetchRealData() = jecnaClient.getDocumentsPage(initialPath)
 
-    override fun setDataUiState(data: DocumentsPage)
-    {
-        changeUiState(
-            documentsPage = data,
-            lastUpdateTimestamp = Clock.System.now(),
-            isCache = false
-        )
-    }
+    override fun setDataUiState(data: DocumentsPage) = changeUiState(documentsPage = data)
 
-    override fun setCacheDataUiState(data: CachedDataNew<DocumentsPage, String>)
-    {
-        changeUiState(
-            documentsPage = data.data,
-            lastUpdateTimestamp = data.timestamp,
-            isCache = true
-        )
-    }
-
-    override fun getLastUpdateTimestamp() = uiState.lastUpdateTimestamp
-    override fun isCurrentlyShowingReal() = uiState.documentsPage != null && !uiState.isCache
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
+
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)
 
     fun onSnackBarMessageEventConsumed() = changeUiState(snackBarMessageEvent = consumed())
@@ -205,16 +178,12 @@ class DocumentsViewModel(
     private fun changeUiState(
         loading: Boolean = uiState.loading,
         documentsPage: DocumentsPage? = uiState.documentsPage,
-        lastUpdateTimestamp: Instant? = uiState.lastUpdateTimestamp,
-        isCache: Boolean = uiState.isCache,
         snackBarMessageEvent: StateEventWithContent<String> = uiState.snackBarMessageEvent,
     )
     {
         uiState = uiState.copy(
             loading = loading,
             documentsPage = documentsPage,
-            lastUpdateTimestamp = lastUpdateTimestamp,
-            isCache = isCache,
             snackBarMessageEvent = snackBarMessageEvent
         )
     }

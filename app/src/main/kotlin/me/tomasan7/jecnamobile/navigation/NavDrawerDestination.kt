@@ -42,5 +42,17 @@ enum class NavDrawerDestination(
     Absences(R.string.sidebar_absences, Icons.Outlined.EventBusy, Icons.Filled.EventBusy, AppDestination.Absences),
     Teachers(R.string.sidebar_teachers, Icons.Outlined.People, Icons.Filled.People, AppDestination.Teachers),
     Rooms(R.string.sidebar_rooms, Icons.Outlined.MeetingRoom, Icons.Filled.MeetingRoom, AppDestination.Rooms),
-    Documents(R.string.sidebar_documents, Icons.Outlined.Folder, Icons.Filled.Folder, AppDestination.Documents)
+    Documents(R.string.sidebar_documents, Icons.Outlined.Folder, Icons.Filled.Folder, AppDestination.Documents);
+
+    fun matches(currentDestination: AppDestination): Boolean
+    {
+        if (this.destination::class == currentDestination::class)
+            return true
+
+        return when (this)
+        {
+            Documents -> currentDestination is AppDestination.DocumentsFolder
+            else -> false
+        }
+    }
 }
