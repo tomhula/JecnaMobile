@@ -97,7 +97,8 @@ fun MainScreen(
                     )
 
                     destinationItems.forEach { item ->
-                        val selected = navBackStack.lastOrNull()?.let { item.matches(it) } ?: false
+                        /* Don't use instance equality check (===), the ::class is not a singleton and returns a different instance each time. */
+                        val selected = item.destination::class == navBackStack.lastOrNull()?.let { it::class }
                         DestinationItem(
                             item = item,
                             selected = selected,
