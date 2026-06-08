@@ -20,12 +20,17 @@ class JecnaFileDownloader(
     private val webJecnaClient: WebJecnaClient,
     private val onError: (message: String) -> Unit,
 ) {
-
+    /* Deliberately only storing the last one, because if downloads multiple files at once,
+    * they would then be overwhelmed by file open popups and not even know which popup corresponds to which file. */
+    private var lastDownloadId: Long? = null
+    
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     private val downloadCompleteBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        if (downloadId == -1L) return@createBroadcastReceiver
+        
+        if (downloadId != lastDownloadId) 
+            return@createBroadcastReceiver
         
         val query = DownloadManager.Query().setFilterById(downloadId)
         
@@ -105,7 +110,7 @@ class JecnaFileDownloader(
             addRequestHeader("Accept-Encoding", ACCEPT_ENCODING)
         }
 
-        downloadManager.enqueue(request)
+        lastDownloadId = downloadManager.enqueue(request)
         return true
     }
 
