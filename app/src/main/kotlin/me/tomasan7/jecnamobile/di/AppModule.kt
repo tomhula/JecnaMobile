@@ -28,8 +28,6 @@ internal val appModule = module {
     single { create(::canteenClient) }
     single { create(::jecnaSuplClient) }
     
-    factory { params -> FileDownloader(get(), params.get(), get()) }
-    
     single<JecnaClientLoginStateProvider>().bind(LoginStateProvider::class)
     single<GradesChangeCheckerImpl>().bind(GradesChangeChecker::class)
     
