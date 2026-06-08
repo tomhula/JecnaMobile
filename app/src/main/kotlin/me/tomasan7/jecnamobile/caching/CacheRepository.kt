@@ -94,6 +94,11 @@ open class CacheRepository<T, P>(
         }
     }
 
+    fun clearCache()
+    {
+        cacheFile.delete()
+    }
+
     protected fun logReadingCache()
     {
         Log.d(LOG_TAG, "$key: Reading cache")
