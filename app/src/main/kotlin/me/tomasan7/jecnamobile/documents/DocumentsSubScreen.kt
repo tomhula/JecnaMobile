@@ -50,9 +50,14 @@ fun DocumentsSubScreen(
     onBackClick: (() -> Unit)? = null,
 )
 {
+    /* Terrible code block start */
+    /* This is probably wrong on many levels, but I don't have the capacity to figure it out properly  */
+    
+    /* koinInject() called inside composable, which is bad (no remember) */
     val appContext: Context = koinInject()
     val jecnaClient: JecnaClient = koinInject()
 
+    /* I don't even understand this */
     val viewModel: DocumentsViewModel = viewModel(
         key = path,
         factory = object : ViewModelProvider.Factory {
@@ -65,6 +70,8 @@ fun DocumentsSubScreen(
                 ) as T
         }
     )
+
+    /* Terrible code block end */
 
     SubScreenViewModelHook(
         key = path,
