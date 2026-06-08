@@ -10,12 +10,12 @@ import de.palm.composestateevents.StateEventWithContent
 import de.palm.composestateevents.consumed
 import de.palm.composestateevents.triggered
 import io.github.tomhula.jecnaapi.data.timetable.TimetablePage
+import io.github.tomhula.jecnaapi.parser.ParseException
 import io.github.tomhula.jecnaapi.util.SchoolYear
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.LoginStateProvider
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenCacheViewModel
-import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
 import kotlin.time.Clock
@@ -25,12 +25,26 @@ import kotlin.time.Instant
 class TimetableViewModel(
     appContext: Context,
     loginStateProvider: LoginStateProvider,
-    repository: TimetableCacheRepository,
+    private val repository: TimetableCacheRepository,
     private val timetableRepository: TimetableRepository
 ) : SubScreenCacheViewModel<TimetableData, SchoolYearPeriodParams>(appContext, loginStateProvider, repository)
 {
     override val parseErrorMessage = appContext.getString(R.string.error_unsupported_timetable)
     override val loadErrorMessage = appContext.getString(R.string.timetable_load_error)
+
+    override suspend fun fetchRealData(): TimetableData
+    {
+        return try {
+            repository.getRealAndCache(getParams())
+        } catch (e: ParseException) {
+            repository.clearCache()
+            changeUiState(
+                selectedSchoolYear = SchoolYear.current(),
+                selectedPeriod = null
+            )
+            repository.getRealAndCache(getParams())
+        }
+    }
     
     var uiState by mutableStateOf(TimetableState())
         private set
