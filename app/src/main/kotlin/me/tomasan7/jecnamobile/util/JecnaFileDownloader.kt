@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.webkit.MimeTypeMap
+import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import androidx.core.net.toUri
 import io.github.tomhula.jecnaapi.WebJecnaClient
@@ -19,28 +20,31 @@ class JecnaFileDownloader(
     private val appContext: Context,
     private val webJecnaClient: WebJecnaClient,
     private val onError: (message: String) -> Unit,
-) {
+)
+{
     /* Deliberately only storing the last one, because if downloads multiple files at once,
     * they would then be overwhelmed by file open popups and not even know which popup corresponds to which file. */
     private var lastDownloadId: Long? = null
-    
+
     private val downloadManager = appContext.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
 
     private val downloadCompleteBroadcastReceiver = createBroadcastReceiver { _, intent ->
         val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
-        
-        if (downloadId != lastDownloadId) 
+
+        if (downloadId != lastDownloadId)
             return@createBroadcastReceiver
-        
+
         val query = DownloadManager.Query().setFilterById(downloadId)
-        
+
         downloadManager.query(query).use { cursor ->
-            if (cursor.moveToFirst()) {
+            if (cursor.moveToFirst())
+            {
                 val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
-                if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                if (status == DownloadManager.STATUS_SUCCESSFUL)
+                {
                     val uri = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI)).toUri()
                     val mimeType = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_MEDIA_TYPE))
-                    
+
                     openFile(uri, mimeType).onFailure {
                         onError(it.message ?: "Unknown error")
                     }
@@ -49,7 +53,8 @@ class JecnaFileDownloader(
         }
     }
 
-    fun openFile(uri: Uri, mimeType: String): Result<Unit> {
+    fun openFile(uri: Uri, mimeType: String): Result<Unit>
+    {
         val providedUri = FileProvider.getUriForFile(
             appContext,
             "${appContext.packageName}.fileprovider",
@@ -62,20 +67,25 @@ class JecnaFileDownloader(
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
 
-        return try {
+        return try
+        {
             appContext.startActivity(openIntent)
             Result.success(Unit)
-        } catch (e: ActivityNotFoundException) {
+        } 
+        catch (_: ActivityNotFoundException)
+        {
             Result.failure(Exception(appContext.getString(R.string.error_unable_to_open_file)))
         }
     }
 
     private var isRegistered = false
 
-    fun register() {
+    fun register()
+    {
         if (isRegistered) return
         val flags = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU)
-            Context.RECEIVER_EXPORTED else 0
+            Context.RECEIVER_EXPORTED
+        else 0
         appContext.registerReceiver(
             downloadCompleteBroadcastReceiver,
             IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE),
@@ -84,7 +94,8 @@ class JecnaFileDownloader(
         isRegistered = true
     }
 
-    fun unregister() {
+    fun unregister()
+    {
         if (!isRegistered) return
         runCatching { appContext.unregisterReceiver(downloadCompleteBroadcastReceiver) }
         isRegistered = false
@@ -95,7 +106,8 @@ class JecnaFileDownloader(
         filename: String,
         label: String,
         extension: String,
-    ): Boolean {
+    ): Boolean
+    {
         val url = webJecnaClient.getUrlForPath(urlPath)
         val cookies = buildCookiesString() ?: return false
 
@@ -114,7 +126,8 @@ class JecnaFileDownloader(
         return true
     }
 
-    private suspend fun buildCookiesString(): String? {
+    private suspend fun buildCookiesString(): String?
+    {
         val cookies = listOfNotNull(
             webJecnaClient.getSessionCookie(),
             webJecnaClient.getCookie("WTDGUID")
@@ -127,7 +140,8 @@ class JecnaFileDownloader(
     private fun mimeTypeForExtension(extension: String) =
         MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension) ?: "*/*"
 
-    companion object {
+    companion object
+    {
         private const val USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:147.0) Gecko/20100101 Firefox/147.0"
         private const val ACCEPT_LANGUAGE = "en-US,en;q=0.9"
         private const val ACCEPT_ENCODING = "gzip, deflate"
