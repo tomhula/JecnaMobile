@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
-import me.tomasan7.jecnamobile.util.FileDownloader
+import me.tomasan7.jecnamobile.util.JecnaFileDownloader
 
 class DocumentsViewModel(
     private val initialPath: String,
@@ -31,7 +31,7 @@ class DocumentsViewModel(
     var uiState by mutableStateOf(DocumentsState())
         private set
 
-    private val fileDownloader = FileDownloader(
+    private val jecnaFileDownloader = JecnaFileDownloader(
         appContext = appContext,
         webJecnaClient = jecnaClient as WebJecnaClient,
         onError = { message -> changeUiState(snackBarMessageEvent = triggered(message)) }
@@ -50,20 +50,20 @@ class DocumentsViewModel(
     override fun enteredComposition()
     {
         super.enteredComposition()
-        fileDownloader.register()
+        jecnaFileDownloader.register()
     }
 
     override fun leftComposition()
     {
         super.leftComposition()
-        fileDownloader.unregister()
+        jecnaFileDownloader.unregister()
     }
 
     fun downloadAndOpenDocumentFile(documentFile: DocumentFile) = viewModelScope.launch {
         val filename = documentFile.path.split("/").lastOrNull() ?: documentFile.label
         val extension = filename.split(".").lastOrNull()?.lowercase() ?: ""
 
-        val success = fileDownloader.downloadAndOpen(
+        val success = jecnaFileDownloader.downloadAndOpen(
             urlPath = documentFile.path,
             filename = filename,
             label = documentFile.label,

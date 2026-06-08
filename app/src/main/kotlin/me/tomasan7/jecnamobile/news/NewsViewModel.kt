@@ -21,10 +21,7 @@ import me.tomasan7.jecnamobile.SubScreenCacheViewModel
 import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.di.NewsCacheRepository
 import me.tomasan7.jecnamobile.util.CachedDataNew
-import me.tomasan7.jecnamobile.util.FileDownloader
-import org.koin.core.component.KoinComponent
-import org.koin.core.component.inject
-import org.koin.core.parameter.parametersOf
+import me.tomasan7.jecnamobile.util.JecnaFileDownloader
 import kotlin.time.Clock
 import io.ktor.http.Cookie
 import kotlin.time.Instant
@@ -42,7 +39,7 @@ class NewsViewModel(
     var uiState by mutableStateOf(NewsState())
         private set
 
-    private val fileDownloader = FileDownloader(
+    private val jecnaFileDownloader = JecnaFileDownloader(
         appContext = appContext,
         webJecnaClient = jecnaClient as WebJecnaClient,
         onError = { message -> changeUiState(snackBarMessageEvent = triggered(message)) }
@@ -72,17 +69,17 @@ class NewsViewModel(
     override fun enteredComposition()
     {
         super.enteredComposition()
-        fileDownloader.register()
+        jecnaFileDownloader.register()
     }
 
     override fun leftComposition()
     {
         super.leftComposition()
-        fileDownloader.unregister()
+        jecnaFileDownloader.unregister()
     }
 
     fun downloadAndOpenArticleFile(articleFile: ArticleFile) = viewModelScope.launch {
-        val success = fileDownloader.downloadAndOpen(
+        val success = jecnaFileDownloader.downloadAndOpen(
             urlPath = articleFile.downloadPath,
             filename = articleFile.filename,
             label = articleFile.label,

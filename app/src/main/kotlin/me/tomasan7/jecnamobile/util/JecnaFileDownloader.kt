@@ -15,7 +15,7 @@ import io.github.tomhula.jecnaapi.WebJecnaClient
 import me.tomasan7.jecnamobile.R
 import java.io.File
 
-class FileDownloader(
+class JecnaFileDownloader(
     private val appContext: Context,
     private val webJecnaClient: WebJecnaClient,
     private val onError: (message: String) -> Unit,
