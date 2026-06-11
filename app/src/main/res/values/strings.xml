@@ -386,7 +386,7 @@
     <string name="report_submit">Nahlásit</string>
     <string name="report_content_label">Popis chyby</string>
     <string name="report_type_label">Typ chyby:</string>
-    <string name="report_type_timetable">Rozvrh</string>
+    <string name="report_type_timetable">Mimořádný rozvrh</string>
     <string name="report_type_teacher_absence">Absence učitele</string>
     <string name="report_type_takes_place">Konání akce</string>
     <string name="report_success">Nahlášeno</string>
