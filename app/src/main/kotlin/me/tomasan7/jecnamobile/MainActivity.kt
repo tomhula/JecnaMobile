@@ -1,5 +1,6 @@
 package me.tomasan7.jecnamobile
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +10,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.chrynan.parcelable.core.getParcelableExtra
@@ -27,6 +29,7 @@ import org.koin.android.ext.android.get
 class MainActivity : ComponentActivity()
 {
     private val authRepository: AuthRepository = get()
+    private var navigateToDestination by mutableStateOf<AppDestination?>(null)
 
     @OptIn(ExperimentalSerializationApi::class)
     override fun onCreate(savedInstanceState: Bundle?)
@@ -34,15 +37,15 @@ class MainActivity : ComponentActivity()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        navigateToDestination = intent.getParcelableExtra(
+            name = EXTRA_NAVIGATE_TO,
+            deserializer = AppDestination.serializer()
+        )
+
         val startState = if (authRepository.exists())
             AppState.Main
         else
             AppState.Login
-
-        val navigateTo = intent.getParcelableExtra(
-            name = EXTRA_NAVIGATE_TO,
-            deserializer = AppDestination.serializer()
-        )
 
         setContent {
             val settings by settingsAsStateAwaitFirst()
@@ -58,18 +61,33 @@ class MainActivity : ComponentActivity()
                     when (targetState)
                     {
                         AppState.Login -> LoginScreen(
-                            onLoginSuccess = { currentState = if (settings.hasSeenWelcomeScreen) AppState.Main else AppState.Welcome }
+                             onLoginSuccess = { currentState = if (settings.hasSeenWelcomeScreen) AppState.Main else AppState.Welcome }
                         )
                         AppState.Welcome -> WelcomeScreen (
                             onWelcomeComplete = { currentState = AppState.Main }
                         )
                         AppState.Main -> MainScreen(
                             onNavigateToLogin = { currentState = AppState.Login },
-                            initialNavigateTo = navigateTo
+                            initialNavigateTo = navigateToDestination
                         )
                     }
                 }
             }
+        }
+    }
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override fun onNewIntent(intent: Intent)
+    {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val nav = intent.getParcelableExtra(
+            name = EXTRA_NAVIGATE_TO,
+            deserializer = AppDestination.serializer()
+        )
+        if (nav != null)
+        {
+            navigateToDestination = nav
         }
     }
 }

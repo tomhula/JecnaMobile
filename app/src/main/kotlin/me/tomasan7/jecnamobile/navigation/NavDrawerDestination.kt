@@ -35,7 +35,7 @@ enum class NavDrawerDestination(
 {
     News(R.string.sidebar_news, Icons.Outlined.Newspaper, Icons.Filled.Newspaper, AppDestination.News),
     Grades(R.string.sidebar_grades, Icons.Outlined.Grade, Icons.Filled.Grade, AppDestination.Grades()),
-    Timetable(R.string.sidebar_timetable, Icons.Outlined.TableChart, Icons.Filled.TableChart, AppDestination.Timetable),
+    Timetable(R.string.sidebar_timetable, Icons.Outlined.TableChart, Icons.Filled.TableChart, AppDestination.Timetable()),
     Substitution(R.string.sidebar_link_substitution_timetable, Icons.Outlined.TableChart, Icons.Filled.TableChart, AppDestination.Substitution),
     Canteen(R.string.sidebar_canteen, Icons.Outlined.Restaurant, Icons.Filled.Restaurant, AppDestination.Canteen),
     Attendances(R.string.sidebar_attendances, Icons.Outlined.DateRange, Icons.Filled.DateRange, AppDestination.Attendances),

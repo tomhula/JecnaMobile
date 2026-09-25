@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_today_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_container_background"
+    android:padding="6dp">
+
+    <!-- Header bar hidden so the 1-row widget looks exactly like 1 row of week timetable + headers -->
+    <LinearLayout
+        android:id="@+id/widget_today_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/widget_today_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/widget_today_last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <ImageButton
+            android:id="@+id/widget_today_refresh_button"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/widget_today_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:contentDescription="Dnešní rozvrh (1 řádek)" />
+
+        <ImageButton
+            android:id="@+id/widget_today_corner_refresh"
+            android:layout_width="32dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|start"
+            android:background="@android:color/transparent"
+            android:contentDescription="Obnovit rozvrh" />
+    </FrameLayout>
+</LinearLayout>

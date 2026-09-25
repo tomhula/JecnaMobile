@@ -14,10 +14,16 @@ object SettingsSerializer : Serializer<Settings>
     override val defaultValue: Settings
         get() = Settings()
 
+    private val json = Json {
+        ignoreUnknownKeys = true
+        coerceInputValues = true
+        encodeDefaults = true
+    }
+
     override suspend fun readFrom(input: InputStream): Settings
     {
         return try {
-            Json.decodeFromString(input.readBytes().decodeToString())
+            json.decodeFromString(input.readBytes().decodeToString())
         } catch (e: SerializationException) {
             e.printStackTrace()
             defaultValue
@@ -34,7 +40,7 @@ object SettingsSerializer : Serializer<Settings>
     {
         withContext(Dispatchers.IO) {
             output.use {
-                it.write(Json.encodeToString(t).encodeToByteArray())
+                it.write(json.encodeToString(t).encodeToByteArray())
             }
         }
     }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateSetOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -43,6 +44,7 @@ fun Timetable(
     substitutions: SubstitutionData? = null,
     modifier: Modifier = Modifier,
     hideClass: Boolean = false,
+    initialLessonToOpen: Lesson? = null,
     onTeacherClick: (TeacherReference) -> Unit = {},
     onRoomClick: (RoomReference) -> Unit = { }
 )
@@ -82,6 +84,12 @@ fun Timetable(
     }
 
     val dialogState = rememberObjectDialogState<Lesson>()
+
+    LaunchedEffect(initialLessonToOpen) {
+        if (initialLessonToOpen != null) {
+            dialogState.show(initialLessonToOpen)
+        }
+    }
 
     Box(modifier = modifier) {
         val breakWidth = 5.dp

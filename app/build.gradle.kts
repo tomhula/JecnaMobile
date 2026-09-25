@@ -95,4 +95,5 @@ dependencies {
     implementation(libs.serialization.json)
     implementation(libs.serialization.parcelable.core)
     implementation(libs.serialization.parcelable.compose)
+    testImplementation("junit:junit:4.13.2")
 }

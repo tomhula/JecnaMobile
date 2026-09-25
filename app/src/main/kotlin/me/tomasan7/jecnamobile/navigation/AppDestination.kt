@@ -13,7 +13,7 @@ sealed interface AppDestination : NavKey
     @Serializable
     data class Grades(val gradeId: Int? = null) : AppDestination
     @Serializable
-    data object Timetable : AppDestination
+    data class Timetable(val lessonDay: String? = null, val lessonHour: Int? = null) : AppDestination
     @Serializable
     data object Substitution : AppDestination
     @Serializable
@@ -61,5 +61,7 @@ sealed interface AppDestination : NavKey
         data object About : Settings
         @Serializable
         data object Drawer : Settings
+        @Serializable
+        data object Widget : Settings
     }
 }

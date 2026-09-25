@@ -252,6 +252,18 @@
     <string name="notification_grade_size_small">malá</string>
     <string name="notification_grade_size_big">velká</string>
 
+    <string name="notification_channel_substitution_name">Mimořádný rozvrh</string>
+    <string name="notification_channel_substitution_description">Oznámení o změnách v mimořádném rozvrhu</string>
+    <string name="notification_substitution_title">Mimořádný rozvrh (%1$s)</string>
+    <string name="notification_substitution_lesson_change">%1$s (%2$d. hodina): %3$s</string>
+    <string name="notification_substitution_lesson_cancelled">%1$s (%2$d. hodina): Zrušeno (%3$s)</string>
+    <string name="notification_substitution_takes_place">%1$s: %2$s</string>
+    <string name="notification_substitution_multiple_changes">%1$d nových změn v mimořádném rozvrhu</string>
+    <string name="settings_notifications_substitution_title">Upozornění na mimořádný rozvrh</string>
+    <string name="settings_notifications_substitution_description">Dostávat oznámení při zjištění nové změny v mimořádném rozvrhu pro vaši třídu.</string>
+    <string name="today">Dnes</string>
+    <string name="tomorrow">Zítra</string>
+
     <!-- ##### Notification Dialog ##### -->
     <string name="notification_dialog_date">Datum</string>
     <string name="notification_dialog_issued_by">Udělil/a</string>
@@ -415,4 +427,15 @@
     <string name="settings_notifications_system_settings">Otevřít nastavení systému</string>
     <string name="settings_notifications_system_settings_description">Pokud je oprávnění odepřeno, můžete jej změnit v nastavení systému.</string>
     <string name="settings_notifications_permission_required">Oprávnění k upozorněním je vyžadováno</string>
+
+    <!-- ##### Widgets ##### -->
+    <string name="settings_widget_title">Widgety rozvrhu</string>
+    <string name="widget_timetable_week_name">Rozvrh na celý týden</string>
+    <string name="widget_timetable_week_description">Zobrazuje kompletní rozvrh hodin na celý týden včetně suplování.</string>
+    <string name="widget_timetable_day_name">Rozvrh na dnešek / zítřek</string>
+    <string name="widget_timetable_day_description">Zobrazuje rozvrh hodin na aktuální nebo následující den.</string>
+    <string name="widget_timetable_today_row_name">Rozvrh - Dnešek (1 řádek)</string>
+    <string name="widget_timetable_today_row_description">Kompaktní jednořádkový přehled dnešního rozvrhu hodin.</string>
+    <string name="widget_timetable_current_hour_name">Rozvrh - Aktuální hodina</string>
+    <string name="widget_timetable_current_hour_description">Zobrazuje detail právě probíhající nebo nadcházející vyučovací hodiny.</string>
 </resources>

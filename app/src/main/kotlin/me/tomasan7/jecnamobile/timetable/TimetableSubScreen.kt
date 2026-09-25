@@ -38,6 +38,8 @@ import kotlin.time.Clock
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimetableSubScreen(
+    initialLessonDay: String? = null,
+    initialLessonHour: Int? = null,
     onTeacherClick: (TeacherReference) -> Unit,
     onRoomClick: (RoomReference) -> Unit,
     viewModel: TimetableViewModel = koinViewModel()
@@ -51,6 +53,16 @@ fun TimetableSubScreen(
     val showReportDialog = remember { mutableStateOf(false) }
     val isReporting = remember { mutableStateOf(false) }
     val settings by settingsAsState()
+
+    val initialLessonToOpen = remember(uiState.timetablePage, initialLessonDay, initialLessonHour) {
+        if (uiState.timetablePage != null && initialLessonDay != null && initialLessonHour != null) {
+            val dayOfWeek = runCatching { DayOfWeek.valueOf(initialLessonDay) }.getOrNull()
+            if (dayOfWeek != null) {
+                val spot = uiState.timetablePage.timetable.getLessonSpotsForDay(dayOfWeek)?.getOrNull(initialLessonHour)
+                spot?.firstOrNull()
+            } else null
+        } else null
+    }
     val showSubstitution = remember(
         uiState.selectedSchoolYear,
         uiState.selectedPeriod,
@@ -297,6 +309,7 @@ fun TimetableSubScreen(
                             timetable = uiState.timetablePage.timetable,
                             substitutions = if (showSubstitution) uiState.substitutions else null,
                             hideClass = true,
+                            initialLessonToOpen = initialLessonToOpen,
                             onRoomClick = onRoomClick,
                             onTeacherClick = onTeacherClick
                         )

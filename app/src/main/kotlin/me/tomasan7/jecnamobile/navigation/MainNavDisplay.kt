@@ -47,8 +47,10 @@ fun MainNavDisplay(
                     onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) }
                 )
             }
-            entry<AppDestination.Timetable> {
+            entry<AppDestination.Timetable> { key ->
                 TimetableSubScreen(
+                    initialLessonDay = key.lessonDay,
+                    initialLessonHour = key.lessonHour,
                     onTeacherClick = { navBackStack.add(AppDestination.Teacher(it)) },
                     onRoomClick = { navBackStack.add(AppDestination.Room(it)) }
                 )
@@ -184,6 +186,14 @@ fun MainNavDisplay(
                 metadata = metadata { slideTransitions() }
             ) {
                 SettingsDrawerScreen(
+                    viewModel = koinViewModel(),
+                    onBackClick = onBack
+                )
+            }
+            entry<AppDestination.Settings.Widget>(
+                metadata = metadata { slideTransitions() }
+            ) {
+                SettingsWidgetScreen(
                     viewModel = koinViewModel(),
                     onBackClick = onBack
                 )

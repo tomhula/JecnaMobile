@@ -23,6 +23,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
+import me.tomasan7.jecnamobile.substitutions.notifications.SubstitutionCheckerWorker
 import me.tomasan7.jecnamobile.util.settingsDataStore
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -60,6 +61,7 @@ fun WelcomeScreen(
                 {
                     context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                     GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                    SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                 }
                 else
                 {
@@ -80,6 +82,7 @@ fun WelcomeScreen(
                     coroutineScope.launch {
                         context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                         GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                        SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                     }
                     pendingWelcomeComplete = true
                 }
@@ -97,6 +100,7 @@ fun WelcomeScreen(
                 coroutineScope.launch {
                     context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                     GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                    SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                 }
                 pendingWelcomeComplete = true
             },

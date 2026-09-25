@@ -12,5 +12,9 @@ interface TimetableRepository
 
     suspend fun getAllSubstitutions(): SubstitutionAllData
 
+    suspend fun getStudentClassName(): String?
+    suspend fun getSubstitutionsForClass(className: String): SubstitutionData
+    suspend fun getSubstitutions(): SubstitutionData
+
     suspend fun reportSubstitutionError(content: String, reportLocation: ReportLocation): Result<Unit>
 }

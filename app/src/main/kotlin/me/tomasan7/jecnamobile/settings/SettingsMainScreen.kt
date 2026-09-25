@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Widgets
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -68,6 +69,12 @@ fun SettingsMainScreen(
                     title = stringResource(R.string.settings_category_appearance),
                     icon = Icons.Default.Palette,
                     onClick = { onNavigate(AppDestination.Settings.Appearance) }
+                )
+                HorizontalDivider()
+                SettingsCategoryItem(
+                    title = "Widgety rozvrhu",
+                    icon = Icons.Default.Widgets,
+                    onClick = { onNavigate(AppDestination.Settings.Widget) }
                 )
                 HorizontalDivider()
                 SettingsCategoryItem(

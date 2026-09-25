@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_container_background"
+    android:padding="10dp">
+
+    <!-- Top header bar: Title, last updated timestamp, refresh button -->
+    <LinearLayout
+        android:id="@+id/widget_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="6dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/widget_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rozvrh hodin"
+            android:textColor="#FFFFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/widget_last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#99FFFFFF"
+            android:textSize="11sp"
+            android:paddingEnd="8dp" />
+
+        <ImageButton
+            android:id="@+id/widget_refresh_button"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_refresh"
+            android:contentDescription="Obnovit"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+    <!-- Main timetable area: Canvas image + interactive overlay click targets -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageView
+            android:id="@+id/widget_timetable_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:contentDescription="Rozvrh" />
+
+        <!-- Overlay grid of clickable cells for each period of each day (5 days x 10 periods) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- Top header row: corner refresh button (top-left) + period header spacers -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="0.8"
+                android:orientation="horizontal">
+                <FrameLayout
+                    android:id="@+id/widget_corner_refresh_button"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.75"
+                    android:clickable="true" />
+                <FrameLayout android:id="@+id/header_col_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+                <FrameLayout android:id="@+id/header_col_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- Row 0: Monday (Po) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.75" />
+                <FrameLayout android:id="@+id/cell_0_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_0_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+            </LinearLayout>
+
+            <!-- Row 1: Tuesday (Út) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.75" />
+                <FrameLayout android:id="@+id/cell_1_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_1_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+            </LinearLayout>
+
+            <!-- Row 2: Wednesday (St) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.75" />
+                <FrameLayout android:id="@+id/cell_2_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_2_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+            </LinearLayout>
+
+            <!-- Row 3: Thursday (Čt) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.75" />
+                <FrameLayout android:id="@+id/cell_3_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_3_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+            </LinearLayout>
+
+            <!-- Row 4: Friday (Pá) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="2"
+                android:orientation="horizontal">
+                <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="0.75" />
+                <FrameLayout android:id="@+id/cell_4_0" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_1" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_2" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_3" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_4" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_5" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_6" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_7" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_8" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+                <FrameLayout android:id="@+id/cell_4_9" android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:clickable="true" />
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+
+    <!-- Bottom info bar: Centered last updated timestamp below the table -->
+    <TextView
+        android:id="@+id/widget_bottom_last_updated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="1dp"
+        android:paddingBottom="0dp"
+        android:text=""
+        android:textColor="#CCFFFFFF"
+        android:textSize="9sp"
+        android:singleLine="true" />
+</LinearLayout>

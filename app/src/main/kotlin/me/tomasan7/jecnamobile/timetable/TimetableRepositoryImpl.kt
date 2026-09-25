@@ -50,7 +50,7 @@ class TimetableRepositoryImpl(
 
     private var cachedClassName: String? = null
 
-    private suspend fun getClassName(): String?
+    override suspend fun getStudentClassName(): String?
     {
         if (cachedClassName != null) return cachedClassName
         val student = jecnaClient.getStudentProfile()
@@ -58,10 +58,10 @@ class TimetableRepositoryImpl(
         return cachedClassName
     }
 
-    private suspend fun fetchSubstitutions(): SubstitutionData
-    {
-        val className = getClassName() ?: throw RuntimeException("Cannot fetch substitutions without class name")
+    private suspend fun getClassName(): String? = getStudentClassName()
 
+    override suspend fun getSubstitutionsForClass(className: String): SubstitutionData
+    {
         val subs = withContext(Dispatchers.IO) {
             substitutionClient.getSchedule(className)
         }
@@ -72,6 +72,14 @@ class TimetableRepositoryImpl(
             announcements = subs.annoucements.mapValues { it.value.map { a -> a.toAnnouncement() } }
         )
     }
+
+    override suspend fun getSubstitutions(): SubstitutionData
+    {
+        val className = getClassName() ?: throw RuntimeException("Cannot fetch substitutions without class name")
+        return getSubstitutionsForClass(className)
+    }
+
+    private suspend fun fetchSubstitutions(): SubstitutionData = getSubstitutions()
 
     override suspend fun getAllSubstitutions(): SubstitutionAllData = withContext(Dispatchers.IO) {
         substitutionClient.getAll().toSubstitutionAllData()

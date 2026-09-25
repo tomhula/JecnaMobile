@@ -12,7 +12,9 @@ import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.NoParams
 import me.tomasan7.jecnamobile.caching.SchoolYearHalfParams
 import me.tomasan7.jecnamobile.caching.SchoolYearMonthParams
+import me.tomasan7.jecnamobile.timetable.SubstitutionData
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
+import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import org.koin.dsl.module
 import org.koin.plugin.module.dsl.single
 
@@ -22,6 +24,7 @@ internal val cacheRepositoriesModule = module {
     single<GradesCacheRepository>()
     single<TimetableCacheRepository>()
     single<AbsencesCacheRepository>()
+    single<SubstitutionsCacheRepository>()
 }
 
 class AttendancesCacheRepository(jecnaClient: JecnaClient, context: Context) :
@@ -59,3 +62,13 @@ class AbsencesCacheRepository(jecnaClient: JecnaClient, context: Context) :
         paramsSerializer = serializer<SchoolYear>(),
         fetcher = { jecnaClient.getAbsencesPage(it) }
     )
+
+class SubstitutionsCacheRepository(timetableRepository: TimetableRepository, context: Context) :
+    CacheRepository<SubstitutionData, String>(
+        appContext = context,
+        key = "substitutions",
+        dataSerializer = serializer<SubstitutionData>(),
+        paramsSerializer = serializer<String>(),
+        fetcher = { className -> timetableRepository.getSubstitutionsForClass(className) }
+    )
+

@@ -23,6 +23,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.gradenotifications.GradeCheckerWorker
+import me.tomasan7.jecnamobile.substitutions.notifications.SubstitutionCheckerWorker
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 import me.tomasan7.jecnamobile.util.settingsDataStore
 
@@ -52,6 +53,7 @@ fun SettingsNotificationsScreen(
                 coroutineScope.launch {
                     context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                     GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                    SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                 }
             }
         }
@@ -115,12 +117,14 @@ fun SettingsNotificationsScreen(
                                             if (hasPermission) {
                                                 context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                                                 GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                                                SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                                             } else {
                                                 notificationPermissionState?.launchPermissionRequest()
                                             }
                                         } else {
                                             context.settingsDataStore.updateData { it.copy(notificationsEnabled = false) }
                                             GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                                            SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                                         }
                                     }
                                 }
@@ -140,6 +144,37 @@ fun SettingsNotificationsScreen(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         HorizontalDivider()
+
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
+                                Text(
+                                    text = stringResource(R.string.settings_notifications_substitution_title),
+                                    style = MaterialTheme.typography.bodyLarge
+                                )
+                                Text(
+                                    text = stringResource(R.string.settings_notifications_substitution_description),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+
+                            Switch(
+                                checked = settings.substitutionNotificationsEnabled && notificationsEnabled,
+                                enabled = notificationsEnabled,
+                                onCheckedChange = { enabled ->
+                                    coroutineScope.launch {
+                                        context.settingsDataStore.updateData { it.copy(substitutionNotificationsEnabled = enabled) }
+                                        SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                                    }
+                                }
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(16.dp))
 

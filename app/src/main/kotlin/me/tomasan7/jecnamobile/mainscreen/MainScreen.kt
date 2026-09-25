@@ -61,6 +61,13 @@ fun MainScreen(
     val initialDestination = initialNavigateTo ?: settings.defaultDestination.destination
     val navBackStack: NavBackStack<AppDestination>  = rememberNavBackStack(initialDestination) as NavBackStack<AppDestination>
 
+    LaunchedEffect(initialNavigateTo) {
+        if (initialNavigateTo != null) {
+            navBackStack.clear()
+            navBackStack.add(initialNavigateTo)
+        }
+    }
+
     val navDrawerHandle = rememberNavDrawerHandle(drawerState, scope)
 
     EventEffect(

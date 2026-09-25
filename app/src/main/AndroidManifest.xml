@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
 
     <application
             android:name=".JecnaMobileApplication"
@@ -48,6 +48,79 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+                android:name=".widget.WidgetConfigurationActivity"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
+        <receiver
+                android:name=".widget.TimetableWeekWidgetReceiver"
+                android:label="@string/widget_timetable_week_name"
+                android:description="@string/widget_timetable_week_description"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="me.tomasan7.jecnamobile.widget.ACTION_REFRESH_WEEK" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/widget_timetable_week_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widget.TimetableDayWidgetReceiver"
+                android:label="@string/widget_timetable_day_name"
+                android:description="@string/widget_timetable_day_description"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="me.tomasan7.jecnamobile.widget.ACTION_REFRESH_DAY" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/widget_timetable_day_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widget.TimetableTodayRowWidgetReceiver"
+                android:label="@string/widget_timetable_today_row_name"
+                android:description="@string/widget_timetable_today_row_description"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="me.tomasan7.jecnamobile.widget.ACTION_REFRESH_TODAY_ROW" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/widget_timetable_today_row_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widget.TimetableCurrentHourWidgetReceiver"
+                android:label="@string/widget_timetable_current_hour_name"
+                android:description="@string/widget_timetable_current_hour_description"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="me.tomasan7.jecnamobile.widget.ACTION_REFRESH_CURRENT_HOUR" />
+            </intent-filter>
+            <meta-data
+                    android:name="android.appwidget.provider"
+                    android:resource="@xml/widget_timetable_current_hour_info" />
+        </receiver>
+
+        <receiver
+                android:name=".widget.TimetableWidgetAlarmReceiver"
+                android:exported="false" />
+
+        <service
+                android:name=".widget.TimetableDayWidgetService"
+                android:permission="android.permission.BIND_REMOTEVIEWS"
+                android:exported="false" />
     </application>
 
 </manifest>

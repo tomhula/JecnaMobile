@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_day_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_container_background"
+    android:padding="10dp">
+
+    <!-- Top header bar: Day title (Dnes / Zítra), last updated timestamp, refresh button -->
+    <LinearLayout
+        android:id="@+id/widget_day_header_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="6dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp">
+
+        <TextView
+            android:id="@+id/widget_day_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Dnes"
+            android:textColor="#FFFFFFFF"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/widget_day_last_updated"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textColor="#99FFFFFF"
+            android:textSize="11sp"
+            android:paddingEnd="8dp" />
+
+        <ImageButton
+            android:id="@+id/widget_day_refresh_button"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_refresh"
+            android:contentDescription="Obnovit"
+            android:scaleType="centerInside" />
+    </LinearLayout>
+
+    <!-- Main day timetable area: Scrollable ListView with period rows -->
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ListView
+            android:id="@+id/widget_day_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:scrollbars="vertical"
+            android:fadeScrollbars="true" />
+
+        <TextView
+            android:id="@+id/widget_day_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Žádné vyučování v tento den"
+            android:textColor="#CCFFFFFF"
+            android:textSize="14sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <!-- Bottom info bar: Centered last updated timestamp below the table -->
+    <TextView
+        android:id="@+id/widget_day_bottom_last_updated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="1dp"
+        android:paddingBottom="0dp"
+        android:text=""
+        android:textColor="#CCFFFFFF"
+        android:textSize="9sp"
+        android:singleLine="true" />
+</LinearLayout>
