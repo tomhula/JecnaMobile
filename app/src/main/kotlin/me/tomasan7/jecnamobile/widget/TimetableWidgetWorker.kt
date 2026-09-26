@@ -13,6 +13,7 @@ import me.tomasan7.jecnamobile.di.SubstitutionsCacheRepository
 import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.timetable.TimetableCacheRepository
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
+import me.tomasan7.jecnamobile.util.UserProfileGroupHelper
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import java.text.SimpleDateFormat
 import java.util.*
@@ -57,6 +58,10 @@ class TimetableWidgetWorker(
             if ((jecnaClient as? WebJecnaClient)?.autoLoginAuth == null)
             {
                 (jecnaClient as? WebJecnaClient)?.autoLoginAuth = authRepository.get()
+            }
+
+            runCatching {
+                UserProfileGroupHelper.fetchAndSyncUserGroup(appContext, jecnaClient)
             }
 
             val className = timetableRepository.getStudentClassName()

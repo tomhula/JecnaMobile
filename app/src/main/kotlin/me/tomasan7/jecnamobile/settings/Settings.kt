@@ -20,7 +20,8 @@ data class Settings(
     var drawerLinks: List<DrawerLink> = DEFAULT_DRAWER_LINKS,
     val widgetSettings: WidgetSettings = WidgetSettings(),
     val perWidgetSettings: Map<Int, WidgetSettings> = emptyMap(),
-    val subjectGroups: Map<String, String> = emptyMap()
+    val subjectGroups: Map<String, String> = emptyMap(),
+    val userProfileGroup: String? = null
 )
 {
     fun getWidgetSettings(widgetId: Int): WidgetSettings
@@ -33,7 +34,8 @@ data class Settings(
             debugMinutesRemaining = widgetSettings.debugMinutesRemaining,
             debugIsBreak = widgetSettings.debugIsBreak,
             debugSubstitutionType = widgetSettings.debugSubstitutionType,
-            debugWeekOverrides = widgetSettings.debugWeekOverrides
+            debugWeekOverrides = widgetSettings.debugWeekOverrides,
+            userProfileGroup = userProfileGroup ?: widgetSettings.userProfileGroup
         )
     }
 
@@ -48,7 +50,8 @@ data class Settings(
             debugMinutesRemaining = updated.debugMinutesRemaining,
             debugIsBreak = updated.debugIsBreak,
             debugSubstitutionType = updated.debugSubstitutionType,
-            debugWeekOverrides = updated.debugWeekOverrides
+            debugWeekOverrides = updated.debugWeekOverrides,
+            userProfileGroup = updated.userProfileGroup ?: userProfileGroup
         )
         val updatedPerWidgets = perWidgetSettings.mapValues { (id, ws) ->
             if (id == widgetId) updated else ws.copy(
@@ -58,7 +61,8 @@ data class Settings(
                 debugMinutesRemaining = updated.debugMinutesRemaining,
                 debugIsBreak = updated.debugIsBreak,
                 debugSubstitutionType = updated.debugSubstitutionType,
-                debugWeekOverrides = updated.debugWeekOverrides
+                debugWeekOverrides = updated.debugWeekOverrides,
+                userProfileGroup = updated.userProfileGroup ?: userProfileGroup
             )
         }
         return if (widgetId <= 0)
@@ -107,7 +111,8 @@ data class Settings(
         val debugMinutesRemaining: Int = 25,
         val debugIsBreak: Boolean = false,
         val debugSubstitutionType: Int = 0,
-        val debugWeekOverrides: Map<String, Int> = emptyMap()
+        val debugWeekOverrides: Map<String, Int> = emptyMap(),
+        val userProfileGroup: String? = null
     )
     {
         fun getEffectivePeriodHeaderMode(): PeriodHeaderMode

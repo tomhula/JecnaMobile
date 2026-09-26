@@ -1182,15 +1182,28 @@ fun SettingsWidgetScreen(
                     if (hasHalves)
                     {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Text(
-                                text = "Skupina pro půlené předměty (1/2, 2/2)",
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.SemiBold
-                            )
-                            val currentHalvesGroup = remember(settings.subjectGroups, allConfigurableSubjects) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                Text(
+                                    text = "Skupina pro půlené předměty (1/2, 2/2)",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                if (settings.userProfileGroup != null) {
+                                    Text(
+                                        text = "(Z profilu: ${settings.userProfileGroup})",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                            val currentHalvesGroup = remember(settings.subjectGroups, allConfigurableSubjects, settings.userProfileGroup) {
                                 val halfSubjects = allConfigurableSubjects.filter { it.availableGroups.any { g -> g == "1/2" || g == "2/2" } }
                                 val groups = halfSubjects.mapNotNull { settings.subjectGroups[it.subjectShort] }.toSet()
-                                if (groups.size == 1) groups.first() else null
+                                if (groups.size == 1) groups.first() else settings.userProfileGroup
                             }
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -1205,7 +1218,12 @@ fun SettingsWidgetScreen(
                                                 allConfigurableSubjects
                                                     .filter { it.availableGroups.any { g -> g == "1/2" || g == "2/2" } }
                                                     .forEach { newMap.remove(it.subjectShort) }
-                                                current.copy(subjectGroups = newMap)
+                                                current.copy(
+                                                    userProfileGroup = null,
+                                                    widgetSettings = current.widgetSettings.copy(userProfileGroup = null),
+                                                    perWidgetSettings = current.perWidgetSettings.mapValues { (_, ws) -> ws.copy(userProfileGroup = null) },
+                                                    subjectGroups = newMap
+                                                )
                                             }
                                             TimetableWidgetUpdater.updateAllWidgets(context, updatedSettings)
                                         }
@@ -1222,7 +1240,12 @@ fun SettingsWidgetScreen(
                                                     allConfigurableSubjects
                                                         .filter { it.availableGroups.any { g -> g == "1/2" || g == "2/2" } }
                                                         .forEach { newMap[it.subjectShort] = grp }
-                                                    current.copy(subjectGroups = newMap)
+                                                    current.copy(
+                                                        userProfileGroup = grp,
+                                                        widgetSettings = current.widgetSettings.copy(userProfileGroup = grp),
+                                                        perWidgetSettings = current.perWidgetSettings.mapValues { (_, ws) -> ws.copy(userProfileGroup = grp) },
+                                                        subjectGroups = newMap
+                                                    )
                                                 }
                                                 TimetableWidgetUpdater.updateAllWidgets(context, updatedSettings)
                                             }

@@ -25,11 +25,13 @@ import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.web.AuthenticationException
 import io.ktor.util.network.*
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.JecnaMobileApplication
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.login.AuthRepository
+import me.tomasan7.jecnamobile.util.UserProfileGroupHelper
 
 private const val LOG_TAG = "MainScreenViewmodel"
 
@@ -53,6 +55,13 @@ class MainScreenViewModel(
         super.onStart(owner)
         Log.d(LOG_TAG, "Registering network availability listener")
         registerNetworkAvailabilityListener()
+
+        if ((jecnaClient as? WebJecnaClient)?.lastSuccessfulLoginTime != null || authRepository.exists())
+        {
+            viewModelScope.launch(Dispatchers.IO) {
+                UserProfileGroupHelper.fetchAndSyncUserGroup(appContext, jecnaClient)
+            }
+        }
     }
 
     override fun onStop(owner: LifecycleOwner)
@@ -99,7 +108,12 @@ class MainScreenViewModel(
             }
 
             if (loginResult)
+            {
                 broadcastSuccessfulLogin(!hasBeenLoggedIn)
+                viewModelScope.launch(Dispatchers.IO) {
+                    UserProfileGroupHelper.fetchAndSyncUserGroup(appContext, jecnaClient)
+                }
+            }
         }
     }
 

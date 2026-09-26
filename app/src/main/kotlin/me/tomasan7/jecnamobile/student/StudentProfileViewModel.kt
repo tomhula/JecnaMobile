@@ -14,10 +14,12 @@ import io.github.tomhula.jecnaapi.WebJecnaClient
 import io.github.tomhula.jecnaapi.data.student.Locker
 import io.github.tomhula.jecnaapi.data.student.Student
 import io.ktor.http.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tomasan7.jecnamobile.R
 import me.tomasan7.jecnamobile.SubScreenViewModel
+import me.tomasan7.jecnamobile.util.UserProfileGroupHelper
 
 
 class StudentProfileViewModel(
@@ -39,7 +41,13 @@ class StudentProfileViewModel(
     
     override suspend fun fetchRealData() = jecnaClient.getStudentProfile()
     
-    override fun setDataUiState(data: Student) = changeUiState(student = data)
+    override fun setDataUiState(data: Student)
+    {
+        changeUiState(student = data)
+        viewModelScope.launch(Dispatchers.IO) {
+            UserProfileGroupHelper.syncUserGroupFromProfile(appContext, data)
+        }
+    }
     
     override fun showSnackBarMessage(message: String) = changeUiState(snackBarMessageEvent = triggered(message))
     override fun setLoadingUiState(loading: Boolean) = changeUiState(loading = loading)

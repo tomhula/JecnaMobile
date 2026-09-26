@@ -96,14 +96,32 @@ object TimetableWidgetRenderer
      * If the subject is configured by the student but this spot only has other groups, returns null (student is free).
      * If unconfigured, falls back to spot.firstOrNull().
      */
-    fun resolveLessonForSpot(spot: LessonSpot?, subjectGroups: Map<String, String>): Lesson?
+    fun resolveLessonForSpot(
+        spot: LessonSpot?,
+        subjectGroups: Map<String, String>,
+        defaultHalfGroup: String? = null
+    ): Lesson?
     {
         if (spot == null || spot.isEmpty()) return null
+
+        fun effectiveGroup(subjectShort: String?, lessonGroup: String?): String?
+        {
+            if (!subjectShort.isNullOrBlank() && !subjectGroups[subjectShort].isNullOrBlank())
+            {
+                return subjectGroups[subjectShort]
+            }
+            if ((lessonGroup == "1/2" || lessonGroup == "2/2") && !defaultHalfGroup.isNullOrBlank())
+            {
+                return defaultHalfGroup
+            }
+            return null
+        }
+
         if (spot.size == 1)
         {
             val onlyLesson = spot.first()
             val short = onlyLesson.subjectName.short
-            val userGroup = if (!short.isNullOrBlank()) subjectGroups[short] else null
+            val userGroup = effectiveGroup(short, onlyLesson.group)
             if (!userGroup.isNullOrBlank() && !onlyLesson.group.isNullOrBlank() && onlyLesson.group != userGroup)
             {
                 return null
@@ -114,8 +132,8 @@ object TimetableWidgetRenderer
         // Multiple lessons in this spot: find the one matching user's configured group
         for (lesson in spot)
         {
-            val short = lesson.subjectName.short ?: continue
-            val userGroup = subjectGroups[short]
+            val short = lesson.subjectName.short
+            val userGroup = effectiveGroup(short, lesson.group)
             if (!userGroup.isNullOrBlank() && lesson.group == userGroup)
             {
                 return lesson
@@ -124,7 +142,8 @@ object TimetableWidgetRenderer
 
         val anyConfigured = spot.any {
             val s = it.subjectName.short
-            !s.isNullOrBlank() && !subjectGroups[s].isNullOrBlank()
+            val g = effectiveGroup(s, it.group)
+            !g.isNullOrBlank()
         }
         if (anyConfigured)
         {
@@ -228,7 +247,7 @@ object TimetableWidgetRenderer
         val tt = timetable ?: timetableData?.page?.timetable ?: return false
         val lessonSpots = tt.getLessonSpotsForDay(day) ?: return false
         val spot = lessonSpots.getOrNull(periodIndex)
-        val userLesson = resolveLessonForSpot(spot, subjectGroups) ?: spot?.firstOrNull()
+        val userLesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup) ?: spot?.firstOrNull()
 
         val substitutionsMap: Map<DayOfWeek, DailySchedule> = try {
             timetableData?.substitutions?.data?.associate { item ->
@@ -735,7 +754,7 @@ object TimetableWidgetRenderer
 
                 val spot = lessonSpots.getOrNull(colIndex)
                 val isCurrentHour = isPeriodActive(settings, day, colIndex, spot, activeSpot, nowLocal, timetable)
-                val baseLesson = resolveLessonForSpot(spot, subjectGroups) ?: spot?.firstOrNull()
+                val baseLesson = resolveLessonForSpot(spot, subjectGroups, settings.userProfileGroup) ?: spot?.firstOrNull()
                 val (isFreeOverride, substitution) = getEffectiveSubstitutionForDayAndPeriod(
                     settings = settings,
                     day = day,
@@ -774,7 +793,7 @@ object TimetableWidgetRenderer
                 {
                     if (settings.filterMyGroups)
                     {
-                        val myLesson = resolveLessonForSpot(spot, subjectGroups)
+                        val myLesson = resolveLessonForSpot(spot, subjectGroups, settings.userProfileGroup)
                         if (myLesson != null)
                         {
                             drawSingleLesson(
@@ -1650,7 +1669,7 @@ object TimetableWidgetRenderer
         for (periodIndex in 0..maxContentPeriod)
         {
             val spot = lessonSpots.getOrNull(periodIndex)
-            val userLesson = resolveLessonForSpot(spot, subjectGroups)
+            val userLesson = resolveLessonForSpot(spot, subjectGroups, settings.userProfileGroup)
             val baseSub = daySubstitutions.getOrNull(periodIndex)
             val (isFreeOverride, effectiveSub) = getEffectiveSubstitutionForDayAndPeriod(
                 settings = settings,
@@ -2407,7 +2426,7 @@ object TimetableWidgetRenderer
 
             val spot = lessonSpots.getOrNull(colIndex)
             val isCurrentHour = isPeriodActive(settings, targetDay, colIndex, spot, activeSpot, nowLocal, timetable)
-            val baseLesson = resolveLessonForSpot(spot, subjectGroups) ?: spot?.firstOrNull()
+            val baseLesson = resolveLessonForSpot(spot, subjectGroups, settings.userProfileGroup) ?: spot?.firstOrNull()
             val (isFreeOverride, substitution) = getEffectiveSubstitutionForDayAndPeriod(
                 settings = settings,
                 day = targetDay,
@@ -2445,7 +2464,7 @@ object TimetableWidgetRenderer
             {
                 if (settings.filterMyGroups)
                 {
-                    val myLesson = resolveLessonForSpot(spot, subjectGroups)
+                    val myLesson = resolveLessonForSpot(spot, subjectGroups, settings.userProfileGroup)
                     if (myLesson != null)
                     {
                         drawSingleLesson(
@@ -2602,7 +2621,7 @@ object TimetableWidgetRenderer
             if (settings.debugPeriodIndex == -1)
             {
                 val firstSpot = lessonSpots.firstOrNull { it.isNotEmpty() }
-                val firstLesson = resolveLessonForSpot(firstSpot, subjectGroups)
+                val firstLesson = resolveLessonForSpot(firstSpot, subjectGroups, settings.userProfileGroup)
                 return CurrentHourInfo(
                     lesson = firstLesson,
                     substitution = null,
@@ -2618,7 +2637,7 @@ object TimetableWidgetRenderer
             val simIdx = settings.debugPeriodIndex.coerceIn(0, maxPeriod)
             val simRange = periods.getOrNull(simIdx)?.toString() ?: "${simIdx + 1}. hodina"
             val simSpot = lessonSpots.getOrNull(simIdx)
-            val baseLessonRaw = resolveLessonForSpot(simSpot, subjectGroups)
+            val baseLessonRaw = resolveLessonForSpot(simSpot, subjectGroups, settings.userProfileGroup)
 
             val (isFreeOverride, simSub) = getEffectiveSubstitutionForDayAndPeriod(
                 settings = settings,
@@ -2652,7 +2671,7 @@ object TimetableWidgetRenderer
             val sub = substitutionsMap[DayOfWeek.MONDAY]?.changes?.getOrNull(firstIdx)
             val pStr = periods.getOrNull(firstIdx)?.toString() ?: "${firstIdx + 1}. hodina"
             return CurrentHourInfo(
-                lesson = resolveLessonForSpot(spot, subjectGroups),
+                lesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup),
                 substitution = sub,
                 periodIndex = firstIdx,
                 periodRange = pStr,
@@ -2682,7 +2701,7 @@ object TimetableWidgetRenderer
             val sub = daySubstitutions.getOrNull(activeIndex)
             val range = periods[activeIndex].toString()
             return CurrentHourInfo(
-                lesson = resolveLessonForSpot(spot, subjectGroups),
+                lesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup),
                 substitution = sub,
                 periodIndex = activeIndex,
                 periodRange = range,
@@ -2730,7 +2749,7 @@ object TimetableWidgetRenderer
                 val sub = substitutionsMap[targetDay]?.changes?.getOrNull(firstIdx)
                 val pStr = periods.getOrNull(firstIdx)?.toString() ?: "${firstIdx + 1}. hodina"
                 return CurrentHourInfo(
-                    lesson = resolveLessonForSpot(spot, subjectGroups),
+                    lesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup),
                     substitution = sub,
                     periodIndex = firstIdx,
                     periodRange = pStr,
@@ -2756,7 +2775,7 @@ object TimetableWidgetRenderer
                 val status = if (i == 0) "1. hodina" else "Přestávka · ${i + 1}. hodina"
 
                 return CurrentHourInfo(
-                    lesson = resolveLessonForSpot(spot, subjectGroups),
+                    lesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup),
                     substitution = sub,
                     periodIndex = i,
                     periodRange = range,
@@ -2792,7 +2811,7 @@ object TimetableWidgetRenderer
             val sub = substitutionsMap[targetDay]?.changes?.getOrNull(firstIdx)
             val pStr = periods.getOrNull(firstIdx)?.toString() ?: "${firstIdx + 1}. hodina"
             return CurrentHourInfo(
-                lesson = resolveLessonForSpot(spot, subjectGroups),
+                lesson = resolveLessonForSpot(spot, subjectGroups, settings?.userProfileGroup),
                 substitution = sub,
                 periodIndex = firstIdx,
                 periodRange = pStr,

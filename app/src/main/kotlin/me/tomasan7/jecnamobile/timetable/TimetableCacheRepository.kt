@@ -6,12 +6,13 @@ import kotlinx.serialization.serializer
 import me.tomasan7.jecnamobile.caching.CacheRepository
 import me.tomasan7.jecnamobile.caching.SchoolYearPeriodParams
 import me.tomasan7.jecnamobile.util.CachedDataNew
+import me.tomasan7.jecnamobile.util.UserProfileGroupHelper
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import kotlin.time.Clock
 
 class TimetableCacheRepository(
     repository: TimetableRepository,
-    context: Context,
+    private val context: Context,
 ) : CacheRepository<TimetableData, SchoolYearPeriodParams>(
     appContext = context,
     key = "timetable",
@@ -53,6 +54,7 @@ class TimetableCacheRepository(
         val actualParams = SchoolYearPeriodParams(data.page.selectedSchoolYear, data.page.periodOptions.find { it.selected }?.id ?: return data)
         entireCache[actualParams] = CachedDataNew(data, actualParams, timestamp = Clock.System.now())
         writeEntireCache(entireCache)
+        UserProfileGroupHelper.applyProfileGroupToTimetable(context, data)
         return data
     }
 }
