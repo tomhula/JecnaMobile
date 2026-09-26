@@ -27,11 +27,15 @@ import me.tomasan7.jecnamobile.login.AuthRepository
 import me.tomasan7.jecnamobile.navigation.AppDestination
 import me.tomasan7.jecnamobile.substitutions.notifications.change.SubstitutionChange
 import me.tomasan7.jecnamobile.substitutions.notifications.change.SubstitutionChangeChecker
+import me.tomasan7.jecnamobile.substitutions.SubstitutionScheduleHelper
 import me.tomasan7.jecnamobile.timetable.TimetableRepository
 import me.tomasan7.jecnamobile.util.settingsDataStore
 import java.time.LocalDate
+import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.toJavaDuration
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 class SubstitutionCheckerWorker(
     private val appContext: Context,
@@ -76,7 +80,25 @@ class SubstitutionCheckerWorker(
 
         Log.d(LOG_TAG, "Checking substitutions for class: $className")
 
-        val cachedSubstitutions = substitutionsCacheRepository.getCache(className)?.data
+        val cachedEntry = substitutionsCacheRepository.getCache(className)
+        val cachedSubstitutions = cachedEntry?.data
+        val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+        val ageMinutes = cachedEntry?.timestamp?.let { (Clock.System.now() - it).inWholeMinutes } ?: Long.MAX_VALUE
+        val effectiveInterval = SubstitutionScheduleHelper.getEffectiveIntervalMinutes(appContext, now, cachedSubstitutions?.currentUpdateSchedule)
+
+        // Overnight battery saver: avoid radio wakeups in deep night if checked recently
+        if (SubstitutionScheduleHelper.isDeepNight(now) && ageMinutes < 180L)
+        {
+            Log.d(LOG_TAG, "Deep night mode. Skipping substitution check to preserve battery.")
+            return Result.success()
+        }
+
+        // Cache freshness check: if data was refreshed recently within the schedule interval, skip network call
+        if (ageMinutes < effectiveInterval)
+        {
+            Log.d(LOG_TAG, "Substitution cache is still fresh ($ageMinutes min < $effectiveInterval min). Skipping network call.")
+            return Result.success()
+        }
 
         val realSubstitutions = try
         {

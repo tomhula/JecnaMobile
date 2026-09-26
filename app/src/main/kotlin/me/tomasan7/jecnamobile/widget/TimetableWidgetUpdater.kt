@@ -199,7 +199,20 @@ object TimetableWidgetUpdater : KoinComponent
         {
             val params = SchoolYearPeriodParams(SchoolYear.current(), SchoolYearPeriodParams.CURRENT_PERIOD_ID)
             val cached = timetableCacheRepository.getCache(params)
-            cached?.data
+            val data = cached?.data ?: return null
+
+            val className = timetableRepository.getStudentClassName()
+                ?: TimetableWidgetRenderer.extractClassName(data)
+
+            val freshSubs = if (!className.isNullOrBlank()) {
+                substitutionsCacheRepository.getCache(className)?.data
+            } else null
+
+            if (freshSubs != null) {
+                data.copy(substitutions = freshSubs)
+            } else {
+                data
+            }
         }
         catch (e: Exception)
         {
