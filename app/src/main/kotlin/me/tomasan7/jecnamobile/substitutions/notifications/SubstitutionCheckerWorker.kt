@@ -282,8 +282,7 @@ class SubstitutionCheckerWorker(
             val settingsEnabled = runCatching {
                 runBlocking {
                     val settings = context.settingsDataStore.data.first()
-                    val masterEnabled = settings.notificationsEnabled ?: settings.hasSeenWelcomeScreen
-                    masterEnabled && settings.substitutionNotificationsEnabled
+                    settings.substitutionNotificationsEnabled
                 }
             }.getOrElse { false }
 

@@ -27,6 +27,11 @@ import me.tomasan7.jecnamobile.substitutions.notifications.SubstitutionCheckerWo
 import me.tomasan7.jecnamobile.util.settingsAsStateAwaitFirst
 import me.tomasan7.jecnamobile.util.settingsDataStore
 
+private enum class NotificationTarget {
+    GRADE,
+    SUBSTITUTION
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 fun SettingsNotificationsScreen(
@@ -45,16 +50,33 @@ fun SettingsNotificationsScreen(
         true
     }
 
-    val notificationsEnabled = (settings.notificationsEnabled ?: settings.hasSeenWelcomeScreen) && hasPermission
+    val gradeNotificationsEnabled = (settings.notificationsEnabled ?: settings.hasSeenWelcomeScreen) && hasPermission
+    val substitutionNotificationsEnabled = settings.substitutionNotificationsEnabled && hasPermission
+
+    var pendingNotificationTarget by remember { mutableStateOf<NotificationTarget?>(null) }
 
     val notificationPermissionState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         rememberPermissionState(Manifest.permission.POST_NOTIFICATIONS) { isGranted ->
             if (isGranted) {
                 coroutineScope.launch {
-                    context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
-                    GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
-                    SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                    when (pendingNotificationTarget) {
+                        NotificationTarget.GRADE -> {
+                            context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
+                            GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                        }
+                        NotificationTarget.SUBSTITUTION -> {
+                            context.settingsDataStore.updateData { it.copy(substitutionNotificationsEnabled = true) }
+                            SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                        }
+                        null -> {
+                            GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                            SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                        }
+                    }
+                    pendingNotificationTarget = null
                 }
+            } else {
+                pendingNotificationTarget = null
             }
         }
     } else null
@@ -89,120 +111,127 @@ fun SettingsNotificationsScreen(
                         modifier = Modifier.padding(bottom = 16.dp)
                     )
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = if (notificationsEnabled) {
-                                    stringResource(R.string.settings_notifications_enabled)
-                                } else {
-                                    stringResource(R.string.settings_notifications_disabled)
-                                },
-                                style = MaterialTheme.typography.bodyLarge,
-                                color = if (notificationsEnabled) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                }
-                            )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (gradeNotificationsEnabled) {
+                                stringResource(R.string.settings_notifications_enabled)
+                            } else {
+                                stringResource(R.string.settings_notifications_disabled)
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (gradeNotificationsEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
 
-                            Switch(
-                                checked = notificationsEnabled,
-                                onCheckedChange = { enabled ->
-                                    coroutineScope.launch {
-                                        if (enabled) {
-                                            if (hasPermission) {
-                                                context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
-                                                GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
-                                                SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
-                                            } else {
-                                                notificationPermissionState?.launchPermissionRequest()
-                                            }
-                                        } else {
-                                            context.settingsDataStore.updateData { it.copy(notificationsEnabled = false) }
+                        Switch(
+                            checked = gradeNotificationsEnabled,
+                            onCheckedChange = { enabled ->
+                                coroutineScope.launch {
+                                    if (enabled) {
+                                        if (hasPermission) {
+                                            context.settingsDataStore.updateData { it.copy(notificationsEnabled = true) }
                                             GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
-                                            SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                                        } else {
+                                            pendingNotificationTarget = NotificationTarget.GRADE
+                                            notificationPermissionState?.launchPermissionRequest()
                                         }
+                                    } else {
+                                        context.settingsDataStore.updateData { it.copy(notificationsEnabled = false) }
+                                        GradeCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                                     }
                                 }
-                            )
-                        }
-
-                        if (!hasPermission) {
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Text(
-                                text = stringResource(R.string.settings_notifications_permission_required),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(24.dp))
-
-                        HorizontalDivider()
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Column(modifier = Modifier.weight(1f).padding(end = 16.dp)) {
-                                Text(
-                                    text = stringResource(R.string.settings_notifications_substitution_title),
-                                    style = MaterialTheme.typography.bodyLarge
-                                )
-                                Text(
-                                    text = stringResource(R.string.settings_notifications_substitution_description),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
                             }
+                        )
+                    }
+                }
+            }
 
-                            Switch(
-                                checked = settings.substitutionNotificationsEnabled && notificationsEnabled,
-                                enabled = notificationsEnabled,
-                                onCheckedChange = { enabled ->
-                                    coroutineScope.launch {
-                                        context.settingsDataStore.updateData { it.copy(substitutionNotificationsEnabled = enabled) }
+            SettingsSection(title = stringResource(R.string.settings_notifications_substitution_title)) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = stringResource(R.string.settings_notifications_substitution_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = if (substitutionNotificationsEnabled) {
+                                stringResource(R.string.settings_notifications_enabled)
+                            } else {
+                                stringResource(R.string.settings_notifications_disabled)
+                            },
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = if (substitutionNotificationsEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
+
+                        Switch(
+                            checked = substitutionNotificationsEnabled,
+                            onCheckedChange = { enabled ->
+                                coroutineScope.launch {
+                                    if (enabled) {
+                                        if (hasPermission) {
+                                            context.settingsDataStore.updateData { it.copy(substitutionNotificationsEnabled = true) }
+                                            SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
+                                        } else {
+                                            pendingNotificationTarget = NotificationTarget.SUBSTITUTION
+                                            notificationPermissionState?.launchPermissionRequest()
+                                        }
+                                    } else {
+                                        context.settingsDataStore.updateData { it.copy(substitutionNotificationsEnabled = false) }
                                         SubstitutionCheckerWorker.scheduleWorkerIfNotificationsEnabled(context)
                                     }
                                 }
-                            )
-                        }
+                            }
+                        )
+                    }
+                }
+            }
 
-                        Spacer(modifier = Modifier.height(16.dp))
-
+            SettingsSection(title = null) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    if (!hasPermission) {
                         Text(
-                            text = stringResource(R.string.settings_notifications_system_settings_description),
+                            text = stringResource(R.string.settings_notifications_permission_required),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(bottom = 8.dp)
                         )
+                    }
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                    Text(
+                        text = stringResource(R.string.settings_notifications_system_settings_description),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(bottom = 16.dp)
+                    )
 
-                        OutlinedButton(
-                            onClick = {
-                                val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                    putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                                }
-                                context.startActivity(intent)
-                            },
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            Text(stringResource(R.string.settings_notifications_system_settings))
-                        }
-                    } else {
-                        Text(
-                            text = stringResource(R.string.settings_notifications_enabled),
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.primary
-                        )
+                    OutlinedButton(
+                        onClick = {
+                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            }
+                            context.startActivity(intent)
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(stringResource(R.string.settings_notifications_system_settings))
                     }
                 }
             }
