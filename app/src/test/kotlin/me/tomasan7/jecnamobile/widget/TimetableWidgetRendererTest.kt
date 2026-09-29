@@ -20,6 +20,28 @@ class TimetableWidgetRendererTest
     }
 
     @Test
+    fun testParseSubstitutionMergedClasses()
+    {
+        val entry1 = ChangeEntry(text = "PIS 19ab Zi(Bc) spoj.", backgroundColor = null, foregroundColor = null, willBeSpecified = false)
+        val parsed1 = TimetableWidgetRenderer.parseSubstitution(entry1)
+
+        assertEquals("PIS spoj", parsed1.subject)
+        assertEquals("19ab", parsed1.room)
+        assertEquals("Zi(Bc)", parsed1.teacher)
+        assertFalse(parsed1.isCancelled)
+        assertTrue(parsed1.isStructured)
+
+        val entry2 = ChangeEntry(text = "A 21 Bu(Ir) spoj.", backgroundColor = null, foregroundColor = null, willBeSpecified = false)
+        val parsed2 = TimetableWidgetRenderer.parseSubstitution(entry2)
+
+        assertEquals("A spoj", parsed2.subject)
+        assertEquals("21", parsed2.room)
+        assertEquals("Bu(Ir)", parsed2.teacher)
+        assertFalse(parsed2.isCancelled)
+        assertTrue(parsed2.isStructured)
+    }
+
+    @Test
     fun testParseSubstitutionCancelledWithTeacher()
     {
         val entry = ChangeEntry(text = "Odpadá (Dr)", backgroundColor = null, foregroundColor = null, willBeSpecified = false)

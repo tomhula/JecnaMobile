@@ -130,7 +130,31 @@ fun Timetable(
                         val isRevealed = revealedSpots.contains(spotKey)
                         val substitution = substitutionsMap[day]?.changes?.getOrNull(index)
                         val substitutionText = substitution?.let {
-                            if (it.willBeSpecified ?: false)
+                            val parsed = me.tomasan7.jecnamobile.widget.TimetableWidgetRenderer.parseSubstitution(it)
+                            if (parsed.isStructured)
+                            {
+                                val lines = mutableListOf<String>()
+                                lines.add(parsed.subject)
+                                if (!parsed.room.isNullOrBlank())
+                                {
+                                    lines.add(parsed.room)
+                                }
+                                if (!parsed.teacher.isNullOrBlank())
+                                {
+                                    val formattedTeacher = parsed.teacher.replace(Regex("([a-zA-Zá-žÁ-Ž]+)\\((.*?)\\)"), "$1 ($2)")
+                                    lines.add(formattedTeacher)
+                                }
+                                if (it.willBeSpecified == true)
+                                {
+                                    lines.add(stringResource(R.string.substitution_will_be_specified))
+                                }
+                                else if (!parsed.note.isNullOrBlank())
+                                {
+                                    lines.add(parsed.note)
+                                }
+                                lines.joinToString("\n")
+                            }
+                            else if (it.willBeSpecified ?: false)
                             {
                                 it.text + "\n" + stringResource(R.string.substitution_will_be_specified)
                             }

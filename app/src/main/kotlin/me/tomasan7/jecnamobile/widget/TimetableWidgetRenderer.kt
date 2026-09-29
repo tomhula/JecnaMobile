@@ -1457,9 +1457,9 @@ object TimetableWidgetRenderer
         val raw = substitution.text.trim()
         val noteSuffix = if (substitution.willBeSpecified == true) "(upřesní se)" else null
 
-        if (raw.startsWith("Odpadá", ignoreCase = true))
+        if (raw.startsWith("Odpadá", ignoreCase = true) || raw.endsWith("odpadá", ignoreCase = true))
         {
-            val rest = raw.removePrefix("Odpadá").trim()
+            val rest = raw.replace(Regex("(?i)odpadá"), "").trim()
             val teacher = if (rest.isNotEmpty()) rest else null
             return ParsedSubstitution(
                 subject = "Odpadá",
@@ -1470,9 +1470,9 @@ object TimetableWidgetRenderer
             )
         }
 
-        if (raw.startsWith("Zrušeno", ignoreCase = true))
+        if (raw.startsWith("Zrušeno", ignoreCase = true) || raw.endsWith("zrušeno", ignoreCase = true))
         {
-            val rest = raw.removePrefix("Zrušeno").trim()
+            val rest = raw.replace(Regex("(?i)zrušeno"), "").trim()
             return ParsedSubstitution(
                 subject = "Zrušeno",
                 teacher = if (rest.isNotEmpty()) rest else null,
@@ -1482,14 +1482,17 @@ object TimetableWidgetRenderer
             )
         }
 
-        val tokens = raw.split(Regex("\\s+")).filter { it.isNotBlank() }
-
         fun looksLikeRoom(s: String): Boolean =
-            s.any { it.isDigit() } || s.lowercase() in setOf("aula", "těl", "dílny", "lab")
+            s.any { it.isDigit() } || s.lowercase() in setOf("aula", "těl", "dílny", "lab", "lab1", "lab2", "tv")
+
+        val isSpoj = Regex("(?i)\\bspoj\\.?(?:\\s+|$)").containsMatchIn(raw)
+        val cleanRaw = raw.replace(Regex("(?i)\\bspoj\\.?(?:\\s+|$)"), " ").replace(Regex("\\s+"), " ").trim()
+        val tokens = cleanRaw.split(Regex("\\s+")).filter { it.isNotBlank() }
 
         if (tokens.size >= 3 && tokens[0].length <= 6 && looksLikeRoom(tokens[1]))
         {
-            val subject = tokens[0]
+            val baseSubject = tokens[0]
+            val subject = if (isSpoj && !baseSubject.contains("spoj", ignoreCase = true)) "$baseSubject spoj" else baseSubject
             val room = tokens[1]
             val teacher = tokens.drop(2).joinToString(" ")
             return ParsedSubstitution(
@@ -1504,7 +1507,8 @@ object TimetableWidgetRenderer
 
         if (tokens.size == 2 && tokens[0].length <= 6)
         {
-            val subject = tokens[0]
+            val baseSubject = tokens[0]
+            val subject = if (isSpoj && !baseSubject.contains("spoj", ignoreCase = true)) "$baseSubject spoj" else baseSubject
             val second = tokens[1]
             val isRoom = looksLikeRoom(second)
             val room = if (isRoom) second else null
@@ -1521,16 +1525,19 @@ object TimetableWidgetRenderer
 
         if (tokens.size == 1 && tokens[0].length <= 5)
         {
+            val baseSubject = tokens[0]
+            val subject = if (isSpoj && !baseSubject.contains("spoj", ignoreCase = true)) "$baseSubject spoj" else baseSubject
             return ParsedSubstitution(
-                subject = tokens[0],
+                subject = subject,
                 note = noteSuffix,
                 isCancelled = false,
                 isStructured = true
             )
         }
 
+        val subject = if (isSpoj && !raw.contains("spoj", ignoreCase = true)) "$raw spoj" else raw
         return ParsedSubstitution(
-            subject = raw,
+            subject = subject,
             note = noteSuffix,
             isCancelled = false,
             isStructured = false
@@ -2066,111 +2073,105 @@ object TimetableWidgetRenderer
             }
         }
 
-        // 2. Structured or raw text content
+        // 2. Structured or raw text content: Always show clean stacked lines centered like "A spoj"
         val parsed = parseSubstitution(substitution)
+        val fullLines = mutableListOf<String>()
+
         if (parsed.isStructured)
         {
-            val boldPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = textColor
-                typeface = Typeface.DEFAULT_BOLD
+            fullLines.add(parsed.subject)
+            if (!parsed.room.isNullOrBlank())
+            {
+                fullLines.add(parsed.room)
             }
-            val cornerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = textColor
-                typeface = Typeface.DEFAULT
+            if (!parsed.teacher.isNullOrBlank() && !settings.hideTeachers)
+            {
+                val formattedTeacher = parsed.teacher.replace(Regex("([a-zA-Zá-žÁ-Ž]+)\\((.*?)\\)"), "$1 ($2)")
+                fullLines.add(formattedTeacher)
             }
-            drawLessonCell(
-                canvas = canvas,
-                rect = rect,
-                subject = parsed.subject,
-                teacher = parsed.teacher,
-                room = parsed.room,
-                clazz = null,
-                group = parsed.note,
-                settings = settings,
-                boldPaint = boldPaint,
-                smallPaint = cornerPaint,
-                teacherPaint = cornerPaint,
-                roomPaint = cornerPaint,
-                groupPaint = cornerPaint
-            )
+            if (!parsed.note.isNullOrBlank())
+            {
+                fullLines.add(parsed.note)
+            }
         }
         else
         {
             val fullText = if (parsed.note != null) "${parsed.subject}\n${parsed.note}" else parsed.subject
-            val padding = 4f
-            val availWidth = rect.width() - (padding * 2)
-            val availHeight = rect.height() - (padding * 2)
+            fullLines.addAll(fullText.split("\n"))
+        }
 
-            val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-                color = textColor
-                typeface = Typeface.DEFAULT_BOLD
-                textAlign = Paint.Align.CENTER
-            }
+        val padding = 4f
+        val availWidth = rect.width() - (padding * 2)
+        val availHeight = rect.height() - (padding * 2)
 
-            var fontSize = (availHeight * 0.28f * scale).coerceIn(10f, 28f)
-            var finalLines = listOf<String>()
-            var finalLineHeight = 0f
+        val textPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+            color = textColor
+            typeface = Typeface.DEFAULT_BOLD
+            textAlign = Paint.Align.CENTER
+        }
 
-            for (attempt in 0..6)
-            {
-                textPaint.textSize = fontSize
-                val fm = textPaint.fontMetrics
-                val lHeight = (fm.descent - fm.ascent) * 1.05f
+        var fontSize = (availHeight * 0.28f * scale).coerceIn(10f, 28f)
+        var finalLines = listOf<String>()
+        var finalLineHeight = 0f
 
-                val lines = mutableListOf<String>()
-                val rawLines = fullText.split("\n")
-                for (rawLine in rawLines)
-                {
-                    val words = rawLine.split(" ")
-                    var cur = ""
-                    for (w in words)
-                    {
-                        val candidate = if (cur.isEmpty()) w else "$cur $w"
-                        if (textPaint.measureText(candidate) <= availWidth)
-                        {
-                            cur = candidate
-                        }
-                        else
-                        {
-                            if (cur.isNotEmpty()) lines.add(cur)
-                            cur = w
-                        }
-                    }
-                    if (cur.isNotEmpty()) lines.add(cur)
-                }
-
-                val totalHeight = lines.size * lHeight
-                val maxLineWidth = lines.maxOfOrNull { textPaint.measureText(it) } ?: 0f
-                if ((totalHeight <= availHeight && maxLineWidth <= availWidth) || fontSize <= 8f)
-                {
-                    finalLines = lines
-                    finalLineHeight = lHeight
-                    break
-                }
-                fontSize = maxOf(7.5f, fontSize * 0.85f)
-            }
-
-            if (finalLines.isEmpty())
-            {
-                finalLines = listOf(fullText)
-                textPaint.textSize = fontSize
-                val fm = textPaint.fontMetrics
-                finalLineHeight = (fm.descent - fm.ascent) * 1.05f
-            }
-
+        for (attempt in 0..6)
+        {
+            textPaint.textSize = fontSize
             val fm = textPaint.fontMetrics
-            val startY = rect.centerY() - ((finalLines.size - 1) * finalLineHeight) / 2f - (fm.ascent + fm.descent) / 2f
+            val lHeight = (fm.descent - fm.ascent) * 1.05f
 
-            finalLines.forEachIndexed { i, line ->
-                var linePaint = textPaint
-                val measured = textPaint.measureText(line)
-                if (measured > availWidth && availWidth > 0)
+            val lines = mutableListOf<String>()
+            for (rawLine in fullLines)
+            {
+                val words = rawLine.split(" ")
+                var cur = ""
+                for (w in words)
                 {
-                    val lineScale = availWidth / measured
-                    linePaint = Paint(textPaint).apply { textSize = textPaint.textSize * lineScale }
+                    val candidate = if (cur.isEmpty()) w else "$cur $w"
+                    if (textPaint.measureText(candidate) <= availWidth)
+                    {
+                        cur = candidate
+                    }
+                    else
+                    {
+                        if (cur.isNotEmpty()) lines.add(cur)
+                        cur = w
+                    }
                 }
-                canvas.drawText(line, rect.centerX(), startY + (i * finalLineHeight), linePaint)
+                if (cur.isNotEmpty()) lines.add(cur)
             }
+
+            val totalHeight = lines.size * lHeight
+            val maxLineWidth = lines.maxOfOrNull { textPaint.measureText(it) } ?: 0f
+            if ((totalHeight <= availHeight && maxLineWidth <= availWidth) || fontSize <= 8f)
+            {
+                finalLines = lines
+                finalLineHeight = lHeight
+                break
+            }
+            fontSize = maxOf(7.5f, fontSize * 0.85f)
+        }
+
+        if (finalLines.isEmpty())
+        {
+            finalLines = fullLines
+            textPaint.textSize = fontSize
+            val fm = textPaint.fontMetrics
+            finalLineHeight = (fm.descent - fm.ascent) * 1.05f
+        }
+
+        val fm = textPaint.fontMetrics
+        val startY = rect.centerY() - ((finalLines.size - 1) * finalLineHeight) / 2f - (fm.ascent + fm.descent) / 2f
+
+        finalLines.forEachIndexed { i, line ->
+            var linePaint = textPaint
+            val measured = textPaint.measureText(line)
+            if (measured > availWidth && availWidth > 0)
+            {
+                val lineScale = availWidth / measured
+                linePaint = Paint(textPaint).apply { textSize = textPaint.textSize * lineScale }
+            }
+            canvas.drawText(line, rect.centerX(), startY + (i * finalLineHeight), linePaint)
         }
 
         // 3. Border
