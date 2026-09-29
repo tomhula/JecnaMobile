@@ -1167,17 +1167,6 @@ fun SettingsWidgetScreen(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
 
-                    SettingToggleRow(
-                        title = "Zobrazit ve velkém rozvrhu pouze moje skupiny",
-                        subtitle = "Na velkém týdenním widgetu zobrazit pouze hodiny vaší vybrané skupiny místo všech rozdělených skupin",
-                        checked = widgetSettings.filterMyGroups,
-                        onCheckedChange = { checked ->
-                            updateWidgetSettings { it.copy(filterMyGroups = checked) }
-                        }
-                    )
-
-                    HorizontalDivider()
-
                     // Quick global selector for 1/2
                     if (hasHalves)
                     {
