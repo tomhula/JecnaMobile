@@ -34,6 +34,8 @@ data class WidgetStyleExport(
     val hideTeachers: Boolean = false,
     val periodHeaderMode: Settings.PeriodHeaderMode = Settings.PeriodHeaderMode.NUMBER_ONLY,
     val cellScale: Float = 1.0f,
+    val showLastUpdatedTime: Boolean = true,
+    val alwaysShowLastUpdated: Boolean = true,
     val colors: WidgetColorsExport = WidgetColorsExport()
 )
 
@@ -127,6 +129,8 @@ object WidgetStyleManager
             hideTeachers = settings.hideTeachers,
             periodHeaderMode = settings.periodHeaderMode,
             cellScale = settings.cellScale,
+            showLastUpdatedTime = settings.showLastUpdatedTime,
+            alwaysShowLastUpdated = settings.alwaysShowLastUpdated,
             colors = colorsExport
         )
 
@@ -184,6 +188,8 @@ object WidgetStyleManager
                 hideTeachers = export.hideTeachers,
                 periodHeaderMode = export.periodHeaderMode,
                 cellScale = export.cellScale,
+                showLastUpdatedTime = export.showLastUpdatedTime,
+                alwaysShowLastUpdated = export.alwaysShowLastUpdated,
                 customColors = parsedColors
             )
         }

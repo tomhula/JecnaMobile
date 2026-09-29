@@ -34,7 +34,8 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
         <ImageView
             android:id="@+id/widget_today_image"
@@ -51,4 +52,18 @@
             android:background="@android:color/transparent"
             android:contentDescription="Obnovit rozvrh" />
     </FrameLayout>
+
+    <!-- Bottom info bar: Centered last updated timestamp below the table -->
+    <TextView
+        android:id="@+id/widget_today_bottom_last_updated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingTop="1dp"
+        android:paddingBottom="0dp"
+        android:text=""
+        android:textColor="#CCFFFFFF"
+        android:textSize="9sp"
+        android:singleLine="true"
+        android:visibility="gone" />
 </LinearLayout>

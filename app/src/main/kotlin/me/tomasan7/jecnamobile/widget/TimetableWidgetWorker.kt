@@ -120,8 +120,12 @@ class TimetableWidgetWorker(
             val timestamp = timeFormat.format(Date())
 
             appContext.settingsDataStore.updateData { current ->
+                val updatedPerWidget = current.perWidgetSettings.mapValues { (_, ws) ->
+                    ws.copy(lastRefreshedTimestamp = timestamp)
+                }
                 current.copy(
-                    widgetSettings = current.widgetSettings.copy(lastRefreshedTimestamp = timestamp)
+                    widgetSettings = current.widgetSettings.copy(lastRefreshedTimestamp = timestamp),
+                    perWidgetSettings = updatedPerWidget
                 )
             }
 

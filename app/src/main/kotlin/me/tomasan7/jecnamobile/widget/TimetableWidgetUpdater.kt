@@ -239,7 +239,9 @@ object TimetableWidgetUpdater : KoinComponent
             val views = RemoteViews(context.packageName, R.layout.widget_timetable_week)
 
             val density = context.resources.displayMetrics.density
-            val hasBottomUpdated = !widgetSettings.lastRefreshedTimestamp.isNullOrEmpty()
+            val shouldShowTime = widgetSettings.shouldShowTimestamp()
+            val timeStr = if (shouldShowTime) widgetSettings.resolveEffectiveTimestamp(timetableData) else ""
+            val hasBottomUpdated = shouldShowTime && widgetSettings.hideHeader
             val horizPadPx = (8 * density).toInt()
 
             val bgAlpha = (colors.backgroundColor shr 24) and 0xFFL
@@ -290,7 +292,7 @@ object TimetableWidgetUpdater : KoinComponent
                 )
                 views.setOnClickPendingIntent(R.id.widget_corner_refresh_button, cornerRefreshPending)
 
-                val bottomUpdatedStr = widgetSettings.lastRefreshedTimestamp?.let { "Aktualizováno: $it" } ?: ""
+                val bottomUpdatedStr = if (shouldShowTime) "Aktualizováno: $timeStr" else ""
                 views.setViewVisibility(R.id.widget_bottom_last_updated, if (bottomUpdatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
                 views.setTextViewText(R.id.widget_bottom_last_updated, bottomUpdatedStr)
                 views.setTextColor(R.id.widget_bottom_last_updated, ((colors.cellTextColor and 0x00FFFFFF) or 0xCC000000L).toInt())
@@ -320,7 +322,8 @@ object TimetableWidgetUpdater : KoinComponent
                 views.setTextColor(R.id.widget_title, colors.cellTextColor.toInt())
 
                 // Last updated timestamp
-                val updatedStr = widgetSettings.lastRefreshedTimestamp?.let { "Akt. $it" } ?: ""
+                val updatedStr = if (shouldShowTime) "Akt. $timeStr" else ""
+                views.setViewVisibility(R.id.widget_last_updated, if (updatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
                 views.setTextViewText(R.id.widget_last_updated, updatedStr)
                 views.setTextColor(R.id.widget_last_updated, colors.cellTextColor.toInt() and 0x99FFFFFF.toInt())
 
@@ -443,7 +446,9 @@ object TimetableWidgetUpdater : KoinComponent
             val views = RemoteViews(context.packageName, R.layout.widget_timetable_day)
 
             val density = context.resources.displayMetrics.density
-            val hasBottomUpdated = !widgetSettings.lastRefreshedTimestamp.isNullOrEmpty()
+            val shouldShowTime = widgetSettings.shouldShowTimestamp()
+            val timeStr = if (shouldShowTime) widgetSettings.resolveEffectiveTimestamp(timetableData) else ""
+            val hasBottomUpdated = shouldShowTime && widgetSettings.hideHeader
             val horizPadPx = (8 * density).toInt()
 
             val bgAlpha = (colors.backgroundColor shr 24) and 0xFFL
@@ -482,7 +487,7 @@ object TimetableWidgetUpdater : KoinComponent
             if (widgetSettings.hideHeader)
             {
                 views.setViewVisibility(R.id.widget_day_header_bar, View.GONE)
-                val bottomUpdatedStr = widgetSettings.lastRefreshedTimestamp?.let { "Aktualizováno: $it" } ?: ""
+                val bottomUpdatedStr = if (shouldShowTime) "Aktualizováno: $timeStr" else ""
                 views.setViewVisibility(R.id.widget_day_bottom_last_updated, if (bottomUpdatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
                 views.setTextViewText(R.id.widget_day_bottom_last_updated, bottomUpdatedStr)
                 views.setTextColor(R.id.widget_day_bottom_last_updated, ((colors.cellTextColor and 0x00FFFFFF) or 0xCC000000L).toInt())
@@ -498,7 +503,8 @@ object TimetableWidgetUpdater : KoinComponent
                 views.setTextColor(R.id.widget_day_title, colors.cellTextColor.toInt())
 
                 // Last updated timestamp
-                val updatedStr = widgetSettings.lastRefreshedTimestamp?.let { "Akt. $it" } ?: ""
+                val updatedStr = if (shouldShowTime) "Akt. $timeStr" else ""
+                views.setViewVisibility(R.id.widget_day_last_updated, if (updatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
                 views.setTextViewText(R.id.widget_day_last_updated, updatedStr)
                 views.setTextColor(R.id.widget_day_last_updated, colors.cellTextColor.toInt() and 0x99FFFFFF.toInt())
 
@@ -581,7 +587,9 @@ object TimetableWidgetUpdater : KoinComponent
             val views = RemoteViews(context.packageName, R.layout.widget_timetable_today_row)
 
             val density = context.resources.displayMetrics.density
-            val hasBottomUpdated = !widgetSettings.lastRefreshedTimestamp.isNullOrEmpty()
+            val shouldShowTime = widgetSettings.shouldShowTimestamp()
+            val timeStr = if (shouldShowTime) widgetSettings.resolveEffectiveTimestamp(timetableData) else ""
+            val hasBottomUpdated = shouldShowTime
             val horizPadPx = (8 * density).toInt()
 
             val bgAlpha = (colors.backgroundColor shr 24) and 0xFFL
@@ -658,6 +666,11 @@ object TimetableWidgetUpdater : KoinComponent
                 subjectGroups = settings.subjectGroups
             )
             views.setImageViewBitmap(R.id.widget_today_image, bitmap)
+
+            val bottomUpdatedStr = if (shouldShowTime) "Aktualizováno: $timeStr" else ""
+            views.setViewVisibility(R.id.widget_today_bottom_last_updated, if (bottomUpdatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
+            views.setTextViewText(R.id.widget_today_bottom_last_updated, bottomUpdatedStr)
+            views.setTextColor(R.id.widget_today_bottom_last_updated, ((colors.cellTextColor and 0x00FFFFFF) or 0xCC000000L).toInt())
 
             appWidgetManager.updateAppWidget(widgetId, views)
         }
@@ -758,6 +771,13 @@ object TimetableWidgetUpdater : KoinComponent
                 userClassName = userClassName
             )
             views.setImageViewBitmap(R.id.widget_current_image, bitmap)
+
+            val shouldShowTime = widgetSettings.shouldShowTimestamp()
+            val timeStr = if (shouldShowTime) widgetSettings.resolveEffectiveTimestamp(timetableData) else ""
+            val bottomUpdatedStr = if (shouldShowTime) "Aktualizováno: $timeStr" else ""
+            views.setViewVisibility(R.id.widget_current_bottom_last_updated, if (bottomUpdatedStr.isNotEmpty()) View.VISIBLE else View.GONE)
+            views.setTextViewText(R.id.widget_current_bottom_last_updated, bottomUpdatedStr)
+            views.setTextColor(R.id.widget_current_bottom_last_updated, ((colors.cellTextColor and 0x00FFFFFF) or 0xCC000000L).toInt())
 
             appWidgetManager.updateAppWidget(widgetId, views)
         }
@@ -1006,13 +1026,14 @@ object TimetableWidgetUpdater : KoinComponent
 
                 val timeFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
                 val timestamp = timeFormat.format(Date())
+                val nowMs = System.currentTimeMillis()
 
                 context.settingsDataStore.updateData { current ->
                     val updatedPerWidget = current.perWidgetSettings.mapValues { (_, ws) ->
-                        ws.copy(lastRefreshedTimestamp = timestamp)
+                        ws.copy(lastRefreshedTimestamp = timestamp, lastManualRefreshTimeMs = nowMs)
                     }
                     current.copy(
-                        widgetSettings = current.widgetSettings.copy(lastRefreshedTimestamp = timestamp),
+                        widgetSettings = current.widgetSettings.copy(lastRefreshedTimestamp = timestamp, lastManualRefreshTimeMs = nowMs),
                         perWidgetSettings = updatedPerWidget
                     )
                 }

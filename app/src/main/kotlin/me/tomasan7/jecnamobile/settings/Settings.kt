@@ -104,6 +104,9 @@ data class Settings(
         val filterMyGroups: Boolean = false,
         val cellScale: Float = 1.0f,
         val customColors: WidgetColors = WidgetColors(),
+        val showLastUpdatedTime: Boolean = true,
+        val alwaysShowLastUpdated: Boolean = true,
+        val lastManualRefreshTimeMs: Long? = null,
         val lastRefreshedTimestamp: String? = null,
         val debugSimulationEnabled: Boolean = false,
         val debugSimulatedDay: String? = null,
@@ -119,6 +122,23 @@ data class Settings(
         {
             if (periodHeaderMode != PeriodHeaderMode.NUMBER_ONLY) return periodHeaderMode
             return if (showTimeRange) PeriodHeaderMode.TIME_ONLY else PeriodHeaderMode.NUMBER_ONLY
+        }
+
+        fun shouldShowTimestamp(): Boolean
+        {
+            if (!showLastUpdatedTime) return false
+            if (alwaysShowLastUpdated) return true
+            val refreshTime = lastManualRefreshTimeMs ?: return false
+            return (System.currentTimeMillis() - refreshTime) < 5 * 60 * 1000L
+        }
+
+        fun resolveEffectiveTimestamp(timetableData: me.tomasan7.jecnamobile.timetable.TimetableData?): String
+        {
+            if (!lastRefreshedTimestamp.isNullOrBlank()) return lastRefreshedTimestamp
+            val subLastUpdated = timetableData?.substitutions?.lastUpdated
+            if (!subLastUpdated.isNullOrBlank()) return subLastUpdated
+            val sdf = java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault())
+            return sdf.format(java.util.Date())
         }
     }
 

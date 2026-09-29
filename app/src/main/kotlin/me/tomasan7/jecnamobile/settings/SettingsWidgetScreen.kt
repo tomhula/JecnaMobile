@@ -1450,7 +1450,10 @@ fun SettingsWidgetScreen(
 
             // Section 4: Refresh Action
             SettingsSection(title = "Aktualizace") {
-                Column(modifier = Modifier.padding(16.dp)) {
+                Column(
+                    modifier = Modifier.padding(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween,
@@ -1461,7 +1464,7 @@ fun SettingsWidgetScreen(
                                 text = "Vynutit obnovení rozvrhu",
                                 style = MaterialTheme.typography.titleMedium
                             )
-                            val lastRefreshed = widgetSettings.lastRefreshedTimestamp?.let { "Naposledy: $it" } ?: "Zatím neaktualizováno"
+                            val lastRefreshed = "Naposledy: " + widgetSettings.resolveEffectiveTimestamp(cachedTimetableData)
                             Text(
                                 text = lastRefreshed,
                                 style = MaterialTheme.typography.bodySmall,
@@ -1478,6 +1481,33 @@ fun SettingsWidgetScreen(
                             Spacer(Modifier.width(8.dp))
                             Text("Obnovit")
                         }
+                    }
+
+                    HorizontalDivider()
+
+                    SettingToggleRow(
+                        title = "Zobrazit čas aktualizace na widgetu",
+                        subtitle = "Zobrazuje čas poslední změny nebo synchronizace rozvrhu",
+                        checked = widgetSettings.showLastUpdatedTime,
+                        onCheckedChange = { checked ->
+                            updateWidgetSettings { it.copy(showLastUpdatedTime = checked) }
+                        }
+                    )
+
+                    if (widgetSettings.showLastUpdatedTime) {
+                        HorizontalDivider()
+
+                        SettingToggleRow(
+                            title = "Zobrazovat čas trvale",
+                            subtitle = if (widgetSettings.alwaysShowLastUpdated)
+                                "Čas je na widgetu viditelný stále"
+                            else
+                                "Čas se na widgetu zobrazí pouze dočasně po manuální aktualizaci",
+                            checked = widgetSettings.alwaysShowLastUpdated,
+                            onCheckedChange = { checked ->
+                                updateWidgetSettings { it.copy(alwaysShowLastUpdated = checked) }
+                            }
+                        )
                     }
                 }
             }
@@ -2591,12 +2621,15 @@ private fun WidgetLivePreviewCard(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            val updatedTimeStr = widgetSettings.lastRefreshedTimestamp?.let { "Akt. $it" } ?: "Akt. 12:45"
-                            Text(
-                                text = updatedTimeStr,
-                                color = cellTextColor.copy(alpha = 0.6f),
-                                fontSize = 10.sp
-                            )
+                            if (widgetSettings.shouldShowTimestamp())
+                            {
+                                val timeStr = widgetSettings.resolveEffectiveTimestamp(cachedTimetableData)
+                                Text(
+                                    text = "Akt. $timeStr",
+                                    color = cellTextColor.copy(alpha = 0.6f),
+                                    fontSize = 10.sp
+                                )
+                            }
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "Obnovit",
@@ -2713,17 +2746,21 @@ private fun WidgetLivePreviewCard(
                     )
                 }
 
-                // Bottom text (only when top header is hidden and not current hour)
-                if (!showHeader && previewMode != PreviewWidgetMode.CURRENT_HOUR && previewMode != PreviewWidgetMode.TODAY_ROW)
+                // Bottom text (when top header is hidden, or on today row / current hour when enabled)
+                if (widgetSettings.shouldShowTimestamp())
                 {
-                    val lastRefreshed = widgetSettings.lastRefreshedTimestamp?.let { "Aktualizováno: $it" } ?: "Aktualizováno: 12:45"
-                    Text(
-                        text = lastRefreshed,
-                        color = cellTextColor.copy(alpha = 0.75f),
-                        fontSize = 9.sp,
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
+                    val isBottomEligible = !showHeader || previewMode == PreviewWidgetMode.TODAY_ROW || previewMode == PreviewWidgetMode.CURRENT_HOUR
+                    if (isBottomEligible)
+                    {
+                        val lastRefreshed = "Aktualizováno: " + widgetSettings.resolveEffectiveTimestamp(cachedTimetableData)
+                        Text(
+                            text = lastRefreshed,
+                            color = cellTextColor.copy(alpha = 0.75f),
+                            fontSize = 9.sp,
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    }
                 }
             }
         }

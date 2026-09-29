@@ -6,3 +6,5 @@
 build/
 release/
 /.junie/memory
+*.apk
+/build-release.bat
