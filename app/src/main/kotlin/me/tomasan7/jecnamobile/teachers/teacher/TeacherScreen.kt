@@ -198,7 +198,7 @@ private fun InfoTable(teacher: Teacher)
             InfoRow(R.string.teacher_private_phone, value = it)
         }
         teacher.cabinet?.let {
-            InfoRow(R.string.teacher_cabinet, value = it)
+            InfoRow(R.string.teacher_cabinet, value = it.name)
         }
         teacher.tutorOfClass?.let {
             InfoRow(R.string.teacher_class, value = it)

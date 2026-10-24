@@ -872,13 +872,13 @@ private fun GradeDialogContent(
                     )
                     DialogRow(stringResource(R.string.grade_description), grade.description ?: "")
                     val teacher = grade.teacher
-                    if (teacher?.short == null)
-                        DialogRow(stringResource(R.string.grade_teacher), teacher?.full ?: "")
+                    if (teacher?.tag == null)
+                        DialogRow(stringResource(R.string.grade_teacher), teacher?.fullName ?: "")
                     else
                         DialogRow(
                             label = stringResource(R.string.grade_teacher),
-                            value = teacher.full,
-                            onClick = { onTeacherClick(TeacherReference(teacher.full, teacher.short!!)) }
+                            value = teacher.fullName,
+                            onClick = { onTeacherClick(TeacherReference(teacher.fullName, teacher.tag!!)) }
                         )
                 }
 
