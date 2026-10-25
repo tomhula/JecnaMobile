@@ -9,7 +9,7 @@
 - Opening braces are placed on new line except for lambdas
 
 # Compose
-- If a composable function declaration or call has more than one parameter, the parameters must be on seperate lines. Opening brace on the same line as function name and closing brace below last parameter
+- If a composable function declaration or call has more than one parameter, the parameters must be on seperate lines. Opening parentheses on the same line as function name and closing parentheses below last parameter
 - If a composable function call has more than one parameter, the prameters must be named.
 - Any compose code repeated more than once should be extracted to its own @Composable function
 - Declare all user facing strings as string resources (strings.xml)
